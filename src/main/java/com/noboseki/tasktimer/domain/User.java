@@ -48,6 +48,16 @@ public class User {
                 .password(dto.password).build();
     }
 
+    public UserDto mapToDto(User user) {
+        return UserDto.builder()
+                .privateID(user.privateID)
+                .publicId(user.publicId)
+                .email(user.email)
+                .imageUrl(user.imageUrl)
+                .emailVerified(user.emailVerified)
+                .password(user.password).build();
+    }
+
     @Data
     @Builder
     public static class UserDto {
@@ -57,15 +67,5 @@ public class User {
         private String imageUrl;
         private Boolean emailVerified;
         private String password;
-
-        public UserDto mapToDto(User user) {
-            return UserDto.builder()
-                    .privateID(user.privateID)
-                    .publicId(user.publicId)
-                    .email(user.email)
-                    .imageUrl(user.imageUrl)
-                    .emailVerified(user.emailVerified)
-                    .password(user.password).build();
-        }
     }
 }
