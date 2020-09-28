@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -30,31 +31,14 @@ public class WorkTime {
     @Column(nullable = false)
     private Time time;
 
-    public WorkTime mapToEntity(WorkTimeDto dto) {
-        return WorkTime.builder()
-                .privateID(dto.privateID)
-                .date(dto.date)
-                .time(dto.time).build();
-    }
-
     @Data
     @Builder
     public static class WorkTimeDto {
+        @NotNull
         private UUID privateID;
+        @NotNull
         private Date date;
+        @NotNull
         private Time time;
-
-        public WorkTimeDto mapToDto(WorkTime workTime) {
-            return WorkTimeDto.builder()
-                    .privateID(workTime.privateID)
-                    .date(workTime.date)
-                    .time(workTime.time).build();
-        }
-
-        public List<WorkTimeDto> mapToDtos(List<WorkTime> tasks) {
-            return tasks.stream()
-                    .map(this::mapToDto)
-                    .collect(Collectors.toList());
-        }
     }
 }
