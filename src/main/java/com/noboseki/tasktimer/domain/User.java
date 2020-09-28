@@ -38,26 +38,6 @@ public class User {
     @JsonIgnore
     private String password;
 
-    public User mapToEntity (UserDto dto) {
-        return User.builder()
-                .privateID(dto.privateID)
-                .publicId(dto.publicId)
-                .email(dto.email)
-                .imageUrl(dto.imageUrl)
-                .emailVerified(dto.emailVerified)
-                .password(dto.password).build();
-    }
-
-    public UserDto mapToDto(User user) {
-        return UserDto.builder()
-                .privateID(user.privateID)
-                .publicId(user.publicId)
-                .email(user.email)
-                .imageUrl(user.imageUrl)
-                .emailVerified(user.emailVerified)
-                .password(user.password).build();
-    }
-
     @Data
     @Builder
     public static class UserDto {
