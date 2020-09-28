@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface WorkTimeRepository extends JpaRepository<WorkTime, UUID> {
+public interface WorkTimeDao extends JpaRepository<WorkTime, UUID> {
 }

@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -36,36 +38,23 @@ public class User {
     private Boolean emailVerified = false;
 
     @JsonIgnore
+    @Column(nullable = false)
     private String password;
-
-    public User mapToEntity (UserDto dto) {
-        return User.builder()
-                .privateID(dto.privateID)
-                .publicId(dto.publicId)
-                .email(dto.email)
-                .imageUrl(dto.imageUrl)
-                .emailVerified(dto.emailVerified)
-                .password(dto.password).build();
-    }
 
     @Data
     @Builder
     public static class UserDto {
+        @NotNull
         private UUID privateID;
+        @NotNull
         private Long publicId;
+        @Email
+        @NotNull
         private String email;
         private String imageUrl;
+        @NotNull
         private Boolean emailVerified;
+        @NotNull
         private String password;
-
-        public UserDto mapToDto(User user) {
-            return UserDto.builder()
-                    .privateID(user.privateID)
-                    .publicId(user.publicId)
-                    .email(user.email)
-                    .imageUrl(user.imageUrl)
-                    .emailVerified(user.emailVerified)
-                    .password(user.password).build();
-        }
     }
 }
