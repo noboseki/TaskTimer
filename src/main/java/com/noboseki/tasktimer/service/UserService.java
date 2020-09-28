@@ -27,7 +27,7 @@ public class UserService {
 
     public ResponseEntity<ApiResponse> create(@Valid User.UserDto dto) {
         checkSaveUser(dto);
-        return getApiResponse(true,"created");
+        return getApiResponse(true, "created");
     }
 
     public ResponseEntity<User.UserDto> get(UUID userID) {
@@ -39,13 +39,13 @@ public class UserService {
     public ResponseEntity<ApiResponse> update(@Valid User.UserDto dto) {
         checkGetUser(dto.getPrivateID());
         checkSaveUser(dto);
-        return getApiResponse(true,"updated");
+        return getApiResponse(true, "updated");
     }
 
     public ResponseEntity<ApiResponse> delete(UUID userID) {
         checkGetUser(userID);
         boolean isDeleted = checkDeleteUser(userID);
-        return getApiResponse(isDeleted,"deleted");
+        return getApiResponse(isDeleted, "deleted");
     }
 
     private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String methodName) {
@@ -63,7 +63,7 @@ public class UserService {
             return true;
         } catch (Exception e) {
             log.error("Delete error", e);
-            throw new DeleteException("User",userId.toString());
+            throw new DeleteException("User", userId.toString());
         }
     }
 
