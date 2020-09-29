@@ -2,11 +2,11 @@ package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.generator.UserIdGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -18,6 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
