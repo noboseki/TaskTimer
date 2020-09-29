@@ -1,6 +1,7 @@
 package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
 @Entity
 @Table(name = "work_time")
 @NoArgsConstructor
+@AllArgsConstructor
 public class WorkTime {
 
     @Id
