@@ -44,6 +44,8 @@ public class User {
 
     @Data
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserDto {
         @NotNull
         private UUID privateID;

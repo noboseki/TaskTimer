@@ -26,19 +26,21 @@ public class WorkTime {
     private UUID privateID;
 
     @Column(nullable = false)
-    private Date date;
+    private String date;
 
     @Column(nullable = false)
-    private Time time;
+    private String time;
 
     @Data
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class WorkTimeDto {
         @NotNull
         private UUID privateID;
         @NotNull
-        private Date date;
+        private String date;
         @NotNull
-        private Time time;
+        private String time;
     }
 }

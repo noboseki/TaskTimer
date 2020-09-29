@@ -31,6 +31,8 @@ public class Task {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TaskDto {
         @NotNull
         private UUID privateID;
