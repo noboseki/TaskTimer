@@ -26,10 +26,18 @@ public class WorkTime {
     private UUID privateID;
 
     @Column(nullable = false)
-    private String date;
+    private Date date;
 
     @Column(nullable = false)
-    private String time;
+    private Time time;
+
+    @NotNull
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            targetEntity = Task.class)
+    @JoinColumn(name = "task_Id")
+    private Task task;
 
     @Data
     @Builder
@@ -39,8 +47,8 @@ public class WorkTime {
         @NotNull
         private UUID privateID;
         @NotNull
-        private String date;
+        private Date date;
         @NotNull
-        private String time;
+        private Time time;
     }
 }

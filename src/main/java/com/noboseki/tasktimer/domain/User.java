@@ -2,15 +2,13 @@ package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.generator.UserIdGenerator;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -36,11 +34,20 @@ public class User {
     private String imageUrl;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean emailVerified = false;
 
     @JsonIgnore
     @Column(nullable = false)
     private String password;
+
+    @Singular
+    @OneToMany(
+            fetch =  FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            targetEntity = Task.class,
+            mappedBy = "user")
+    private Set<Task> tasks;
 
     @Data
     @Builder

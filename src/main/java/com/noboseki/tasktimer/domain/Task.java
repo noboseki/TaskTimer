@@ -1,13 +1,11 @@
 package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -27,7 +25,24 @@ public class Task {
     private String name;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean complete = false;
+
+    @NotNull
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            targetEntity = User.class)
+    @JoinColumn(name = "user_Id")
+    private User user;
+
+    @Singular
+    @OneToMany(
+            fetch =  FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            targetEntity = WorkTime.class,
+            mappedBy = "task")
+    private Set<WorkTime> workTimes;
 
     @Data
     @Builder
