@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Component
+@Repository
 public interface TaskDao extends JpaRepository<Task, UUID> {
 }
