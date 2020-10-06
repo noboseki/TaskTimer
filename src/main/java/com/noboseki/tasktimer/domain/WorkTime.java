@@ -29,7 +29,15 @@ public class WorkTime {
     private Date date;
 
     @Column(nullable = false)
-    private java.sql.Time time;
+    private Time time;
+
+    @NotNull
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            targetEntity = Task.class)
+    @JoinColumn(name = "task_Id")
+    private Task task;
 
     @Data
     @Builder
