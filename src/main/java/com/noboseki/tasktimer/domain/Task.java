@@ -22,7 +22,6 @@ public class Task {
     private UUID privateID;
 
     @Column(nullable = false)
-    @Builder.Default
     private String name;
 
     @Column(nullable = false)
