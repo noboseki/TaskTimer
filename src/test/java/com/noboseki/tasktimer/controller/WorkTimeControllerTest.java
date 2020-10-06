@@ -50,8 +50,8 @@ class WorkTimeControllerTest {
 
         dto = WorkTime.WorkTimeDto.builder()
                 .privateID(UUID.randomUUID())
-                .date(Date.valueOf(LocalDate.now()).toString())
-                .time(Time.valueOf(LocalTime.now()).toString()).build();
+                .date(Date.valueOf(LocalDate.now()))
+                .time(Time.valueOf(LocalTime.now())).build();
     }
 
     @Test

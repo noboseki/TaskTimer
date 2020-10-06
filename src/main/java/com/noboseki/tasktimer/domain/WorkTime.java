@@ -26,10 +26,10 @@ public class WorkTime {
     private UUID privateID;
 
     @Column(nullable = false)
-    private String date;
+    private Date date;
 
     @Column(nullable = false)
-    private String time;
+    private java.sql.Time time;
 
     @Data
     @Builder
@@ -39,8 +39,8 @@ public class WorkTime {
         @NotNull
         private UUID privateID;
         @NotNull
-        private String date;
+        private Date date;
         @NotNull
-        private String time;
+        private Time time;
     }
 }
