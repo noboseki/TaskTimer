@@ -1,6 +1,7 @@
-package com.noboseki.tasktimer.controller;
+package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
+import com.noboseki.tasktimer.controller.WorkTimeController;
 import com.noboseki.tasktimer.domain.WorkTime;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
@@ -90,8 +91,8 @@ class WorkTimeControllerTest {
         mockMvc.perform(get("/workTime/get/" + uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(dto.getPrivateID().toString())))
-                .andExpect(jsonPath("$.date",is(dto.getDate())))
-                .andExpect(jsonPath("$.time",is(dto.getTime())));
+                .andExpect(jsonPath("$.date",is(dto.getDate().getTime())))
+                .andExpect(jsonPath("$.time",is(dto.getTime().toString())));
     }
 
     @Test

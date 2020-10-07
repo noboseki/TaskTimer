@@ -1,10 +1,12 @@
-package com.noboseki.tasktimer.controller;
+package com.noboseki.tasktimer.controller.juint;
 
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.core.Is.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,7 +23,8 @@ public class ControllerMvcMethod {
         return mockMvc.perform(post(url)
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("UTF-8")
-                    .content(jsonObject))
+                    .content(jsonObject)
+                    .with(httpBasic("spring","password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("success",is(true)))
                 .andExpect(jsonPath("message",is("Test Ok"))).andReturn();

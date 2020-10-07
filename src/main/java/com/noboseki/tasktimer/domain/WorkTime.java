@@ -50,5 +50,14 @@ public class WorkTime {
         private Date date;
         @NotNull
         private Time time;
+
+        @Override
+        public String toString() {
+            return "WorkTimeDto{" +
+                    "privateID=" + privateID +
+                    ", date=" + date.toString() +
+                    ", time=" + time.toString() +
+                    '}';
+        }
     }
 }
