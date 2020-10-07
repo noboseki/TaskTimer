@@ -51,7 +51,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
                     .email("test@test.com")
                     .imageUrl("testURL")
                     .emailVerified(true)
-                    .password("Password").build();
+                    .password("password").build();
 
             User userFromDb = userDao.save(user);
 

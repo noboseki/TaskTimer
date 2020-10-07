@@ -42,7 +42,7 @@ class UserServiceTest {
                 .email("test@email.com")
                 .imageUrl("test URL")
                 .emailVerified(true)
-                .password("Password").build();
+                .password("password").build();
 
         dto = User.UserDto.builder()
                 .privateID(UUID.randomUUID())
@@ -50,7 +50,7 @@ class UserServiceTest {
                 .email("test@email.com")
                 .imageUrl("test URL")
                 .emailVerified(true)
-                .password("Password").build();
+                .password("password").build();
     }
 
     @Test

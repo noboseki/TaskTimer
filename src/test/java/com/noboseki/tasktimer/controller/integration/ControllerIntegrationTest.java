@@ -13,6 +13,7 @@ import com.noboseki.tasktimer.service.WorkTimeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -38,6 +39,12 @@ public class ControllerIntegrationTest {
     User.UserDto userDto;
     Task.TaskDto taskDto;
     WorkTime.WorkTimeDto workTimeDto;
+
+    @Value("${spring.security.user.name}")
+    String username;
+
+    @Value("${spring.security.user.password}")
+    String password;
 
     @MockBean
     UserService userService;
@@ -67,7 +74,7 @@ public class ControllerIntegrationTest {
                 .email("test@test.com")
                 .emailVerified(true)
                 .imageUrl("test")
-                .password("Password").build();
+                .password(password).build();
 
         taskDto = Task.TaskDto.builder()
                 .privateID(UUID.randomUUID())

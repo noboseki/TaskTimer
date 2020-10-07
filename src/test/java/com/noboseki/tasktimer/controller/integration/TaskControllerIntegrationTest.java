@@ -27,7 +27,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                    .with(httpBasic("spring", "password")))
+                    .with(httpBasic(username, password)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(taskDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.name",is("Test")))
@@ -61,7 +61,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                .with(httpBasic("spring", "password")))
+                .with(httpBasic(username, password)))
                 .andExpect(status().is(404)).andReturn();
 
         verify(taskService, times(1)).get(any(UUID.class));
