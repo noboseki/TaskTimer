@@ -1,6 +1,7 @@
-package com.noboseki.tasktimer.controller;
+package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
+import com.noboseki.tasktimer.controller.UserController;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;

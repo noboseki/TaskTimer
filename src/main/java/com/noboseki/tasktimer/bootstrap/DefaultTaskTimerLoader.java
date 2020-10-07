@@ -26,11 +26,15 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private final UserDao userDao;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
+        runBootstrap();
+    }
+
+    public void runBootstrap() {
         log.info("Starting bootstrap loader");
         boolean checkDb = checkBootstrap();
         loadTaskTimerLoader(checkDb);
-        log.info("Bootstrap has been created");
+        log.info("Bootstrap has been loaded");
     }
 
     private boolean checkBootstrap() {
@@ -58,8 +62,8 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
             Task taskFromDb = taskDao.save(task);
 
             WorkTime workTime = WorkTime.builder()
-                    .date(Date.valueOf(LocalDate.of(2020,03,20)))
-                    .time(Time.valueOf(LocalTime.of(4,06)))
+                    .date(Date.valueOf(LocalDate.of(2020, 3,20)))
+                    .time(Time.valueOf(LocalTime.of(4, 6)))
                     .task(taskFromDb).build();
 
             workTimeDao.save(workTime);
