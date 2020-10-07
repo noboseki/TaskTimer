@@ -23,8 +23,7 @@ public class ControllerMvcMethod {
         return mockMvc.perform(post(url)
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("UTF-8")
-                    .content(jsonObject)
-                    .with(httpBasic("spring","password")))
+                    .content(jsonObject))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("success",is(true)))
                 .andExpect(jsonPath("message",is("Test Ok"))).andReturn();
