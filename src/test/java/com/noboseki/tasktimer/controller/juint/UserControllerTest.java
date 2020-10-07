@@ -51,7 +51,7 @@ class UserControllerTest {
                 .email("test@test.com")
                 .emailVerified(true)
                 .imageUrl("test")
-                .password("Password").build();
+                .password("password").build();
     }
 
     @Test
@@ -93,7 +93,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.publicId",is(1)))
                 .andExpect(jsonPath("$.email",is("test@test.com")))
                 .andExpect(jsonPath("$.imageUrl",is("test")))
-                .andExpect(jsonPath("$.password",is("Password")))
+                .andExpect(jsonPath("$.password",is("password")))
                 .andExpect(jsonPath("$.emailVerified",is(true)));
     }
 
