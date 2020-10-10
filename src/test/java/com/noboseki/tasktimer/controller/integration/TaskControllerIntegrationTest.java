@@ -2,7 +2,12 @@ package com.noboseki.tasktimer.controller.integration;
 
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
 
@@ -13,6 +18,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
@@ -27,7 +33,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(adminConfig.getUserName(), adminConfig.getAdminPassword())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(taskDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.name",is("Test")))
@@ -61,7 +67,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                .with(httpBasic(username, password)))
+                .with(httpBasic(adminConfig.getUserName(), adminConfig.getUserPassword())))
                 .andExpect(status().is(404)).andReturn();
 
         verify(taskService, times(1)).get(any(UUID.class));

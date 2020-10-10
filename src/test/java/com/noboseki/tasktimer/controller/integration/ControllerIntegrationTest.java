@@ -1,5 +1,6 @@
 package com.noboseki.tasktimer.controller.integration;
 
+import com.noboseki.tasktimer.config.AdminConfig;
 import com.noboseki.tasktimer.controller.juint.ControllerMvcMethod;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
@@ -14,7 +15,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,20 +35,17 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 @WebMvcTest
 @ExtendWith(SpringExtension.class)
-public class ControllerIntegrationTest {
+public abstract class ControllerIntegrationTest {
     @Autowired
     WebApplicationContext wac;
+
+    @Autowired
+    AdminConfig adminConfig;
 
     MockMvc mockMvc;
     User.UserDto userDto;
     Task.TaskDto taskDto;
     WorkTime.WorkTimeDto workTimeDto;
-
-    @Value("${spring.security.user.name}")
-    String username;
-
-    @Value("${spring.security.user.password}")
-    String password;
 
     @MockBean
     UserService userService;
@@ -74,7 +75,7 @@ public class ControllerIntegrationTest {
                 .email("test@test.com")
                 .emailVerified(true)
                 .imageUrl("test")
-                .password(password).build();
+                .password("password").build();
 
         taskDto = Task.TaskDto.builder()
                 .privateID(UUID.randomUUID())

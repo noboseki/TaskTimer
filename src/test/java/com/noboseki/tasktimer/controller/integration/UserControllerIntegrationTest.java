@@ -27,13 +27,13 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         //Then
         mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(adminConfig.getUserName(), adminConfig.getUserPassword())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(userDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.publicId",is(1)))
                 .andExpect(jsonPath("$.email",is("test@test.com")))
                 .andExpect(jsonPath("$.imageUrl",is("test")))
-                .andExpect(jsonPath("$.password",is(password)))
+                .andExpect(jsonPath("$.password",is(adminConfig.getUserPassword())))
                 .andExpect(jsonPath("$.emailVerified",is(true)));
 
         verify(userService, times(1)).get(any(UUID.class));
@@ -64,7 +64,7 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         //Then
         mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(adminConfig.getUserName(), adminConfig.getUserPassword())))
                 .andExpect(status().is(404)).andReturn();
 
         verify(userService, times(1)).get(any(UUID.class));
