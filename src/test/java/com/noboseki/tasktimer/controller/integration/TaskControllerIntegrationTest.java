@@ -14,8 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
+public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
     @Test
     @Order(1)
@@ -27,7 +26,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(userName, userPassword)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(taskDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.name",is("Test")))
@@ -61,7 +60,7 @@ class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                .with(httpBasic(username, password)))
+                .with(httpBasic(userName, userPassword)))
                 .andExpect(status().is(404)).andReturn();
 
         verify(taskService, times(1)).get(any(UUID.class));

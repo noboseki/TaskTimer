@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class WorkTimeControllerIntegrationTest extends ControllerIntegrationTest{
 
     @Test
@@ -27,7 +26,7 @@ class WorkTimeControllerIntegrationTest extends ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/workTime/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(userName, userPassword)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(workTimeDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.date",is(workTimeDto.getDate().toString())))
@@ -61,7 +60,7 @@ class WorkTimeControllerIntegrationTest extends ControllerIntegrationTest{
 
         //Then
         mockMvc.perform(get("/workTime/get/" + uuid)
-                    .with(httpBasic(username, password)))
+                    .with(httpBasic(userName, userPassword)))
                 .andExpect(status().is(404)).andReturn();
 
         verify(workTimeService, times(1)).get(any(UUID.class));

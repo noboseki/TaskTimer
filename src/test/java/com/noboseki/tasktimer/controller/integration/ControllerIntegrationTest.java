@@ -1,6 +1,5 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.noboseki.tasktimer.controller.juint.ControllerMvcMethod;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.domain.WorkTime;
@@ -11,6 +10,8 @@ import com.noboseki.tasktimer.service.TaskService;
 import com.noboseki.tasktimer.service.UserService;
 import com.noboseki.tasktimer.service.WorkTimeService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,20 +32,27 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 @WebMvcTest
 @ExtendWith(SpringExtension.class)
-public class ControllerIntegrationTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public abstract class ControllerIntegrationTest {
     @Autowired
     WebApplicationContext wac;
+
+    @Value("${noboseki.security.admin.name}")
+    String adminName;
+
+    @Value("${noboseki.security.admin.password}")
+    String adminPassword;
+
+    @Value("${noboseki.security.user.name}")
+    String userName;
+
+    @Value("${noboseki.security.user.password}")
+    String userPassword;
 
     MockMvc mockMvc;
     User.UserDto userDto;
     Task.TaskDto taskDto;
     WorkTime.WorkTimeDto workTimeDto;
-
-    @Value("${spring.security.user.name}")
-    String username;
-
-    @Value("${spring.security.user.password}")
-    String password;
 
     @MockBean
     UserService userService;
@@ -74,7 +82,7 @@ public class ControllerIntegrationTest {
                 .email("test@test.com")
                 .emailVerified(true)
                 .imageUrl("test")
-                .password(password).build();
+                .password("password").build();
 
         taskDto = Task.TaskDto.builder()
                 .privateID(UUID.randomUUID())
