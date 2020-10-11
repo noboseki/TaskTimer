@@ -1,7 +1,5 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.noboseki.tasktimer.config.AdminConfig;
-import com.noboseki.tasktimer.controller.juint.ControllerMvcMethod;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.domain.WorkTime;
@@ -12,13 +10,12 @@ import com.noboseki.tasktimer.service.TaskService;
 import com.noboseki.tasktimer.service.UserService;
 import com.noboseki.tasktimer.service.WorkTimeService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,12 +32,22 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 @WebMvcTest
 @ExtendWith(SpringExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class ControllerIntegrationTest {
     @Autowired
     WebApplicationContext wac;
 
-    @Autowired
-    AdminConfig adminConfig;
+    @Value("${noboseki.security.admin.name}")
+    String adminName;
+
+    @Value("${noboseki.security.admin.password}")
+    String adminPassword;
+
+    @Value("${noboseki.security.user.name}")
+    String userName;
+
+    @Value("${noboseki.security.user.password}")
+    String userPassword;
 
     MockMvc mockMvc;
     User.UserDto userDto;

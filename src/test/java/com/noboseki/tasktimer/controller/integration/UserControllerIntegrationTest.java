@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
@@ -27,13 +26,13 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         //Then
         mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(adminConfig.getUserName(), adminConfig.getUserPassword())))
+                    .with(httpBasic(userName, userPassword)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(userDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.publicId",is(1)))
                 .andExpect(jsonPath("$.email",is("test@test.com")))
                 .andExpect(jsonPath("$.imageUrl",is("test")))
-                .andExpect(jsonPath("$.password",is(adminConfig.getUserPassword())))
+                .andExpect(jsonPath("$.password",is("password")))
                 .andExpect(jsonPath("$.emailVerified",is(true)));
 
         verify(userService, times(1)).get(any(UUID.class));
@@ -64,7 +63,7 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         //Then
         mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(adminConfig.getUserName(), adminConfig.getUserPassword())))
+                    .with(httpBasic(userName, userPassword)))
                 .andExpect(status().is(404)).andReturn();
 
         verify(userService, times(1)).get(any(UUID.class));
