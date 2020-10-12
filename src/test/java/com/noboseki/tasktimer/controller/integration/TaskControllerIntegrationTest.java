@@ -1,7 +1,9 @@
 package com.noboseki.tasktimer.controller.integration;
 
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -21,12 +23,11 @@ public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
     @DisplayName("Get correct")
     void getCorrect() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(taskService.get(any(UUID.class))).thenReturn(ResponseEntity.ok(taskDto));
 
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                    .with(httpBasic(userName, userPassword)))
+                .with(httpBasic(userName, userPassword)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(taskDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.name",is("Test")))
@@ -40,13 +41,10 @@ public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
     @DisplayName("Get valid unauthorized")
     void getValidUnauthorized() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(taskService.get(any(UUID.class))).thenReturn(ResponseEntity.ok(taskDto));
 
         //Then
-        mockMvc.perform(get("/task/get/" + uuid))
-                .andExpect(status().is(401));
-
+        getValidUnauthorized("/task/get/" + uuid);
         verify(taskService, times(0)).get(any(UUID.class));
     }
 
@@ -55,14 +53,46 @@ public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
     @DisplayName("Get valid not found")
     void getValidNotFound() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(taskService.get(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
-        mockMvc.perform(get("/task/get/" + uuid)
-                .with(httpBasic(userName, userPassword)))
-                .andExpect(status().is(404)).andReturn();
-
+        getValidNotFound("/task/get/" + uuid);
         verify(taskService, times(1)).get(any(UUID.class));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Delete correct")
+    void deleteCorrect() throws Exception {
+        //When
+        when(taskService.delete(any(UUID.class))).thenReturn(response);
+
+        //Then
+        deleteCorrect("/task/delete/" + uuid);
+        verify(taskService, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Delete valid not found")
+    void deleteValidNotFound() throws Exception {
+        //When
+        when(taskService.delete(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
+
+        //Then
+        deleteValidNotFound("/task/delete/" + uuid);
+        verify(taskService, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Delete valid unauthorized")
+    void deleteValidUnauthorized() throws Exception {
+        //When
+        when(taskService.delete(any(UUID.class))).thenReturn(response);
+
+        //Then
+        deleteValidUnauthorized("/task/delete/" + uuid);
+        verify(taskService, times(0)).delete(any(UUID.class));
     }
 }

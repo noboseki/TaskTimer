@@ -1,15 +1,19 @@
 package com.noboseki.tasktimer.config;
 
+import com.noboseki.tasktimer.security.RestHeaderAuthFilter;
 import com.noboseki.tasktimer.security.SFGPasswordEncoderFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -32,12 +36,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return SFGPasswordEncoderFactory.createDelegatingPasswordEncoder();
     }
 
+    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager){
+        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable();
+
         http
-                .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
-                } )
+                .authorizeRequests(authorize -> authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll())
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
@@ -58,20 +70,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .password("{bcrypt}" + encoder.encode(userPassword))
                 .roles("USER");
     }
-
-    /*    @Override
-    @Bean
-    public UserDetailsService userDetailsServiceBean() {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username(adminName)
-                .password(adminPassword)
-                .roles("ADMIN").build();
-
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username(userName)
-                .password(userPassword)
-                .roles("USER").build();
-
-        return new InMemoryUserDetailsManager(admin, user);
-    }*/
 }
