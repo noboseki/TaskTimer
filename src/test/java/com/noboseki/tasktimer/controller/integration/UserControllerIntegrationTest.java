@@ -1,7 +1,9 @@
 package com.noboseki.tasktimer.controller.integration;
 
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -21,12 +23,11 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @DisplayName("Get correct")
     void getCorrect() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(userService.get(any(UUID.class))).thenReturn(ResponseEntity.ok(userDto));
 
         //Then
         mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(userName, userPassword)))
+                    .with(httpBasic("user", "password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(userDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.publicId",is(1)))
@@ -43,13 +44,10 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @DisplayName("Get valid unauthorized")
     void getValidUnauthorized() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(userService.get(any(UUID.class))).thenReturn(ResponseEntity.ok(userDto));
 
         //Then
-        mockMvc.perform(get("/user/get/" + uuid))
-                .andExpect(status().is(401));
-
+        getValidUnauthorized("/user/get/" + uuid);
         verify(userService, times(0)).get(any(UUID.class));
     }
 
@@ -58,14 +56,46 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @DisplayName("Get valid not found")
     void getValidNotFound() throws Exception {
         //When
-        String uuid = UUID.randomUUID().toString();
         when(userService.get(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
-        mockMvc.perform(get("/user/get/" + uuid)
-                    .with(httpBasic(userName, userPassword)))
-                .andExpect(status().is(404)).andReturn();
-
+        getValidNotFound("/user/get/" + uuid);
         verify(userService, times(1)).get(any(UUID.class));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Delete correct")
+    void deleteCorrect() throws Exception {
+        //When
+        when(userService.delete(any(UUID.class))).thenReturn(response);
+
+        //Then
+        deleteCorrect("/user/delete/" + uuid);
+        verify(userService, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Delete valid not found")
+    void deleteValidNotFound() throws Exception {
+        //When
+        when(userService.delete(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
+
+        //Then
+        deleteValidNotFound("/user/delete/" + uuid);
+        verify(userService, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Delete valid unauthorized")
+    void deleteValidUnauthorized() throws Exception {
+        //When
+        when(userService.delete(any(UUID.class))).thenReturn(response);
+
+        //Then
+        deleteValidUnauthorized("/user/delete/" + uuid);
+        verify(userService, times(0)).delete(any(UUID.class));
     }
 }
