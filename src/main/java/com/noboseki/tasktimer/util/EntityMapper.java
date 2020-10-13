@@ -1,8 +1,16 @@
 package com.noboseki.tasktimer.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.generator.UserIdGenerator;
+import lombok.Builder;
+import org.hibernate.annotations.NaturalId;
+
+import javax.persistence.Column;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 public class EntityMapper {
 
@@ -32,12 +40,12 @@ public class EntityMapper {
 
     public static User.UserDto mapToDto(User user) {
         return User.UserDto.builder()
-                .privateID(user.getPrivateID())
                 .publicId(user.getPublicId())
+                .username(user.getUsername())
+                .password(user.getPassword())
                 .email(user.getEmail())
                 .imageUrl(user.getImageUrl())
-                .emailVerified(user.getEmailVerified())
-                .password(user.getPassword()).build();
+                .build();
     }
 
     public static Task.TaskDto mapToDto(Task task) {

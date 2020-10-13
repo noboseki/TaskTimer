@@ -1,6 +1,8 @@
-package com.noboseki.tasktimer.controller.integration;
+/*package com.noboseki.tasktimer.controller.integration;
 
+import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,25 +20,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
 
+    @Override
+    @BeforeEach
+    void setUp() {
+        super.setUp();
+        task = taskDao.save(classCreator.task());
+    }
+
     @Test
     @Order(1)
     @DisplayName("Get correct")
     void getCorrect() throws Exception {
-        //When
-        when(taskService.get(any(UUID.class))).thenReturn(ResponseEntity.ok(taskDto));
-
         //Then
         mockMvc.perform(get("/task/get/" + uuid)
-                .with(httpBasic(userName, userPassword)))
+                .with(httpBasic(task.getPrivateID(), userPassword)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.privateID",is(taskDto.getPrivateID().toString())))
                 .andExpect(jsonPath("$.name",is("Test")))
                 .andExpect(jsonPath("$.complete",is(true)));
-
-        verify(taskService, times(1)).get(any(UUID.class));
     }
 
-    @Test
+ *//*   @Test
     @Order(2)
     @DisplayName("Get valid unauthorized")
     void getValidUnauthorized() throws Exception {
@@ -94,5 +98,5 @@ public class TaskControllerIntegrationTest extends  ControllerIntegrationTest{
         //Then
         deleteValidUnauthorized("/task/delete/" + uuid);
         verify(taskService, times(0)).delete(any(UUID.class));
-    }
-}
+    }*/
+//}
