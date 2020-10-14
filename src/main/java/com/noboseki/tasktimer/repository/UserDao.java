@@ -5,8 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.awt.desktop.OpenFilesEvent;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface UserDao extends JpaRepository<User, UUID> {
+
+    Optional<User> findByPublicId(Long id);
 }

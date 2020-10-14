@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller.integration;
 
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
@@ -95,4 +96,4 @@ class WorkTimeControllerIntegrationTest extends ControllerIntegrationTest{
         deleteValidUnauthorized("/workTime/delete/" + uuid);
         verify(workTimeService, times(0)).delete(any(UUID.class));
     }
-}
+}*/

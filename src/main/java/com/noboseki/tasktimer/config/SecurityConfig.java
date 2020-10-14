@@ -49,15 +49,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
 
         http
-                .authorizeRequests(authorize -> authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll())
+                .authorizeRequests(authorize -> {
+                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
+                    authorize.antMatchers("/h2-console/**").permitAll();
+                })
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().and()
                 .httpBasic();
+
+        //h2 console config
+        http
+                .headers().frameOptions().sameOrigin();
     }
 
-    @Override
+/*    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -69,5 +76,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser(userName)
                 .password("{bcrypt}" + encoder.encode(userPassword))
                 .roles("USER");
-    }
+    }*/
 }

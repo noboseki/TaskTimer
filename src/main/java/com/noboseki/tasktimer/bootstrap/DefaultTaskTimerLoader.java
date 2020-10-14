@@ -1,14 +1,17 @@
 package com.noboseki.tasktimer.bootstrap;
 
+import com.noboseki.tasktimer.domain.Authority;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.repository.AuthorityDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import com.noboseki.tasktimer.repository.WorkTimeDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -24,6 +27,8 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private final WorkTimeDao workTimeDao;
     private final TaskDao taskDao;
     private final UserDao userDao;
+    private final AuthorityDao authorityDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -47,11 +52,17 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
 
     private void loadTaskTimerLoader(boolean isTrue) {
         if (isTrue){
+            Authority authority = Authority.builder()
+                    .role("ADMIN").build();
+
+            authority = authorityDao.save(authority);
+
             User user = User.builder()
+                    .username("user")
                     .email("test@test.com")
                     .imageUrl("testURL")
-                    .emailVerified(true)
-                    .password("password").build();
+                    .password(passwordEncoder.encode("password"))
+                    .authority(authority).build();
 
             User userFromDb = userDao.save(user);
 
