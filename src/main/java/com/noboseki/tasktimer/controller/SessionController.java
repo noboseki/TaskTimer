@@ -1,7 +1,7 @@
 package com.noboseki.tasktimer.controller;
 
-import com.noboseki.tasktimer.domain.WorkTime;
-import com.noboseki.tasktimer.service.WorkTimeService;
+import com.noboseki.tasktimer.domain.Session;
+import com.noboseki.tasktimer.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,16 +9,16 @@ import java.util.UUID;
 
 @RequestMapping("workTime")
 @RestController
-public class WorkTimeController {
+public class SessionController {
 
-    private WorkTimeService service;
+    private SessionService service;
 
-    public WorkTimeController(WorkTimeService service) {
+    public SessionController(SessionService service) {
         this.service = service;
     }
 
     @PostMapping("create")
-    public ResponseEntity<?> create(WorkTime.WorkTimeDto dto) {
+    public ResponseEntity<?> create(Session.SessionDto dto) {
         return service.create(dto);
     }
 
@@ -28,7 +28,7 @@ public class WorkTimeController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<?> update(WorkTime.WorkTimeDto dto) {
+    public ResponseEntity<?> update(Session.SessionDto dto) {
         return service.update(dto);
     }
 

@@ -1,13 +1,13 @@
 package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
-import com.noboseki.tasktimer.controller.WorkTimeController;
-import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.controller.SessionController;
+import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.service.WorkTimeService;
+import com.noboseki.tasktimer.service.SessionService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,16 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class WorkTimeControllerTest {
+class SessionControllerTest {
     @Mock
-    WorkTimeService service;
+    SessionService service;
     @InjectMocks
-    WorkTimeController controller;
+    SessionController controller;
 
     MockMvc mockMvc;
     Gson gson = new Gson();
     ResponseEntity<ApiResponse> response = ResponseEntity.ok(new ApiResponse(true,"Test Ok"));
-    WorkTime.WorkTimeDto dto;
+    Session.SessionDto dto;
     ControllerMvcMethod method;
 
     @BeforeEach
@@ -49,7 +49,7 @@ class WorkTimeControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         method = new ControllerMvcMethod(mockMvc);
 
-        dto = WorkTime.WorkTimeDto.builder()
+        dto = Session.SessionDto.builder()
                 .privateID(UUID.randomUUID())
                 .date(Date.valueOf(LocalDate.now()))
                 .time(Time.valueOf(LocalTime.now())).build();
@@ -61,7 +61,7 @@ class WorkTimeControllerTest {
     void createCorrect() throws Exception {
         //When
         String jsonTaskDto = gson.toJson(dto);
-        when(service.create(any(WorkTime.WorkTimeDto.class))).thenReturn(response);
+        when(service.create(any(Session.SessionDto.class))).thenReturn(response);
 
         //Then
         method.createCorrect("/workTime/create/", jsonTaskDto);
@@ -73,7 +73,7 @@ class WorkTimeControllerTest {
     void createValid() throws Exception {
         //When
         String jsonTaskDto = gson.toJson(dto);
-        when(service.create(any(WorkTime.WorkTimeDto.class))).thenThrow(SaveException.class);
+        when(service.create(any(Session.SessionDto.class))).thenThrow(SaveException.class);
 
         //Then
         method.createValid("/workTime/create", jsonTaskDto);
@@ -113,7 +113,7 @@ class WorkTimeControllerTest {
     void updateCorrect() throws Exception {
         //When
         String jsonTaskDto = gson.toJson(dto);
-        when(service.update(any(WorkTime.WorkTimeDto.class))).thenReturn(response);
+        when(service.update(any(Session.SessionDto.class))).thenReturn(response);
 
         //Then
         method.updateCorrect("/workTime/update", jsonTaskDto);
@@ -125,7 +125,7 @@ class WorkTimeControllerTest {
     void updateValidFindById() throws Exception {
         //When
         String jsonTaskDto = gson.toJson(dto);
-        when(service.update(any(WorkTime.WorkTimeDto.class))).thenThrow(ResourceNotFoundException.class);
+        when(service.update(any(Session.SessionDto.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
         method.updateValid("/workTime/update", jsonTaskDto);
@@ -137,7 +137,7 @@ class WorkTimeControllerTest {
     void updateValidSave() throws Exception {
         //When
         String jsonTaskDto = gson.toJson(dto);
-        when(service.update(any(WorkTime.WorkTimeDto.class))).thenThrow(SaveException.class);
+        when(service.update(any(Session.SessionDto.class))).thenThrow(SaveException.class);
 
         //Then
         method.updateValid("/workTime/update", jsonTaskDto);

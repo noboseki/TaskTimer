@@ -40,9 +40,9 @@ public class Task {
     @OneToMany(
             fetch =  FetchType.LAZY,
             cascade = CascadeType.ALL,
-            targetEntity = WorkTime.class,
+            targetEntity = Session.class,
             mappedBy = "task")
-    private Set<WorkTime> workTimes;
+    private Set<Session> sessions;
 
     @Data
     @Builder
