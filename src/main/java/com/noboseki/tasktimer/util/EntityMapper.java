@@ -1,16 +1,8 @@
 package com.noboseki.tasktimer.util;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.domain.WorkTime;
-import com.noboseki.tasktimer.generator.UserIdGenerator;
-import lombok.Builder;
-import org.hibernate.annotations.NaturalId;
-
-import javax.persistence.Column;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import com.noboseki.tasktimer.domain.Session;
 
 public class EntityMapper {
 
@@ -31,8 +23,8 @@ public class EntityMapper {
                 .complete(dto.getComplete()).build();
     }
 
-    public static WorkTime mapToEntity(WorkTime.WorkTimeDto dto) {
-        return WorkTime.builder()
+    public static Session mapToEntity(Session.SessionDto dto) {
+        return Session.builder()
                 .privateID(dto.getPrivateID())
                 .date(dto.getDate())
                 .time(dto.getTime()).build();
@@ -55,11 +47,11 @@ public class EntityMapper {
                 .complete(task.getComplete()).build();
     }
 
-    public static WorkTime.WorkTimeDto mapToDto(WorkTime workTime) {
-        return WorkTime.WorkTimeDto.builder()
-                .privateID(workTime.getPrivateID())
-                .date(workTime.getDate())
-                .time(workTime.getTime()).build();
+    public static Session.SessionDto mapToDto(Session session) {
+        return Session.SessionDto.builder()
+                .privateID(session.getPrivateID())
+                .date(session.getDate())
+                .time(session.getTime()).build();
     }
 
 }

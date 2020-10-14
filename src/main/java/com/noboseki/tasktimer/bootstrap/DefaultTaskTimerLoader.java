@@ -3,11 +3,11 @@ package com.noboseki.tasktimer.bootstrap;
 import com.noboseki.tasktimer.domain.Authority;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.repository.AuthorityDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
-import com.noboseki.tasktimer.repository.WorkTimeDao;
+import com.noboseki.tasktimer.repository.SessionDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +24,7 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 public class DefaultTaskTimerLoader implements CommandLineRunner {
 
-    private final WorkTimeDao workTimeDao;
+    private final SessionDao sessionDao;
     private final TaskDao taskDao;
     private final UserDao userDao;
     private final AuthorityDao authorityDao;
@@ -45,7 +45,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private boolean checkBootstrap() {
         boolean isUser = userDao.findAll().isEmpty();
         boolean isTask = taskDao.findAll().isEmpty();
-        boolean isWorkTime = workTimeDao.findAll().isEmpty();
+        boolean isWorkTime = sessionDao.findAll().isEmpty();
 
         return isUser && isTask && isWorkTime;
     }
@@ -72,12 +72,12 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
 
             Task taskFromDb = taskDao.save(task);
 
-            WorkTime workTime = WorkTime.builder()
+            Session session = Session.builder()
                     .date(Date.valueOf(LocalDate.of(2020, 3,20)))
                     .time(Time.valueOf(LocalTime.of(4, 6)))
                     .task(taskFromDb).build();
 
-            workTimeDao.save(workTime);
+            sessionDao.save(session);
         }
     }
 }

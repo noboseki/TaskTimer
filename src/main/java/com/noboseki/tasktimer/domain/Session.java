@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name = "work_time")
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkTime {
+public class Session {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,7 +43,7 @@ public class WorkTime {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class WorkTimeDto {
+    public static class SessionDto {
         @NotNull
         private UUID privateID;
         @NotNull

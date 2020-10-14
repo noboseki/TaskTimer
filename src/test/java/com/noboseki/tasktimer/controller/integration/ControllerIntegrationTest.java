@@ -5,7 +5,7 @@ import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
-import com.noboseki.tasktimer.repository.WorkTimeDao;
+import com.noboseki.tasktimer.repository.SessionDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -46,7 +46,7 @@ public abstract class ControllerIntegrationTest {
     UserDao userDao;
 
     @Autowired
-    WorkTimeDao workTimeDao;
+    SessionDao sessionDao;
 
     @BeforeEach
     void setUp() {

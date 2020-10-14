@@ -89,12 +89,10 @@ class UserControllerTest {
         //Then
         mockMvc.perform(get("/user/get/" + uuid))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.privateID",is(dto.getPrivateID().toString())))
-                .andExpect(jsonPath("$.publicId",is(1)))
-                .andExpect(jsonPath("$.email",is("test@test.com")))
-                .andExpect(jsonPath("$.imageUrl",is("test")))
-                .andExpect(jsonPath("$.password",is("password")))
-                .andExpect(jsonPath("$.emailVerified",is(true)));
+                .andExpect(jsonPath("$.publicId",is(dto.getPublicId().intValue())))
+                .andExpect(jsonPath("$.email",is(dto.getEmail())))
+                .andExpect(jsonPath("$.imageUrl",is(dto.getImageUrl())))
+                .andExpect(jsonPath("$.username",is(dto.getUsername())));
     }
 
     @Test

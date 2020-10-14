@@ -1,11 +1,11 @@
 package com.noboseki.tasktimer.service;
 
-import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.repository.WorkTimeDao;
+import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.util.EntityMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +16,27 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class WorkTimeService {
+public class SessionService {
     private final String WORK_TIME_HAS_BEEN = "WorkTime has been ";
 
-    private WorkTimeDao dao;
+    private SessionDao dao;
 
-    public WorkTimeService(WorkTimeDao dao) {
+    public SessionService(SessionDao dao) {
         this.dao = dao;
     }
 
-    public ResponseEntity<ApiResponse> create(@Valid WorkTime.WorkTimeDto dto) {
+    public ResponseEntity<ApiResponse> create(@Valid Session.SessionDto dto) {
         checkSaveWorkTime(dto);
         return getApiResponse(true, "created");
     }
 
-    public ResponseEntity<WorkTime.WorkTimeDto> get(UUID workTimeID) {
-        WorkTime workTime = checkGetWorkTime(workTimeID);
+    public ResponseEntity<Session.SessionDto> get(UUID workTimeID) {
+        Session session = checkGetWorkTime(workTimeID);
         log.info(WORK_TIME_HAS_BEEN + "taken");
-        return ResponseEntity.ok(EntityMapper.mapToDto(workTime));
+        return ResponseEntity.ok(EntityMapper.mapToDto(session));
     }
 
-    public ResponseEntity<ApiResponse> update(@Valid WorkTime.WorkTimeDto dto) {
+    public ResponseEntity<ApiResponse> update(@Valid Session.SessionDto dto) {
         checkGetWorkTime(dto.getPrivateID());
         checkSaveWorkTime(dto);
         return getApiResponse(true, "updated");
@@ -52,7 +52,7 @@ public class WorkTimeService {
         return ResponseEntity.ok().body(new ApiResponse(isCorrect, WORK_TIME_HAS_BEEN + methodName));
     }
 
-    private WorkTime checkGetWorkTime(UUID workTimeID) {
+    private Session checkGetWorkTime(UUID workTimeID) {
         return dao.findById(workTimeID).orElseThrow(() -> new ResourceNotFoundException("WorkTime: ", "id", workTimeID));
     }
 
@@ -67,7 +67,7 @@ public class WorkTimeService {
         }
     }
 
-    private boolean checkSaveWorkTime(WorkTime.WorkTimeDto dto){
+    private boolean checkSaveWorkTime(Session.SessionDto dto){
         try {
             dao.save(EntityMapper.mapToEntity(dto));
             log.info(WORK_TIME_HAS_BEEN + "saved");

@@ -1,10 +1,10 @@
 package com.noboseki.tasktimer.service;
 
-import com.noboseki.tasktimer.domain.WorkTime;
+import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.repository.WorkTimeDao;
+import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.util.EntityMapper;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
@@ -27,25 +27,25 @@ import static org.mockito.Mockito.*;
 
 @SpringJUnitWebConfig
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class WorkTimeServiceTest {
+class SessionServiceTest {
     @Mock
-    WorkTimeDao dao;
+    SessionDao dao;
 
     @InjectMocks
-    WorkTimeService service;
+    SessionService service;
 
-    WorkTime workTime;
-    WorkTime.WorkTimeDto dto;
+    Session session;
+    Session.SessionDto dto;
     ResponseEntity<ApiResponse> response;
 
     @BeforeEach
     void setUp() {
-        workTime = WorkTime.builder()
+        session = Session.builder()
                 .privateID(UUID.randomUUID())
                 .time(Time.valueOf(LocalTime.now()))
                 .date(Date.valueOf(LocalDate.now())).build();
 
-        dto = WorkTime.WorkTimeDto.builder()
+        dto = Session.SessionDto.builder()
                 .privateID(UUID.randomUUID())
                 .time(Time.valueOf(LocalTime.now()))
                 .date(Date.valueOf(LocalDate.now())).build();
@@ -56,11 +56,11 @@ class WorkTimeServiceTest {
     @DisplayName("Create correct")
     void createCorrect() {
         //When
-        when(dao.save(any(WorkTime.class))).thenReturn(workTime);
+        when(dao.save(any(Session.class))).thenReturn(session);
         response = service.create(dto);
 
         //Then
-        verify(dao, times(1)).save(any(WorkTime.class));
+        verify(dao, times(1)).save(any(Session.class));
         assertThat(response.getBody().getMessage()).isEqualTo("WorkTime has been created");
         assertTrue(response.getBody().isSuccess());
     }
@@ -70,7 +70,7 @@ class WorkTimeServiceTest {
     @DisplayName("Create valid save")
     void createValid() {
         //When
-        when(dao.save(any(WorkTime.class))).thenThrow(SaveException.class);
+        when(dao.save(any(Session.class))).thenThrow(SaveException.class);
 
         //Then
         assertThrows(SaveException.class, () -> {
@@ -83,12 +83,12 @@ class WorkTimeServiceTest {
     @DisplayName("Get correct")
     void getCorrect() {
         //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(workTime));
-        ResponseEntity<WorkTime.WorkTimeDto> response = service.get(UUID.randomUUID());
+        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
+        ResponseEntity<Session.SessionDto> response = service.get(UUID.randomUUID());
 
         //Then
         verify(dao, times(1)).findById(any(UUID.class));
-        assertThat(response.getBody()).isEqualTo(EntityMapper.mapToDto(workTime));
+        assertThat(response.getBody()).isEqualTo(EntityMapper.mapToDto(session));
     }
 
     @Test
@@ -109,13 +109,13 @@ class WorkTimeServiceTest {
     @DisplayName("Update correct")
     void updateCorrect() {
         //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(workTime));
-        when(dao.save(any(WorkTime.class))).thenReturn(workTime);
+        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
+        when(dao.save(any(Session.class))).thenReturn(session);
         response = service.update(dto);
 
         //Then
         verify(dao, times(1)).findById(any(UUID.class));
-        verify(dao, times(1)).save(any(WorkTime.class));
+        verify(dao, times(1)).save(any(Session.class));
         assertThat(response.getBody().getMessage()).isEqualTo("WorkTime has been updated");
         assertTrue(response.getBody().isSuccess());
     }
@@ -138,8 +138,8 @@ class WorkTimeServiceTest {
     @DisplayName("Update valid save")
     void updateValidSave() {
         //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(workTime));
-        when(dao.save(any(WorkTime.class))).thenThrow(SaveException.class);
+        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
+        when(dao.save(any(Session.class))).thenThrow(SaveException.class);
 
         //Then
         assertThrows(SaveException.class, () -> {
@@ -152,7 +152,7 @@ class WorkTimeServiceTest {
     @DisplayName("Delete correct")
     void deleteCorrect() {
         //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(workTime));
+        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
         response = service.delete(UUID.randomUUID());
 
         //Then
