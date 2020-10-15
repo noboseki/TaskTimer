@@ -24,7 +24,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    private UUID privateID;
+    private UUID id;
 
     @NaturalId
     @Builder.Default
@@ -60,10 +60,10 @@ public class User {
     private Boolean enabled = true;
 
     @Singular
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_authority",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id"))
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private Set<Authority> authorities;
 
     @Singular
@@ -77,7 +77,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "privateID=" + privateID +
+                "privateID=" + id +
                 ", publicId=" + publicId +
                 ", email='" + email + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +

@@ -19,7 +19,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    private UUID privateID;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;

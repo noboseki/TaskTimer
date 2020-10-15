@@ -8,7 +8,7 @@ public class EntityMapper {
 
     public static User mapToEntity (User.UserDto dto) {
         return User.builder()
-                .privateID(dto.getPrivateID())
+                .id(dto.getPrivateID())
                 .publicId(dto.getPublicId())
                 .email(dto.getEmail())
                 .imageUrl(dto.getImageUrl())
@@ -18,14 +18,14 @@ public class EntityMapper {
 
     public static Task mapToEntity(Task.TaskDto dto) {
         return Task.builder()
-                .privateID(dto.getPrivateID())
+                .id(dto.getPrivateID())
                 .name(dto.getName())
                 .complete(dto.getComplete()).build();
     }
 
     public static Session mapToEntity(Session.SessionDto dto) {
         return Session.builder()
-                .privateID(dto.getPrivateID())
+                .id(dto.getPrivateID())
                 .date(dto.getDate())
                 .time(dto.getTime()).build();
     }
@@ -42,14 +42,14 @@ public class EntityMapper {
 
     public static Task.TaskDto mapToDto(Task task) {
         return Task.TaskDto.builder()
-                .privateID(task.getPrivateID())
+                .privateID(task.getId())
                 .name(task.getName())
                 .complete(task.getComplete()).build();
     }
 
     public static Session.SessionDto mapToDto(Session session) {
         return Session.SessionDto.builder()
-                .privateID(session.getPrivateID())
+                .privateID(session.getId())
                 .date(session.getDate())
                 .time(session.getTime()).build();
     }

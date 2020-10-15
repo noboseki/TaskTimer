@@ -1,5 +1,6 @@
 package com.noboseki.tasktimer.controller.integration;
 
+import com.noboseki.tasktimer.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -15,19 +16,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
+    User user;
+
     @Override
     @BeforeEach
     void setUp() {
         super.setUp();
-        user = userDao.save(classCreator.user());
+        user = userDao.findAll().get(0);
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println(user);
     }
 
     @Test
     @Order(1)
     @DisplayName("Get correct")
     void getCorrect() throws Exception {
-        mockMvc.perform(get("/user/get/" + user.getPrivateID().toString())
-                    .with(httpBasic(user.getPublicId().toString(), "password")))
+        mockMvc.perform(get("/user/get/" + user.getId().toString())
+                    .with(httpBasic(user.getPublicId().toString(), "spring")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
                 .andExpect(jsonPath("$.email",is(user.getEmail())))
@@ -40,7 +45,7 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @Order(2)
     @DisplayName("Get valid unauthorized")
     void getValidUnauthorized() throws Exception {
-        getValidUnauthorized("/user/get/" + user.getPrivateID().toString());
+        getValidUnauthorized("/user/get/" + user.getId().toString());
     }
 
     @Test
@@ -56,7 +61,7 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @Order(4)
     @DisplayName("Delete correct")
     void deleteCorrect() throws Exception {
-        deleteCorrect("/user/delete/" + user.getPrivateID().toString(),
+        deleteCorrect("/user/delete/" + user.getId().toString(),
                 user.getPublicId().toString(),
                 "password");
     }

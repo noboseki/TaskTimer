@@ -41,7 +41,7 @@ class SessionServiceTest {
     @BeforeEach
     void setUp() {
         session = Session.builder()
-                .privateID(UUID.randomUUID())
+                .id(UUID.randomUUID())
                 .time(Time.valueOf(LocalTime.now()))
                 .date(Date.valueOf(LocalDate.now())).build();
 

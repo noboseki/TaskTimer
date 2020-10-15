@@ -15,7 +15,7 @@ import java.util.UUID;
 @Data
 @Builder
 @Entity
-@Table(name = "work_time")
+@Table(name = "session")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Session {
@@ -23,7 +23,7 @@ public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    private UUID privateID;
+    private UUID id;
 
     @Column(nullable = false)
     private Date date;
