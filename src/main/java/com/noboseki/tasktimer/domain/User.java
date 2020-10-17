@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.generator.UserIdGenerator;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -11,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -19,7 +24,7 @@ import java.util.UUID;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,6 +49,29 @@ public class User {
     @Column(nullable = false)
     private String username;
 
+    @Singular
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_authority",
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
+    private Set<Authority> authorities;
+
+    @Singular
+    @OneToMany(
+            fetch =  FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            targetEntity = Task.class,
+            mappedBy = "user")
+    private Set<Task> tasks;
+
+    @Transient
+    public Set<GrantedAuthority> getAuthorities() {
+        return authorities.stream()
+                .map(authority -> {
+                    return new SimpleGrantedAuthority(authority.getRole());
+                }).collect(Collectors.toSet());
+    }
+
     @Builder.Default
     private Boolean emailVerified = false;
 
@@ -59,36 +87,29 @@ public class User {
     @Builder.Default
     private Boolean enabled = true;
 
-    @Singular
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "user_authority",
-            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
-    private Set<Authority> authorities;
-
-    @Singular
-    @OneToMany(
-            fetch =  FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            targetEntity = Task.class,
-            mappedBy = "user")
-    private Set<Task> tasks;
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "privateID=" + id +
-                ", publicId=" + publicId +
-                ", email='" + email + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", password='" + password + '\'' +
-                ", username='" + username + '\'' +
-                ", emailVerified=" + emailVerified +
-                ", accountNonExpired=" + accountNonExpired +
-                ", accountNonLocked=" + accountNonLocked +
-                ", credentialsNonExpired=" + credentialsNonExpired +
-                ", enabled=" + enabled +
-                '}';
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 
     @Data
