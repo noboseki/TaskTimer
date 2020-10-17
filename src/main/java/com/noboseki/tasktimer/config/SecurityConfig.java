@@ -2,7 +2,6 @@ package com.noboseki.tasktimer.config;
 
 import com.noboseki.tasktimer.security.RestHeaderAuthFilter;
 import com.noboseki.tasktimer.security.SFGPasswordEncoderFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,18 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Value("${noboseki.security.admin.name}")
-    private String adminName;
-
-    @Value("${noboseki.security.admin.password}")
-    private String adminPassword;
-
-    @Value("${noboseki.security.user.name}")
-    private String userName;
-
-    @Value("${noboseki.security.user.password}")
-    private String userPassword;
 
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
@@ -52,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(restHeaderAuthFilter(authenticationManager()),
                 UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
+                .csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
 
         http
                 .authorizeRequests(authorize -> {
@@ -69,18 +56,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .headers().frameOptions().sameOrigin();
     }
-
-/*    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        auth.inMemoryAuthentication()
-                .withUser(adminName)
-                .password("{bcrypt}" + encoder.encode(adminPassword))
-                .roles("ADMIN")
-                .and()
-                .withUser(userName)
-                .password("{bcrypt}" + encoder.encode(userPassword))
-                .roles("USER");
-    }*/
 }
