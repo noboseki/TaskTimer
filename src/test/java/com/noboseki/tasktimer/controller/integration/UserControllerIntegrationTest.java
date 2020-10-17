@@ -16,28 +16,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
+    User admin;
     User user;
 
     @Override
     @BeforeEach
     void setUp() {
         super.setUp();
-        user = userDao.findAll().get(0);
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        System.out.println(user);
+        user = userDao.findByUsername("user").orElseThrow();
+        admin = userDao.findByUsername("admin").orElseThrow();
     }
 
     @Test
     @Order(1)
     @DisplayName("Get correct")
     void getCorrect() throws Exception {
-        mockMvc.perform(get("/user/get/" + user.getId().toString())
-                    .with(httpBasic(user.getPublicId().toString(), "spring")))
+        mockMvc.perform(get("/user/get/" + admin.getId().toString())
+                    .with(httpBasic(admin.getEmail(), "spring")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
-                .andExpect(jsonPath("$.email",is(user.getEmail())))
-                .andExpect(jsonPath("$.imageUrl",is(user.getImageUrl())))
-                .andExpect(jsonPath("$.username",is(user.getUsername())))
+                .andExpect(jsonPath("$.publicId",is(admin.getPublicId().intValue())))
+                .andExpect(jsonPath("$.email",is(admin.getEmail())))
+                .andExpect(jsonPath("$.imageUrl",is(admin.getImageUrl())))
+                .andExpect(jsonPath("$.username",is(admin.getUsername())))
                 .andReturn();
     }
 
@@ -53,23 +53,23 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @DisplayName("Get valid not found")
     void getValidNotFound() throws Exception {
         getValidNotFound("/user/get/" + UUID.randomUUID().toString(),
-                user.getPublicId().toString(),
-                "password");
+                admin.getEmail(),
+                "spring");
     }
 
     @Test
     @Order(4)
     @DisplayName("Delete correct")
     void deleteCorrect() throws Exception {
-        deleteCorrect("/user/delete/" + user.getId().toString(),
-                user.getPublicId().toString(),
-                "password");
+        deleteCorrect("/user/delete/" + admin.getId().toString(),
+                admin.getEmail(),
+                "spring");
     }
     @Test
     @Order(5)
     @DisplayName("Delete valid not found")
     void deleteValidNotFound() throws Exception {
-        deleteValidNotFound("/user/delete/" + UUID.randomUUID().toString(), user.getPublicId().toString(), "password");
+        deleteValidNotFound("/user/delete/" + UUID.randomUUID().toString(), admin.getEmail(), "spring");
     }
 
     @Test

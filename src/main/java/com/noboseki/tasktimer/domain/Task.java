@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "task")
