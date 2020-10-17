@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "task")
@@ -19,7 +20,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    private UUID privateID;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;

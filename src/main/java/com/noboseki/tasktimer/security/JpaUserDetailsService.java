@@ -27,12 +27,12 @@ public class JpaUserDetailsService implements UserDetailsService {
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String emile) throws UsernameNotFoundException {
 
         log.debug("Getting User info via JPA");
 
-        User userSecurity = userDao.findByPublicId(Long.valueOf(username)).orElseThrow(() -> {
-           throw  new UsernameNotFoundException("User name: " + username + "not found");
+        User userSecurity = userDao.findByEmail(emile).orElseThrow(() -> {
+           throw  new UsernameNotFoundException("User by emile: " + emile + "not found");
         });
 
         return new org.springframework.security.core.userdetails.User(userSecurity.getUsername(), userSecurity.getPassword(),

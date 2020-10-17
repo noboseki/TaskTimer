@@ -47,37 +47,56 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
         boolean isTask = taskDao.findAll().isEmpty();
         boolean isWorkTime = sessionDao.findAll().isEmpty();
 
-        return isUser && isTask && isWorkTime;
+        return isUser || isTask || isWorkTime;
     }
 
     private void loadTaskTimerLoader(boolean isTrue) {
         if (isTrue){
-            Authority authority = Authority.builder()
-                    .role("ADMIN").build();
 
-            authority = authorityDao.save(authority);
+            Authority adminA = authorityDao.save(Authority.builder().role("ROLE_ADMIN").build());
+            Authority userA = authorityDao.save(Authority.builder().role("ROLE_USER").build());
 
-            User user = User.builder()
-                    .username("user")
+            User admin = userDao.save(User.builder()
+                    .username("admin")
                     .email("test@test.com")
                     .imageUrl("testURL")
+                    .password(passwordEncoder.encode("spring"))
+                    .authority(adminA).build()) ;
+
+            User user = userDao.save(User.builder()
+                    .username("user")
+                    .email("test@test2.com")
+                    .imageUrl("testURL")
                     .password(passwordEncoder.encode("password"))
-                    .authority(authority).build();
+                    .authority(userA).build()) ;
 
-            User userFromDb = userDao.save(user);
+            Task taskAdmin = taskDao.save(Task.builder()
+                    .name("Task Admin")
+                    .user(admin).build());
 
-            Task task = Task.builder()
-                    .name("Test name")
-                    .user(userFromDb).build();
+            Task taskUser = taskDao.save(Task.builder()
+                    .name("Task User")
+                    .user(user).build());
 
-            Task taskFromDb = taskDao.save(task);
-
-            Session session = Session.builder()
+            sessionDao.save(Session.builder()
                     .date(Date.valueOf(LocalDate.of(2020, 3,20)))
                     .time(Time.valueOf(LocalTime.of(4, 6)))
-                    .task(taskFromDb).build();
+                    .task(taskAdmin).build());
 
-            sessionDao.save(session);
+            sessionDao.save(Session.builder()
+                    .date(Date.valueOf(LocalDate.of(2020, 3,21)))
+                    .time(Time.valueOf(LocalTime.of(5, 24)))
+                    .task(taskAdmin).build());
+
+            sessionDao.save(Session.builder()
+                    .date(Date.valueOf(LocalDate.of(2020, 3,15)))
+                    .time(Time.valueOf(LocalTime.of(2, 55)))
+                    .task(taskUser).build());
+
+            sessionDao.save(Session.builder()
+                    .date(Date.valueOf(LocalDate.of(2020, 3,16)))
+                    .time(Time.valueOf(LocalTime.of(3, 41)))
+                    .task(taskUser).build());
         }
     }
 }

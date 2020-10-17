@@ -37,7 +37,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         user = User.builder()
-                .privateID(UUID.randomUUID())
+                .id(UUID.randomUUID())
                 .publicId(1L)
                 .email("test@email.com")
                 .imageUrl("test URL")

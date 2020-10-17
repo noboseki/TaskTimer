@@ -37,7 +37,7 @@ class TaskServiceTest {
     @BeforeEach
     void setUp() {
         task = Task.builder()
-                .privateID(UUID.randomUUID())
+                .id(UUID.randomUUID())
                 .name("Test name")
                 .complete(false).build();
 

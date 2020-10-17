@@ -6,12 +6,12 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
 @Entity
+@Table(name = "authority")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Authority {
 
     @Id

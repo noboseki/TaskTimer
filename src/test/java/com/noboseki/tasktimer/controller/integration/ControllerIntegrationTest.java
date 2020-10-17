@@ -3,12 +3,14 @@ package com.noboseki.tasktimer.controller.integration;
 import com.noboseki.tasktimer.controller.ClassCreator;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import com.noboseki.tasktimer.repository.SessionDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,6 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -33,8 +38,11 @@ public abstract class ControllerIntegrationTest {
     WebApplicationContext wac;
 
     MockMvc mockMvc;
-    User user;
-    Task task;
+
+    protected String userName = "user";
+    protected String adminName = "admin";
+    protected String userPassword = "password";
+    protected String adminPassword = "admin";
 
     @Autowired
     ClassCreator classCreator;
@@ -81,5 +89,14 @@ public abstract class ControllerIntegrationTest {
         return mockMvc.perform(delete(url)
                     .with(httpBasic(username, password)))
                 .andExpect(status().is(404)).andReturn();
+    }
+
+    protected User getUserByName( String username) {
+        return userDao.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User: ", "name", username));
+    }
+
+    public static Stream<Arguments> getAllRoles(){
+        return Stream.of(Arguments.of("admin", "spring"),
+                Arguments.of("user", "password"));
     }
 }

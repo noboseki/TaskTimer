@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.Email;
 import java.awt.desktop.OpenFilesEvent;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,5 +13,7 @@ import java.util.UUID;
 @Repository
 public interface UserDao extends JpaRepository<User, UUID> {
 
-    Optional<User> findByPublicId(Long id);
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsername(String user);
 }
