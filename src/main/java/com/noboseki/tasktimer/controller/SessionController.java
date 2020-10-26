@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.Session;
@@ -42,3 +43,4 @@ public class SessionController {
         return service.delete(uuid);
     }
 }
+*/

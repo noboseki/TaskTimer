@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -112,39 +111,4 @@ public class User implements UserDetails, CredentialsContainer {
         this.password = null;
     }
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class UserDto {
-        @NotNull
-        @JsonIgnore
-        private UUID privateID;
-        @NotNull
-        private Long publicId;
-        @Email
-        @NotNull
-        private String email;
-        private String imageUrl;
-        @NotNull
-        @JsonIgnore
-        private Boolean emailVerified;
-        @NotNull
-        private String username;
-        @NotNull
-        @JsonIgnore
-        private String password;
-        @Builder.Default
-        @JsonIgnore
-        private Boolean accountNonExpired = true;
-        @Builder.Default
-        @JsonIgnore
-        private Boolean accountNonLocked = true;
-        @Builder.Default
-        @JsonIgnore
-        private Boolean credentialsNonExpired = true;
-        @Builder.Default
-        @JsonIgnore
-        private Boolean enabled = true;
-    }
 }

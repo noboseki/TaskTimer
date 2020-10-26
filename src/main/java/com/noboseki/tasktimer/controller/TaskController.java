@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.Task;
@@ -41,4 +42,4 @@ public class TaskController {
     public ResponseEntity<?> delete(@PathVariable UUID uuid) {
         return service.delete(uuid);
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
@@ -178,4 +179,4 @@ class SessionControllerTest {
         //Then
         method.deleteValid("/workTime/delete/" + uuid);
     }
-}
+}*/
