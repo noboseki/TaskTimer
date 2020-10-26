@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.Session;
@@ -5,7 +6,6 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.util.EntityMapper;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -175,3 +175,4 @@ class SessionServiceTest {
         });
     }
 }
+*/

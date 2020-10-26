@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.Session;
@@ -6,7 +7,6 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.util.EntityMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -77,4 +77,4 @@ public class SessionService {
             throw new SaveException("WorkTime", dto);
         }
     }
-}
+}*/

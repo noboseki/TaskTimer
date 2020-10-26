@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
@@ -174,4 +175,4 @@ class TaskControllerTest {
         //Then
         method.deleteValid("/task/delete/" + uuid);
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.noboseki.tasktimer.controller.juint;
 
 import com.google.gson.Gson;
@@ -77,7 +78,8 @@ class UserControllerTest {
         //Then
         method.createValid("/user/create", jsonTaskDto);
     }
-
+*/
+/*
     @Test
     @Order(3)
     @DisplayName("Get correct")
@@ -177,5 +179,6 @@ class UserControllerTest {
 
         //Then
         method.deleteValid("/user/delete/" + uuid);
-    }
-}
+    }*//*
+
+}*/

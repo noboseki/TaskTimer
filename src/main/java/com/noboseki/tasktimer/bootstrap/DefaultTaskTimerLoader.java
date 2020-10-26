@@ -58,14 +58,15 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
 
             User admin = userDao.save(User.builder()
                     .username("admin")
-                    .email("test@test.com")
+                    .email("admin@test.com")
                     .imageUrl("testURL")
                     .password(passwordEncoder.encode("spring"))
-                    .authority(adminA).build()) ;
+                    .authority(adminA)
+                    .authority(userA).build()) ;
 
             User user = userDao.save(User.builder()
                     .username("user")
-                    .email("test@test2.com")
+                    .email("user@test.com")
                     .imageUrl("testURL")
                     .password(passwordEncoder.encode("password"))
                     .authority(userA).build()) ;

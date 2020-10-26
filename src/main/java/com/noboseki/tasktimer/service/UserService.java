@@ -2,79 +2,125 @@ package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
+import com.noboseki.tasktimer.exeption.ForbiddenException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.playload.UserCreateRequest;
+import com.noboseki.tasktimer.playload.UserGetResponse;
 import com.noboseki.tasktimer.repository.UserDao;
-import com.noboseki.tasktimer.util.EntityMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final String USER_HAS_BEEN = "User has been ";
+    private final String ADMIN_ROLE = "ROLE_ADMIN";
+    private final String USER = "User";
+    private final String EMAIL = "email";
 
-    private UserDao dao;
+    private final UserDao dao;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserDao dao) {
-        this.dao = dao;
+    public ResponseEntity<ApiResponse> create(UserCreateRequest request) {
+        User user = mapToUser(request);
+        return getApiResponse(checkSaveUser(user), USER_HAS_BEEN + "created");
     }
 
-    public ResponseEntity<ApiResponse> create(@Valid User.UserDto dto) {
-        checkSaveUser(dto);
-        return getApiResponse(true, "created");
+    public ResponseEntity<UserGetResponse> get(String email, String password) {
+        User user = checkGetUser(email, password);
+        return ResponseEntity.ok(mapToResponse(user));
     }
 
-    public ResponseEntity<User.UserDto> get(UUID userID) {
-        User user = checkGetUser(userID);
-        log.info(USER_HAS_BEEN + "taken");
-        return ResponseEntity.ok(EntityMapper.mapToDto(user));
+    public ResponseEntity<UserGetResponse> getByEmail(String email) {
+        User user = dao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
+        checkAdminAuthority(user.getAuthorities());
+        return ResponseEntity.ok(mapToResponse(user));
     }
 
-    public ResponseEntity<ApiResponse> update(@Valid User.UserDto dto) {
-        checkGetUser(dto.getPrivateID());
-        checkSaveUser(dto);
-        return getApiResponse(true, "updated");
+    public ResponseEntity<ApiResponse> updateImageUrl(String url, User user) {
+        User updateUser = checkGetUser(user.getEmail(), user.getPassword());
+        updateUser.setImageUrl(url);
+        return getApiResponse(checkSaveUser(updateUser),"Image has been changed");
     }
 
-    public ResponseEntity<ApiResponse> delete(UUID userID) {
-        checkGetUser(userID);
-        boolean isDeleted = checkDeleteUser(userID);
-        return getApiResponse(isDeleted, "deleted");
+    public ResponseEntity<ApiResponse> updateName(String name, User user) {
+        User updateUser = checkGetUser(user.getEmail(), user.getPassword());
+        updateUser.setUsername(name);
+        return getApiResponse(checkSaveUser(updateUser), "Username has been changed");
     }
 
-    private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String methodName) {
-        return ResponseEntity.ok().body(new ApiResponse(isCorrect, USER_HAS_BEEN + methodName));
+    public ResponseEntity<ApiResponse> delete(String email) {
+        User deleteUser = dao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
+        checkAdminAuthority(deleteUser.getAuthorities());
+        return getApiResponse(checkDeleteUser(deleteUser), USER_HAS_BEEN + "deleted");
     }
 
-    private User checkGetUser(UUID userID) {
-        return dao.findById(userID).orElseThrow(() -> new ResourceNotFoundException("User: ", "id", userID));
+    private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String message) {
+        return ResponseEntity.ok().body(new ApiResponse(isCorrect, message));
     }
 
-    private boolean checkDeleteUser(UUID userId) {
+    private User checkGetUser(String email, String password) {
+        return dao.findByEmailAndPassword(email, password).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
+    }
+
+    private boolean checkAdminAuthority(Set<GrantedAuthority> authorities) {
+        Set<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(s -> s.equals(ADMIN_ROLE))
+                .collect(Collectors.toSet());
+
+        if (roles.size() > 0) {
+            throw new ForbiddenException(USER, "admin", "deleted");
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkDeleteUser(User user) {
         try {
-            dao.deleteById(userId);
+            dao.delete(user);
             log.info(USER_HAS_BEEN + "deleted");
             return true;
         } catch (Exception e) {
             log.error("Delete error", e);
-            throw new DeleteException("User", userId.toString());
+            throw new DeleteException(USER, user);
         }
     }
 
-    private boolean checkSaveUser(User.UserDto dto){
+    private boolean checkSaveUser(User user){
         try {
-            dao.save(EntityMapper.mapToEntity(dto));
+            dao.save(user);
             log.info(USER_HAS_BEEN + "saved");
             return true;
         } catch (Exception e) {
             log.error("User save error", e);
-            throw new SaveException("User", dto);
+            throw new SaveException(USER, user.getEmail());
         }
+    }
+
+    private UserGetResponse mapToResponse(User user) {
+        return UserGetResponse.builder()
+                .email(user.getEmail())
+                .publicId(user.getPublicId())
+                .username(user.getUsername())
+                .imageUrl(user.getImageUrl()).build();
+    }
+
+    private User mapToUser(UserCreateRequest request) {
+        return User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .username(request.getUserName())
+                .imageUrl(request.getImageUrl()).build();
     }
 }

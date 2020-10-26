@@ -1,23 +1,34 @@
 package com.noboseki.tasktimer.controller.integration;
 
+import com.google.gson.Gson;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.playload.UserCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerIntegrationTest extends ControllerIntegrationTest {
+    private final String GET_URL = "/user/get/";
+    private final String UPDATE_URL = "/user/update/";
+    private final String DELETE_URL = "/user/delete/";
+    private final String POST_URL = "/user/create/";
 
-    User admin;
-    User user;
+    private final String ADMIN_PASSWORD = "spring";
+    private final String USER_PASSWORD = "password";
+
+    private User admin;
+    private User user;
 
     @Override
     @BeforeEach
@@ -27,55 +38,187 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
         admin = userDao.findByUsername("admin").orElseThrow();
     }
 
+    @Nested
+    @DisplayName("Create")
+    class UserControllerIntegrationTestCreate {
+        private Gson gson = new Gson();
+        private UserCreateRequest request;
+
+        @Test
+        @DisplayName("Correct")
+        void createCorrect() throws Exception {
+            //Given
+            request = UserCreateRequest.builder()
+                    .email("test@test.com")
+                    .userName("test name")
+                    .password("TestPassword")
+                    .imageUrl("test.url.com").build();
+
+            String jsonRequest = gson.toJson(request);
+
+            //Then
+            mockMvc.perform(post(POST_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonRequest))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("success",is(true)))
+                    .andExpect(jsonPath("message",is("User has been created")));
+        }
+
+        @Test
+        @DisplayName("Valid request")
+        void createValidRequest() throws Exception {
+            //Given
+            request = UserCreateRequest.builder()
+                    .email("test@test.com")
+                    .password("TestPassword").build();
+            String jsonRequest = gson.toJson(request);
+
+            //Then
+            mockMvc.perform(post(POST_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(jsonRequest))
+                    .andExpect(status().is(417));
+        }
+    }
+
+    @Nested
+    @DisplayName("Get")
+    class UserControllerIntegrationTestGet extends ControllerIntegrationTest{
+
+        @Test
+        @DisplayName("Correct")
+        @WithUserDetails("user@test.com")
+        void getCorrectUser() throws Exception {
+            mockMvc.perform(get(GET_URL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
+                    .andExpect(jsonPath("$.email",is(user.getEmail())))
+                    .andExpect(jsonPath("$.imageUrl",is(user.getImageUrl())))
+                    .andExpect(jsonPath("$.username",is(user.getUsername())))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("Unauthorized")
+        void getValidUnauthorized() throws Exception {
+            useBasicMvc(HttpMethod.GET,
+                    GET_URL,
+                    "", "",
+                    401);
+        }
+    }
+
+    @Nested
+    @DisplayName("Get by email")
+    class UserControllerIntegrationTestGetByEmail extends ControllerIntegrationTest {
+
+        @Test
+        @DisplayName("Correct")
+        void getByEmailCorrect() throws Exception {
+            mockMvc.perform(get(GET_URL + user.getEmail())
+                    .with(httpBasic(admin.getEmail(), ADMIN_PASSWORD)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
+                    .andExpect(jsonPath("$.email",is(user.getEmail())))
+                    .andExpect(jsonPath("$.imageUrl",is(user.getImageUrl())))
+                    .andExpect(jsonPath("$.username",is(user.getUsername())))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("Unauthorized")
+        void getByEmailValidUnauthorized() throws Exception {
+            useBasicMvc(HttpMethod.GET,
+                    GET_URL + user.getEmail(),
+                    user.getEmail(), USER_PASSWORD,
+                    403);
+        }
+
+        @Test
+        @DisplayName("Forbidden")
+        void getByEmailValidForbidden() throws Exception {
+            useBasicMvc(HttpMethod.GET,
+                    GET_URL + admin.getEmail(),
+                    admin.getEmail(), admin.getPassword(),
+                    401);
+        }
+    }
+
+    @Nested
+    @DisplayName("Delete")
+    class UserControllerIntegrationTestDelete extends ControllerIntegrationTest {
+
+        @Test
+        @DisplayName("Correct")
+        void deleteCorrect() throws Exception {
+            useBasicMvc(HttpMethod.DELETE,
+                    DELETE_URL + user.getEmail(),
+                    admin.getEmail(), ADMIN_PASSWORD,
+                    200);
+        }
+
+        @Test
+        @DisplayName("Unauthorized")
+        void deleteValidUnauthorized() throws Exception {
+            useBasicMvc(HttpMethod.DELETE,
+                    DELETE_URL + user.getEmail(),
+                    user.getEmail(),
+                    USER_PASSWORD,
+                    403);
+        }
+
+        @Test
+        @DisplayName("Forbidden")
+        void deleteValidForbidden() throws Exception {
+            useBasicMvc(HttpMethod.DELETE,
+                    DELETE_URL + admin.getEmail(),
+                    admin.getEmail(),ADMIN_PASSWORD,
+                    403);
+        }
+    }
+
     @Test
-    @Order(1)
-    @DisplayName("Get correct")
-    void getCorrect() throws Exception {
-        mockMvc.perform(get("/user/get/" + admin.getId().toString())
-                    .with(httpBasic(admin.getEmail(), "spring")))
+    @DisplayName("Update name correct")
+    @WithUserDetails("user@test.com")
+    void updateNameCorrect() throws Exception {
+        mockMvc.perform(put(UPDATE_URL + "name/test2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.publicId",is(admin.getPublicId().intValue())))
-                .andExpect(jsonPath("$.email",is(admin.getEmail())))
-                .andExpect(jsonPath("$.imageUrl",is(admin.getImageUrl())))
-                .andExpect(jsonPath("$.username",is(admin.getUsername())))
-                .andReturn();
+                .andExpect(jsonPath("success",is(true)))
+                .andExpect(jsonPath("message",is("Username has been changed"))).andReturn();
     }
 
     @Test
-    @Order(2)
-    @DisplayName("Get valid unauthorized")
-    void getValidUnauthorized() throws Exception {
-        getValidUnauthorized("/user/get/" + user.getId().toString());
+    @DisplayName("Update imageUrl correct")
+    @WithUserDetails("user@test.com")
+    void updateImageUrlCorrect() throws Exception {
+        mockMvc.perform(put(UPDATE_URL + "imageUrl/test.url.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("success",is(true)))
+                .andExpect(jsonPath("message",is("Image has been changed"))).andReturn();
     }
 
-    @Test
-    @Order(3)
-    @DisplayName("Get valid not found")
-    void getValidNotFound() throws Exception {
-        getValidNotFound("/user/get/" + UUID.randomUUID().toString(),
-                admin.getEmail(),
-                "spring");
-    }
 
-    @Test
-    @Order(4)
-    @DisplayName("Delete correct")
-    void deleteCorrect() throws Exception {
-        deleteCorrect("/user/delete/" + admin.getId().toString(),
-                admin.getEmail(),
-                "spring");
-    }
-    @Test
-    @Order(5)
-    @DisplayName("Delete valid not found")
-    void deleteValidNotFound() throws Exception {
-        deleteValidNotFound("/user/delete/" + UUID.randomUUID().toString(), admin.getEmail(), "spring");
-    }
-
-    @Test
-    @Order(6)
-    @DisplayName("Delete valid unauthorized")
-    void deleteValidUnauthorized() throws Exception {
-        deleteValidUnauthorized("/user/delete/" + UUID.randomUUID().toString());
+    private MvcResult useBasicMvc(HttpMethod httpMethod, String url,
+                                  String email, String password,
+                                  Integer status) throws Exception {
+        switch (httpMethod){
+            case GET:
+                return mockMvc.perform(get(url)
+                        .with(httpBasic(email, password)))
+                        .andExpect(status().is(status)).andReturn();
+            case PUT:
+                return mockMvc.perform(put(url)
+                        .with(httpBasic(email, password)))
+                        .andExpect(status().is(status)).andReturn();
+            case DELETE:
+                return mockMvc.perform(delete(url)
+                        .with(httpBasic(email, password)))
+                        .andExpect(status().is(status)).andReturn();
+            default:
+                throw new RuntimeException();
+        }
     }
 }
