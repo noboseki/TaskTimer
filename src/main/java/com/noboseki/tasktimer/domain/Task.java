@@ -44,17 +44,4 @@ public class Task {
             targetEntity = Session.class,
             mappedBy = "task")
     private Set<Session> sessions;
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TaskDto {
-        @NotNull
-        private UUID privateID;
-        @NotNull
-        private String name;
-        @NotNull
-        private Boolean complete;
-    }
 }

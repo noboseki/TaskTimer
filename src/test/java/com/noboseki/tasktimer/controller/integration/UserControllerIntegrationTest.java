@@ -27,21 +27,16 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTest {
     private final String ADMIN_PASSWORD = "spring";
     private final String USER_PASSWORD = "password";
 
-    private User admin;
-    private User user;
-
     @Override
     @BeforeEach
     void setUp() {
         super.setUp();
-        user = userDao.findByUsername("user").orElseThrow();
-        admin = userDao.findByUsername("admin").orElseThrow();
+
     }
 
     @Nested
     @DisplayName("Create")
     class UserControllerIntegrationTestCreate {
-        private Gson gson = new Gson();
         private UserCreateRequest request;
 
         @Test

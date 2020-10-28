@@ -1,45 +1,61 @@
-/*
 package com.noboseki.tasktimer.controller;
 
-import com.noboseki.tasktimer.domain.Task;
+import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.TaskService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import javax.validation.Valid;
 
 @RequestMapping("task")
 @RestController
+@RequiredArgsConstructor
 public class TaskController {
 
-    private TaskService service;
+    private final TaskService service;
 
-    public TaskController(TaskService service) {
-        this.service = service;
+    @UserPermission
+    @PostMapping("create/{name}")
+    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
+                                    @Valid @PathVariable String name) {
+        return service.create(user,name);
     }
 
     @UserPermission
-    @PostMapping("create")
-    public ResponseEntity<?> create(Task.TaskDto dto) {
-        return service.create(dto);
+    @GetMapping("get/{name}")
+    public ResponseEntity<?> get(@AuthenticationPrincipal User user,
+                                 @Valid @PathVariable String name) {
+        return service.get(user, name);
     }
 
     @UserPermission
-    @GetMapping("get/{uuid}")
-    public ResponseEntity<?> get(@PathVariable UUID uuid) {
-        return service.get(uuid);
+    @GetMapping("getAll")
+    public ResponseEntity<?> get(@AuthenticationPrincipal User user) {
+        return service.getAll(user);
     }
 
     @UserPermission
-    @PutMapping("update")
-    public ResponseEntity<?> update(Task.TaskDto dto) {
-        return service.update(dto);
+    @PutMapping("updateName/{oldName}/{newName}")
+    public ResponseEntity<?> updateName(@AuthenticationPrincipal User user,
+                                        @PathVariable String oldName,
+                                        @Valid@PathVariable String newName) {
+        return service.updateName(user, oldName, newName);
     }
 
     @UserPermission
-    @DeleteMapping("delete/{uuid}")
-    public ResponseEntity<?> delete(@PathVariable UUID uuid) {
-        return service.delete(uuid);
+    @PutMapping("updateStatus/{name}")
+    public ResponseEntity<?> updateName(@AuthenticationPrincipal User user,
+                                        @PathVariable String name) {
+        return service.updateIsComplete(user, name);
     }
-}*/
+
+    @UserPermission
+    @DeleteMapping("delete/{name}")
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
+                                    @PathVariable String name) {
+        return service.delete(user, name);
+    }
+}
