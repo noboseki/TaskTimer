@@ -6,13 +6,11 @@ import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserCreateRequest;
 import com.noboseki.tasktimer.playload.UserGetResponse;
-import com.noboseki.tasktimer.repository.UserDao;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 import java.util.Optional;
 
@@ -21,16 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringJUnitWebConfig
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
-class UserServiceTest {
-    private final String TEST_NAME = "TestName";
-    private final String TEST_PASSWORD = "TestPassword";
-    private final String TEST_EMAIL = "test@email.com";
-    private final String TEST_IMAGE = "test.url.com";
-
-    @Mock
-    private UserDao dao;
+class UserServiceTest extends ServiceSetupClass{
 
     @Mock
     private PasswordEncoder encoder;
@@ -38,17 +27,6 @@ class UserServiceTest {
     @InjectMocks
     private UserService service;
 
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = User.builder()
-                .username(TEST_NAME)
-                .publicId(10001L)
-                .password(TEST_PASSWORD)
-                .email(TEST_EMAIL)
-                .imageUrl(TEST_IMAGE).build();
-    }
 
     @Nested
     @DisplayName("Create")
@@ -66,7 +44,7 @@ class UserServiceTest {
 
         @AfterEach
         void tearDown() {
-            verify(dao, times(1)).save(any(User.class));
+            verify(userDao, times(1)).save(any(User.class));
             verify(encoder, times(1)).encode(anyString());
         }
 
@@ -77,14 +55,14 @@ class UserServiceTest {
             ResponseEntity<ApiResponse> response = service.create(request);
 
             //Then
-            checkApiResponse(response.getBody(), "User has been created");
+            checkApiResponse(response.getBody(), "User has been created", true);
         }
 
         @Test
         @DisplayName("Save error")
         void createSaveError() {
             //When
-            when(dao.save(any(User.class))).thenThrow(SaveException.class);
+            when(userDao.save(any(User.class))).thenThrow(SaveException.class);
 
             //Then
             assertThrows(SaveException.class, () -> service.create(request));
@@ -97,14 +75,14 @@ class UserServiceTest {
 
         @AfterEach
         void tearDown() {
-            verify(dao,times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao,times(1)).findByEmailAndPassword(anyString(),anyString());
         }
 
         @Test
         @DisplayName("Correct")
         void getCorrect() {
             //When
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
             ResponseEntity<UserGetResponse> response = service.get(TEST_EMAIL, TEST_PASSWORD);
 
             //Then
@@ -115,7 +93,7 @@ class UserServiceTest {
         @DisplayName("Resource not found")
         void getResourceNotFound() {
             //When
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
             assertThrows(ResourceNotFoundException.class, () -> service.get(TEST_EMAIL, TEST_PASSWORD));
@@ -128,14 +106,14 @@ class UserServiceTest {
 
         @AfterEach
         void tearDown() {
-            verify(dao, times(1)).findByEmail(anyString());
+            verify(userDao, times(1)).findByEmail(anyString());
         }
 
         @Test
         @DisplayName("Correct")
         void getByEmailCorrect() {
             //When
-            when(dao.findByEmail(anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
             ResponseEntity<UserGetResponse> response = service.getByEmail(TEST_EMAIL);
 
             //Then
@@ -145,11 +123,7 @@ class UserServiceTest {
         @Test
         @DisplayName("Resource not found")
         void getByEmailResourceNotFound() {
-            //When
-            when(dao.findByEmail(anyString())).thenThrow(ResourceNotFoundException.class);
-
-            //Then
-            assertThrows(ResourceNotFoundException.class, () -> service.getByEmail(TEST_EMAIL));
+            testUserNotFound(() -> service.getByEmail(TEST_EMAIL));
         }
     }
 
@@ -159,12 +133,12 @@ class UserServiceTest {
 
         @BeforeEach
         void setUp() {
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
         }
 
         @AfterEach
         void tearDown() {
-            verify(dao, times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao, times(1)).findByEmailAndPassword(anyString(),anyString());
         }
 
         @Test
@@ -174,15 +148,15 @@ class UserServiceTest {
             ResponseEntity<ApiResponse> response = service.updateImageUrl(TEST_IMAGE, user);
 
             //Then
-            verify(dao, times(1)).save(any(User.class));
-            checkApiResponse(response.getBody(),"Image has been changed");
+            verify(userDao, times(1)).save(any(User.class));
+            checkApiResponse(response.getBody(),"Image has been changed", true);
         }
 
         @Test
         @DisplayName("Resource not found")
         void updateImageResourceNotFound() {
             //When
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
             assertThrows(ResourceNotFoundException.class, () -> service.updateImageUrl(TEST_IMAGE, user));
@@ -192,11 +166,11 @@ class UserServiceTest {
         @DisplayName("Save error")
         void updateImageSaveError() {
             //When
-            when(dao.save(any(User.class))).thenThrow(SaveException.class);
+            when(userDao.save(any(User.class))).thenThrow(SaveException.class);
 
             //Then
             assertThrows(SaveException.class, () -> service.updateImageUrl(TEST_EMAIL, user));
-            verify(dao, times(1)).save(any(User.class));
+            verify(userDao, times(1)).save(any(User.class));
         }
     }
 
@@ -206,12 +180,12 @@ class UserServiceTest {
 
         @BeforeEach
         void setUp() {
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
         }
 
         @AfterEach
         void tearDown() {
-            verify(dao, times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao, times(1)).findByEmailAndPassword(anyString(),anyString());
         }
 
         @Test
@@ -221,30 +195,30 @@ class UserServiceTest {
             ResponseEntity<ApiResponse> response = service.updateName(TEST_NAME, user);
 
             //Then
-            verify(dao, times(1)).save(any(User.class));
-            checkApiResponse(response.getBody(),"Username has been changed");
+            verify(userDao, times(1)).save(any(User.class));
+            checkApiResponse(response.getBody(),"Username has been changed", true);
         }
 
         @Test
         @DisplayName("Resource not found")
         void updateNameResourceNotFound() {
             //When
-            when(dao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
             assertThrows(ResourceNotFoundException.class, () -> service.updateImageUrl(TEST_NAME, user));
-            verify(dao,times(1)).findByEmailAndPassword(anyString(), anyString());
+            verify(userDao,times(1)).findByEmailAndPassword(anyString(), anyString());
         }
 
         @Test
         @DisplayName("Save error")
         void updateNameSaveError() {
             //When
-            when(dao.save(any(User.class))).thenThrow(SaveException.class);
+            when(userDao.save(any(User.class))).thenThrow(SaveException.class);
 
             //Then
             assertThrows(SaveException.class, () -> service.updateName(TEST_NAME, user));
-            verify(dao, times(1)).save(any(User.class));
+            verify(userDao, times(1)).save(any(User.class));
         }
     }
 
@@ -254,29 +228,25 @@ class UserServiceTest {
 
         @AfterEach
         void tearDown() {
-            verify(dao, times(1)).findByEmail(anyString());
+            verify(userDao, times(1)).findByEmail(anyString());
         }
 
         @Test
         @DisplayName("Correct")
         void deleteCorrect() {
             //When
-            when(dao.findByEmail(anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
             ResponseEntity<ApiResponse> response = service.delete(TEST_EMAIL);
 
             //Then
-            verify(dao, times(1)).delete(any(User.class));
-            checkApiResponse(response.getBody(),"User has been deleted");
+            verify(userDao, times(1)).delete(any(User.class));
+            checkApiResponse(response.getBody(),"User has been deleted", true);
         }
 
         @Test
         @DisplayName("Resource not found")
         void deleteResourceNotFound() {
-            //When
-            when(dao.findByEmail(anyString())).thenThrow(ResourceNotFoundException.class);
-
-            //Then
-            assertThrows(ResourceNotFoundException.class, () -> service.delete(TEST_EMAIL));
+            testUserNotFound(() -> service.delete(TEST_EMAIL));
         }
     }
 
@@ -285,10 +255,5 @@ class UserServiceTest {
         assertThat(response.getPublicId()).isEqualTo(user.getPublicId());
         assertThat(response.getUsername()).isEqualTo(user.getUsername());
         assertThat(response.getImageUrl()).isEqualTo(user.getImageUrl());
-    }
-
-    private void checkApiResponse(ApiResponse response, String message) {
-        assertThat(response.getMessage()).isEqualTo(message);
-        assertThat(response.isSuccess()).isEqualTo(true);
     }
 }

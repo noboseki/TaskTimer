@@ -1,6 +1,8 @@
 package com.noboseki.tasktimer.controller.integration;
 
+import com.google.gson.Gson;
 import com.noboseki.tasktimer.controller.ClassCreator;
+import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
@@ -20,10 +22,15 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public abstract class ControllerIntegrationTest {
+
+    protected final String TEST_NAME = "Test Name";
+
     @Autowired
     WebApplicationContext wac;
 
     MockMvc mockMvc;
+
+    protected Gson gson = new Gson();
 
     @Autowired
     ClassCreator classCreator;
@@ -37,8 +44,13 @@ public abstract class ControllerIntegrationTest {
     @Autowired
     SessionDao sessionDao;
 
+    protected User admin;
+    protected User user;
+
     @BeforeEach
     void setUp() {
+        user = userDao.findByUsername("user").orElseThrow();
+        admin = userDao.findByUsername("admin").orElseThrow();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
     }
 }
