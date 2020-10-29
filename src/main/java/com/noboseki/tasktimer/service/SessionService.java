@@ -6,6 +6,7 @@ import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.CreateSessionRequest;
+import com.noboseki.tasktimer.playload.GetByDateSessionResponse;
 import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
@@ -50,43 +51,14 @@ public class SessionService extends MainService{
         return ResponseEntity.ok(session);
     }
 
-    public ResponseEntity<List<GetByTaskSessionResponse>> getByDate(User user, Date date){
+    public ResponseEntity<List<GetByDateSessionResponse>> getByDate(User user, Date date){
         User dbUser = checkGetUser(user.getEmail());
-        return null;
+        List<GetByDateSessionResponse> responses = sessionDao.findAllByTask_User_EmailAndDate(dbUser.getEmail(),date).stream()
+                .map(this::mapToGetByDateResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 
-    /*
-       public ResponseEntity<ApiResponse> update(@Valid Session.SessionDto dto) {
-           checkGetWorkTime(dto.getPrivateID());
-           checkSaveWorkTime(dto);
-           return getApiResponse(true, "updated");
-       }
-
- public ResponseEntity<ApiResponse> delete(UUID workTimeID) {
-           checkGetWorkTime(workTimeID);
-           boolean isDeleted = checkDeleteWorkTime(workTimeID);
-           return getApiResponse(isDeleted, "deleted");
-       }
-
-       private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String methodName) {
-           return ResponseEntity.ok().body(new ApiResponse(isCorrect, WORK_TIME_HAS_BEEN + methodName));
-       }
-
-       private Session checkGetWorkTime(UUID workTimeID) {
-           return sessionDao.findById(workTimeID).orElseThrow(() -> new ResourceNotFoundException("WorkTime: ", "id", workTimeID));
-       }
-
-       private boolean checkDeleteWorkTime(UUID WorkTImeID) {
-           try {
-               sessionDao.deleteById(WorkTImeID);
-               log.info(WORK_TIME_HAS_BEEN + "deleted");
-               return true;
-           } catch (Exception e) {
-               log.error("Delete error", e);
-               throw new DeleteException("WorkTime", WorkTImeID.toString());
-           }
-       }
-   */
     private boolean checkSaveSession(Session session){
         try {
             sessionDao.save(session);
@@ -96,6 +68,10 @@ public class SessionService extends MainService{
             log.error("Session save error", e);
             throw new SaveException("Session", session);
         }
+    }
+
+    private GetByDateSessionResponse mapToGetByDateResponse(Session session) {
+        return new GetByDateSessionResponse(session.getDate(), session.getTime(), session.getTask().getName());
     }
 
     private GetByTaskSessionResponse mapToGetByTaskResponse(Session session){
