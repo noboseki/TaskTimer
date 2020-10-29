@@ -3,13 +3,11 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
-import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskGetResponse;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,32 +19,30 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class TaskService {
+public class TaskService extends MainService{
     private final String TASK_HAS_BEEN = "Task has been ";
-    private final String TASK = "Task";
     private final  String THE_SAME_NAME = "Duplicate task name";
 
-    private final TaskDao taskDao;
-    private final UserDao userDao;
-
+    public TaskService(TaskDao taskDao, UserDao userDao) {
+        super(taskDao, userDao);
+    }
 
     public ResponseEntity<ApiResponse> create(User user, @Min(6) @Max(40) String name) {
         User dbUser =  checkGetUser(user.getEmail());
-        Task task = Task.builder()
-                .name(name)
-                .user(dbUser).build();
 
         if (taskDao.findByNameAndUser(name,dbUser).isPresent()){
             return getApiResponse(false,THE_SAME_NAME);
         }
-        
+
+        Task task = Task.builder()
+                .name(name)
+                .user(dbUser).build();
+
         return getApiResponse(checkSaveTask(task), TASK_HAS_BEEN + "created");
     }
 
     public ResponseEntity<TaskGetResponse> get(User user, String name) {
-        User dbUser = checkGetUser(user.getEmail());
-        Task task = checkGetTask(dbUser, name);
+        Task task = getTaskByUserAndName(user,name);
         return ResponseEntity.ok(mapToGetResponse(task));
     }
 
@@ -69,29 +65,15 @@ public class TaskService {
         return getApiResponse(checkSaveTask(task),"Task name has been updated");
     }
 
-    public ResponseEntity<ApiResponse> updateIsComplete(User user, String name){
-        User dbUser = checkGetUser(user.getEmail());
-        Task task = checkGetTask(dbUser,name);
+    public ResponseEntity<ApiResponse> updateIsComplete(User user, String name) {
+        Task task = getTaskByUserAndName(user, name);
         task.setComplete(!task.getComplete());
         return getApiResponse(checkSaveTask(task),"Task status has been updated");
     }
 
     public ResponseEntity<ApiResponse> delete(User user, String name) {
-        User dbUser = checkGetUser(user.getEmail());
-        Task task = checkGetTask(dbUser,name);
+        Task task = getTaskByUserAndName(user, name);
         return getApiResponse(checkDeleteTask(task), TASK_HAS_BEEN + "deleted");
-    }
-
-    private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String message) {
-        return ResponseEntity.ok().body(new ApiResponse(isCorrect, message));
-    }
-
-    private User checkGetUser(String email) {
-        return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
-    }
-
-    private Task checkGetTask(User user, String name) {
-        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException(TASK, "name", name));
     }
 
     private boolean checkDeleteTask(Task task) {

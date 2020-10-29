@@ -28,7 +28,7 @@ public class UserController {
     @UserPermission
     @GetMapping("get")
     public ResponseEntity<?> get(@AuthenticationPrincipal User user) {
-        return service.get(user.getEmail(), user.getPassword());
+        return service.get(user);
     }
 
     @AdminPermission

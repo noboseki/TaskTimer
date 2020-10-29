@@ -3,13 +3,12 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ForbiddenException;
-import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserCreateRequest;
 import com.noboseki.tasktimer.playload.UserGetResponse;
+import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,56 +20,49 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class UserService {
+public class UserService  extends MainService{
     private final String USER_HAS_BEEN = "User has been ";
     private final String ADMIN_ROLE = "ROLE_ADMIN";
-    private final String USER = "User";
-    private final String EMAIL = "email";
 
-    private final UserDao dao;
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    public UserService(TaskDao taskDao, UserDao userDao, PasswordEncoder passwordEncoder) {
+        super(taskDao, userDao);
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public ResponseEntity<ApiResponse> create(UserCreateRequest request) {
         User user = mapToUser(request);
         return getApiResponse(checkSaveUser(user), USER_HAS_BEEN + "created");
     }
 
-    public ResponseEntity<UserGetResponse> get(String email, String password) {
-        User user = checkGetUser(email, password);
-        return ResponseEntity.ok(mapToResponse(user));
+    public ResponseEntity<UserGetResponse> get(User user) {
+        User dbUser = checkGetUser(user.getEmail());
+        return ResponseEntity.ok(mapToResponse(dbUser));
     }
 
     public ResponseEntity<UserGetResponse> getByEmail(String email) {
-        User user = dao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
+        User user = checkGetUser(email);
         checkAdminAuthority(user.getAuthorities());
         return ResponseEntity.ok(mapToResponse(user));
     }
 
     public ResponseEntity<ApiResponse> updateImageUrl(String url, User user) {
-        User updateUser = checkGetUser(user.getEmail(), user.getPassword());
+        User updateUser = checkGetUser(user.getEmail());
         updateUser.setImageUrl(url);
         return getApiResponse(checkSaveUser(updateUser),"Image has been changed");
     }
 
     public ResponseEntity<ApiResponse> updateName(String name, User user) {
-        User updateUser = checkGetUser(user.getEmail(), user.getPassword());
+        User updateUser = checkGetUser(user.getEmail());
         updateUser.setUsername(name);
         return getApiResponse(checkSaveUser(updateUser), "Username has been changed");
     }
 
     public ResponseEntity<ApiResponse> delete(String email) {
-        User deleteUser = dao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
+        User deleteUser = checkGetUser(email);
         checkAdminAuthority(deleteUser.getAuthorities());
         return getApiResponse(checkDeleteUser(deleteUser), USER_HAS_BEEN + "deleted");
-    }
-
-    private ResponseEntity<ApiResponse> getApiResponse(boolean isCorrect, String message) {
-        return ResponseEntity.ok().body(new ApiResponse(isCorrect, message));
-    }
-
-    private User checkGetUser(String email, String password) {
-        return dao.findByEmailAndPassword(email, password).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
     }
 
     private boolean checkAdminAuthority(Set<GrantedAuthority> authorities) {
@@ -88,7 +80,7 @@ public class UserService {
 
     private boolean checkDeleteUser(User user) {
         try {
-            dao.delete(user);
+            userDao.delete(user);
             log.info(USER_HAS_BEEN + "deleted");
             return true;
         } catch (Exception e) {
@@ -99,7 +91,7 @@ public class UserService {
 
     private boolean checkSaveUser(User user){
         try {
-            dao.save(user);
+            userDao.save(user);
             log.info(USER_HAS_BEEN + "saved");
             return true;
         } catch (Exception e) {
