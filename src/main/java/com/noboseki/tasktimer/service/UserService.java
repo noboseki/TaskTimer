@@ -7,6 +7,7 @@ import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserCreateRequest;
 import com.noboseki.tasktimer.playload.UserGetResponse;
+import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class UserService  extends MainService{
 
     private PasswordEncoder passwordEncoder;
 
-    public UserService(TaskDao taskDao, UserDao userDao, PasswordEncoder passwordEncoder) {
-        super(taskDao, userDao);
+    public UserService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, PasswordEncoder passwordEncoder) {
+        super(taskDao, userDao, sessionDao);
         this.passwordEncoder = passwordEncoder;
     }
 

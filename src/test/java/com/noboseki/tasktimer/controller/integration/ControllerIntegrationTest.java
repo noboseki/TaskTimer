@@ -33,9 +33,6 @@ public abstract class ControllerIntegrationTest {
     protected Gson gson = new Gson();
 
     @Autowired
-    ClassCreator classCreator;
-
-    @Autowired
     TaskDao taskDao;
 
     @Autowired

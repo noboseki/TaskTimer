@@ -4,6 +4,7 @@ import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class MainService {
 
     protected final TaskDao taskDao;
     protected final UserDao userDao;
+    protected final SessionDao sessionDao;
 
     protected User checkGetUser(String email) {
         return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, "email", email));

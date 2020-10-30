@@ -48,7 +48,8 @@ class SessionServiceTest extends ServiceSetupClass {
         task = Task.builder()
                 .id(UUID.randomUUID())
                 .name("Test name")
-                .complete(false).build();
+                .complete(false)
+                .user(user).build();
 
         when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
     }
@@ -60,7 +61,7 @@ class SessionServiceTest extends ServiceSetupClass {
 
         @BeforeEach
         void setUp() {
-            request = new CreateSessionRequest(Date.valueOf(LocalDate.now()), Time.valueOf(LocalTime.of(2,5)));
+            request = new CreateSessionRequest(LocalDate.now().toString(), LocalTime.of(2,5,20).toString());
         }
 
         @Test
@@ -115,7 +116,7 @@ class SessionServiceTest extends ServiceSetupClass {
             //When
             when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
             when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
-            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getByTask(user, TEST_NAME);
+            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
             GetByTaskSessionResponse response = responses.getBody().get(0);
 
             //Then
@@ -136,7 +137,7 @@ class SessionServiceTest extends ServiceSetupClass {
             //When
             when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
             when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
-            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getByTask(user, TEST_NAME);
+            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
 
             //Then
             assertEquals(0,responses.getBody().size());
@@ -148,13 +149,13 @@ class SessionServiceTest extends ServiceSetupClass {
         @Test
         @DisplayName("User Not Found")
         void getByTaskUserNotFound() {
-            testUserNotFound(() -> service.getByTask(user, TEST_NAME));
+            testUserNotFound(() -> service.getAllByTask(user, TEST_NAME));
         }
 
         @Test
         @DisplayName("Task Not Found")
         void getByTaskTaskNotFound() {
-            testTaskNotFound(() -> service.getByTask(user, TEST_NAME));
+            testTaskNotFound(() -> service.getAllByTask(user, TEST_NAME));
         }
     }
 
