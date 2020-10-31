@@ -52,9 +52,10 @@ public class SessionService extends MainService{
         return ResponseEntity.ok(session);
     }
 
-    public ResponseEntity<List<GetByDateSessionResponse>> getByDate(User user, Date date){
+    public ResponseEntity<List<GetByDateSessionResponse>> getByDate(User user, String date){
+        Date dateFromString = checkDateFromString(date);
         User dbUser = checkGetUser(user.getEmail());
-        List<GetByDateSessionResponse> responses = sessionDao.findAllByTask_User_EmailAndDate(dbUser.getEmail(),date).stream()
+        List<GetByDateSessionResponse> responses = sessionDao.findAllByTask_User_EmailAndDate(dbUser.getEmail(),dateFromString).stream()
                 .map(this::mapToGetByDateResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responses);

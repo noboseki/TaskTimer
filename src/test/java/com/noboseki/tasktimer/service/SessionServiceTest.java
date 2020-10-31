@@ -162,6 +162,7 @@ class SessionServiceTest extends ServiceSetupClass {
     @Nested
     @DisplayName("Get by Date")
     class SessionServiceTestGetByDate {
+        protected final String DATE = "2016-08-16";
 
         @Test
         @DisplayName("Correct")
@@ -177,7 +178,7 @@ class SessionServiceTest extends ServiceSetupClass {
 
             //When
             when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
-            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, Date.valueOf(LocalDate.now()));
+            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, DATE);
             GetByDateSessionResponse response = responses.getBody().get(0);
 
             //Then
@@ -197,7 +198,7 @@ class SessionServiceTest extends ServiceSetupClass {
 
             //When
             when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
-            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, Date.valueOf(LocalDate.now()));
+            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, DATE);
 
             //Then
             assertEquals(0,responses.getBody().size());
@@ -208,7 +209,7 @@ class SessionServiceTest extends ServiceSetupClass {
         @Test
         @DisplayName("User Not Found")
         void getByTaskUserNotFound() {
-            testUserNotFound(() -> service.getByDate(user, Date.valueOf(LocalDate.now())));
+            testUserNotFound(() -> service.getByDate(user, DATE));
         }
     }
 }

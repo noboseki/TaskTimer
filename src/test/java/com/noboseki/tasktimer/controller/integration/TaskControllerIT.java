@@ -218,24 +218,4 @@ public class TaskControllerIT extends ControllerIntegrationTest {
             useBasicMvc(HttpMethod.DELETE, DELETE_URL + TEST_NAME, 401);
         }
     }
-
-    private MvcResult useBasicMvc(HttpMethod httpMethod, String url,
-                                  Integer status) throws Exception {
-        switch (httpMethod){
-            case POST:
-                return mockMvc.perform(post(url))
-                        .andExpect(status().is(status)).andReturn();
-            case GET:
-                return mockMvc.perform(get(url))
-                        .andExpect(status().is(status)).andReturn();
-            case PUT:
-                return mockMvc.perform(put(url))
-                        .andExpect(status().is(status)).andReturn();
-            case DELETE:
-                return mockMvc.perform(delete(url))
-                        .andExpect(status().is(status)).andReturn();
-            default:
-                throw new RuntimeException();
-        }
-    }
 }

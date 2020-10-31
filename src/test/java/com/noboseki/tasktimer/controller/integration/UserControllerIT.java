@@ -97,7 +97,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Unauthorized")
         void getValidUnauthorized() throws Exception {
-            useBasicMvc(HttpMethod.GET,
+            useBasicMvcWithHttpBasic(HttpMethod.GET,
                     GET_URL,
                     "", "",
                     401);
@@ -124,7 +124,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Unauthorized")
         void getByEmailValidUnauthorized() throws Exception {
-            useBasicMvc(HttpMethod.GET,
+            useBasicMvcWithHttpBasic(HttpMethod.GET,
                     GET_URL + user.getEmail(),
                     user.getEmail(), USER_PASSWORD,
                     403);
@@ -133,7 +133,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Forbidden")
         void getByEmailValidForbidden() throws Exception {
-            useBasicMvc(HttpMethod.GET,
+            useBasicMvcWithHttpBasic(HttpMethod.GET,
                     GET_URL + admin.getEmail(),
                     admin.getEmail(), admin.getPassword(),
                     401);
@@ -147,7 +147,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Correct")
         void deleteCorrect() throws Exception {
-            useBasicMvc(HttpMethod.DELETE,
+            useBasicMvcWithHttpBasic(HttpMethod.DELETE,
                     DELETE_URL + user.getEmail(),
                     admin.getEmail(), ADMIN_PASSWORD,
                     200);
@@ -156,7 +156,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Unauthorized")
         void deleteValidUnauthorized() throws Exception {
-            useBasicMvc(HttpMethod.DELETE,
+            useBasicMvcWithHttpBasic(HttpMethod.DELETE,
                     DELETE_URL + user.getEmail(),
                     user.getEmail(),
                     USER_PASSWORD,
@@ -166,7 +166,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @Test
         @DisplayName("Forbidden")
         void deleteValidForbidden() throws Exception {
-            useBasicMvc(HttpMethod.DELETE,
+            useBasicMvcWithHttpBasic(HttpMethod.DELETE,
                     DELETE_URL + admin.getEmail(),
                     admin.getEmail(),ADMIN_PASSWORD,
                     403);
@@ -194,9 +194,9 @@ public class UserControllerIT extends ControllerIntegrationTest {
     }
 
 
-    private MvcResult useBasicMvc(HttpMethod httpMethod, String url,
-                                  String email, String password,
-                                  Integer status) throws Exception {
+    private MvcResult useBasicMvcWithHttpBasic(HttpMethod httpMethod, String url,
+                                               String email, String password,
+                                               Integer status) throws Exception {
         switch (httpMethod){
             case GET:
                 return mockMvc.perform(get(url)

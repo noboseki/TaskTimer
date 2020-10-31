@@ -27,4 +27,17 @@ public class SessionController {
         return service.create(user,taskName, request);
     }
 
+    @UserPermission
+    @GetMapping("getByTask/{task}")
+    public ResponseEntity<?> getByTask(@AuthenticationPrincipal User user,
+                                       @PathVariable String task) {
+        return service.getAllByTask(user,task);
+    }
+
+    @UserPermission
+    @GetMapping("getByDate/{date}")
+    public ResponseEntity<?> getByDate(@AuthenticationPrincipal User user,
+                                       @PathVariable String date) {
+        return service.getByDate(user,date);
+    }
 }
