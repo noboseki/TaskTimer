@@ -1,46 +1,43 @@
-/*
 package com.noboseki.tasktimer.controller;
 
-import com.noboseki.tasktimer.domain.Session;
+import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.playload.CreateSessionRequest;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.SessionService;
+import com.noboseki.tasktimer.service.TaskService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import javax.validation.Valid;
 
-@RequestMapping("workTime")
+@RequestMapping("session")
 @RestController
+@RequiredArgsConstructor
 public class SessionController {
 
-    private SessionService service;
+    private final SessionService service;
 
-    public SessionController(SessionService service) {
-        this.service = service;
+    @UserPermission
+    @PostMapping("create/{taskName}")
+    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
+                                    @PathVariable String taskName,
+                                    @RequestBody CreateSessionRequest request) {
+        return service.create(user,taskName, request);
     }
 
     @UserPermission
-    @PostMapping("create")
-    public ResponseEntity<?> create(Session.SessionDto dto) {
-        return service.create(dto);
+    @GetMapping("getByTask/{task}")
+    public ResponseEntity<?> getByTask(@AuthenticationPrincipal User user,
+                                       @PathVariable String task) {
+        return service.getAllByTask(user,task);
     }
 
     @UserPermission
-    @GetMapping("get/{uuid}")
-    public ResponseEntity<?> get(@PathVariable UUID uuid) {
-        return service.get(uuid);
-    }
-
-    @UserPermission
-    @PutMapping("update")
-    public ResponseEntity<?> update(Session.SessionDto dto) {
-        return service.update(dto);
-    }
-
-    @UserPermission
-    @DeleteMapping("delete/{uuid}")
-    public ResponseEntity<?> delete(@PathVariable UUID uuid) {
-        return service.delete(uuid);
+    @GetMapping("getByDate/{date}")
+    public ResponseEntity<?> getByDate(@AuthenticationPrincipal User user,
+                                       @PathVariable String date) {
+        return service.getByDate(user,date);
     }
 }
-*/

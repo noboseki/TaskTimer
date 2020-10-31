@@ -27,13 +27,8 @@ import static org.mockito.Mockito.*;
 @SpringJUnitWebConfig
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TaskServiceTest extends ServiceSetupClass{
-    @Mock
-    private TaskDao taskDao;
-
     @InjectMocks
     private TaskService service;
-
-    private Task task;
 
     @Override
     @BeforeEach
@@ -306,10 +301,5 @@ class TaskServiceTest extends ServiceSetupClass{
             testTaskNotFound(() -> service.delete(user, TEST_NAME));
             verify(taskDao, times(1)).findByNameAndUser(anyString(),any(User.class));
         }
-    }
-
-    private void testTaskNotFound(Executable executable) {
-        when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, executable);
     }
 }

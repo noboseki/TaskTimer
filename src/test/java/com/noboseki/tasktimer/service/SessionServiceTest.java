@@ -1,178 +1,215 @@
-/*
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.Session;
-import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
+import com.noboseki.tasktimer.domain.Task;
+import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.playload.CreateSessionRequest;
+import com.noboseki.tasktimer.playload.GetByDateSessionResponse;
+import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@SpringJUnitWebConfig
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class SessionServiceTest {
+class SessionServiceTest extends ServiceSetupClass {
+
     @Mock
-    SessionDao dao;
+    SessionDao sessionDao;
 
     @InjectMocks
     SessionService service;
 
-    Session session;
-    Session.SessionDto dto;
-    ResponseEntity<ApiResponse> response;
-
+    @Override
     @BeforeEach
     void setUp() {
-        session = Session.builder()
+        super.setUp();
+
+        task = Task.builder()
                 .id(UUID.randomUUID())
-                .time(Time.valueOf(LocalTime.now()))
-                .date(Date.valueOf(LocalDate.now())).build();
+                .name("Test name")
+                .complete(false)
+                .user(user).build();
 
-        dto = Session.SessionDto.builder()
-                .privateID(UUID.randomUUID())
-                .time(Time.valueOf(LocalTime.now()))
-                .date(Date.valueOf(LocalDate.now())).build();
+        when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
     }
 
-    @Test
-    @Order(1)
-    @DisplayName("Create correct")
-    void createCorrect() {
-        //When
-        when(dao.save(any(Session.class))).thenReturn(session);
-        response = service.create(dto);
+    @Nested
+    @DisplayName("Create")
+    class SessionServiceTestCreate  {
+        private CreateSessionRequest request;
 
-        //Then
-        verify(dao, times(1)).save(any(Session.class));
-        assertThat(response.getBody().getMessage()).isEqualTo("WorkTime has been created");
-        assertTrue(response.getBody().isSuccess());
+        @BeforeEach
+        void setUp() {
+            request = new CreateSessionRequest(LocalDate.now().toString(), LocalTime.of(2,5,20).toString());
+        }
+
+        @Test
+        @DisplayName("Correct")
+        void createCorrect() {
+            //When
+            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
+            ResponseEntity<ApiResponse> response = service.create(user, TEST_NAME, request);
+
+            //Then
+            verify(sessionDao, times(1)).save(any(Session.class));
+            checkApiResponse(response.getBody(),"Session has been created", true);
+        }
+
+        @Test
+        @DisplayName("User Not Found")
+        void createUserNotFound() {
+            testUserNotFound(() -> service.create(user, TEST_NAME, request));
+        }
+
+        @Test
+        @DisplayName("Task Not Found")
+        void createTaskNotFound() {
+            testTaskNotFound(() -> service.create(user, TEST_NAME, request));
+        }
+
+        @Test
+        @DisplayName("Save error")
+        void createSaveError() {
+            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
+            when(sessionDao.save(any(Session.class))).thenThrow(SaveException.class);
+            assertThrows(SaveException.class, () -> service.create(user, TEST_NAME, request));
+        }
     }
 
-    @Test
-    @Order(2)
-    @DisplayName("Create valid save")
-    void createValid() {
-        //When
-        when(dao.save(any(Session.class))).thenThrow(SaveException.class);
+    @Nested
+    @DisplayName("Get by Task")
+    class SessionServiceTestGetByTask {
 
-        //Then
-        assertThrows(SaveException.class, () -> {
-            service.create(dto);
-        });
+        @Test
+        @DisplayName("Correct")
+        void getByTaskCorrect() {
+            //Given
+            Session session = Session.builder()
+                    .date(Date.valueOf(LocalDate.now()))
+                    .time(Time.valueOf(LocalTime.of(2,5)))
+                    .task(task).build();
+
+            List<Session> sessions = new ArrayList<>();
+            sessions.add(session);
+
+            //When
+            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
+            when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
+            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
+            GetByTaskSessionResponse response = responses.getBody().get(0);
+
+            //Then
+            assertEquals(1,responses.getBody().size());
+            assertEquals(session.getDate(), response.getDate());
+            assertEquals(session.getTime(), response.getTime());
+            verify(userDao, times(1)).findByEmail(anyString());
+            verify(taskDao, times(1)).findByNameAndUser(anyString(),any(User.class));
+            verify(sessionDao, times(1)).findAllByTask(any(Task.class));
+        }
+
+        @Test
+        @DisplayName("Empty")
+        void getByTaskEmpty() {
+            //Given
+            List<Session> sessions = new ArrayList<>();
+
+            //When
+            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
+            when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
+            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
+
+            //Then
+            assertEquals(0,responses.getBody().size());
+            verify(userDao, times(1)).findByEmail(anyString());
+            verify(taskDao, times(1)).findByNameAndUser(anyString(),any(User.class));
+            verify(sessionDao, times(1)).findAllByTask(any(Task.class));
+        }
+
+        @Test
+        @DisplayName("User Not Found")
+        void getByTaskUserNotFound() {
+            testUserNotFound(() -> service.getAllByTask(user, TEST_NAME));
+        }
+
+        @Test
+        @DisplayName("Task Not Found")
+        void getByTaskTaskNotFound() {
+            testTaskNotFound(() -> service.getAllByTask(user, TEST_NAME));
+        }
     }
 
-    @Test
-    @Order(3)
-    @DisplayName("Get correct")
-    void getCorrect() {
-        //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
-        ResponseEntity<Session.SessionDto> response = service.get(UUID.randomUUID());
+    @Nested
+    @DisplayName("Get by Date")
+    class SessionServiceTestGetByDate {
+        protected final String DATE = "2016-08-16";
 
-        //Then
-        verify(dao, times(1)).findById(any(UUID.class));
-        assertThat(response.getBody()).isEqualTo(EntityMapper.mapToDto(session));
-    }
+        @Test
+        @DisplayName("Correct")
+        void getByTaskCorrect() {
+            //Given
+            Session session = Session.builder()
+                    .date(Date.valueOf(LocalDate.now()))
+                    .time(Time.valueOf(LocalTime.of(2,5)))
+                    .task(task).build();
 
-    @Test
-    @Order(4)
-    @DisplayName("Get valid findById")
-    void getValidFindById() {
-        //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.empty());
+            List<Session> sessions = new ArrayList<>();
+            sessions.add(session);
 
-        //Then
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.get(UUID.randomUUID());
-        });
-    }
+            //When
+            when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
+            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, DATE);
+            GetByDateSessionResponse response = responses.getBody().get(0);
 
-    @Test
-    @Order(5)
-    @DisplayName("Update correct")
-    void updateCorrect() {
-        //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
-        when(dao.save(any(Session.class))).thenReturn(session);
-        response = service.update(dto);
+            //Then
+            assertEquals(1,responses.getBody().size());
+            assertEquals(session.getDate(), response.getDate());
+            assertEquals(session.getTime(), response.getTime());
+            assertEquals(session.getTask().getName(), response.getTaskName());
+            verify(userDao, times(1)).findByEmail(anyString());
+            verify(sessionDao, times(1)).findAllByTask_User_EmailAndDate(anyString(),any(Date.class));
+        }
 
-        //Then
-        verify(dao, times(1)).findById(any(UUID.class));
-        verify(dao, times(1)).save(any(Session.class));
-        assertThat(response.getBody().getMessage()).isEqualTo("WorkTime has been updated");
-        assertTrue(response.getBody().isSuccess());
-    }
+        @Test
+        @DisplayName("Empty")
+        void getByTaskEmpty() {
+            //Given
+            List<Session> sessions = new ArrayList<>();
 
-    @Test
-    @Order(6)
-    @DisplayName("Update valid findBy")
-    void UpdateValidFindBy() {
-        //When
-        when(dao.findById(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
+            //When
+            when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
+            ResponseEntity<List<GetByDateSessionResponse>> responses = service.getByDate(user, DATE);
 
-        //Then
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.get(UUID.randomUUID());
-        });
-    }
+            //Then
+            assertEquals(0,responses.getBody().size());
+            verify(userDao, times(1)).findByEmail(anyString());
+            verify(sessionDao, times(1)).findAllByTask_User_EmailAndDate(anyString(),any(Date.class));
+        }
 
-    @Test
-    @Order(6)
-    @DisplayName("Update valid save")
-    void updateValidSave() {
-        //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
-        when(dao.save(any(Session.class))).thenThrow(SaveException.class);
-
-        //Then
-        assertThrows(SaveException.class, () -> {
-            service.update(dto);
-        });
-    }
-
-    @Test
-    @Order(7)
-    @DisplayName("Delete correct")
-    void deleteCorrect() {
-        //When
-        when(dao.findById(any(UUID.class))).thenReturn(Optional.of(session));
-        response = service.delete(UUID.randomUUID());
-
-        //Then
-        verify(dao, times(1)).findById(any(UUID.class));
-        verify(dao, times(1)).deleteById(any());
-        assertThat(response.getBody().getMessage()).isEqualTo("WorkTime has been deleted");
-        assertTrue(response.getBody().isSuccess());
-    }
-
-    @Test
-    @Order(8)
-    @DisplayName("Delete valid findById")
-    void deleteValidFindById() {
-        //When
-        when(dao.findById(any(UUID.class))).thenThrow(ResourceNotFoundException.class);
-
-        //Then
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.get(UUID.randomUUID());
-        });
+        @Test
+        @DisplayName("User Not Found")
+        void getByTaskUserNotFound() {
+            testUserNotFound(() -> service.getByDate(user, DATE));
+        }
     }
 }
-*/

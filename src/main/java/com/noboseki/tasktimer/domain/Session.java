@@ -38,26 +38,4 @@ public class Session {
             targetEntity = Task.class)
     @JoinColumn(name = "task_Id")
     private Task task;
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class SessionDto {
-        @NotNull
-        private UUID privateID;
-        @NotNull
-        private Date date;
-        @NotNull
-        private Time time;
-
-        @Override
-        public String toString() {
-            return "WorkTimeDto{" +
-                    "privateID=" + privateID +
-                    ", date=" + date.toString() +
-                    ", time=" + time.toString() +
-                    '}';
-        }
-    }
 }

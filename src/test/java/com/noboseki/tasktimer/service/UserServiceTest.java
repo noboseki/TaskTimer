@@ -75,15 +75,15 @@ class UserServiceTest extends ServiceSetupClass{
 
         @AfterEach
         void tearDown() {
-            verify(userDao,times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao,times(1)).findByEmail(anyString());
         }
 
         @Test
         @DisplayName("Correct")
         void getCorrect() {
             //When
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
-            ResponseEntity<UserGetResponse> response = service.get(TEST_EMAIL, TEST_PASSWORD);
+            when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
+            ResponseEntity<UserGetResponse> response = service.get(user);
 
             //Then
             checkUserGetResponse(response.getBody(), user);
@@ -93,10 +93,10 @@ class UserServiceTest extends ServiceSetupClass{
         @DisplayName("Resource not found")
         void getResourceNotFound() {
             //When
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmail(anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
-            assertThrows(ResourceNotFoundException.class, () -> service.get(TEST_EMAIL, TEST_PASSWORD));
+            assertThrows(ResourceNotFoundException.class, () -> service.get(user));
         }
     }
 
@@ -133,12 +133,12 @@ class UserServiceTest extends ServiceSetupClass{
 
         @BeforeEach
         void setUp() {
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
         }
 
         @AfterEach
         void tearDown() {
-            verify(userDao, times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao, times(1)).findByEmail(anyString());
         }
 
         @Test
@@ -156,7 +156,7 @@ class UserServiceTest extends ServiceSetupClass{
         @DisplayName("Resource not found")
         void updateImageResourceNotFound() {
             //When
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmail(anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
             assertThrows(ResourceNotFoundException.class, () -> service.updateImageUrl(TEST_IMAGE, user));
@@ -180,12 +180,12 @@ class UserServiceTest extends ServiceSetupClass{
 
         @BeforeEach
         void setUp() {
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenReturn(Optional.of(user));
+            when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
         }
 
         @AfterEach
         void tearDown() {
-            verify(userDao, times(1)).findByEmailAndPassword(anyString(),anyString());
+            verify(userDao, times(1)).findByEmail(anyString());
         }
 
         @Test
@@ -203,11 +203,11 @@ class UserServiceTest extends ServiceSetupClass{
         @DisplayName("Resource not found")
         void updateNameResourceNotFound() {
             //When
-            when(userDao.findByEmailAndPassword(anyString(),anyString())).thenThrow(ResourceNotFoundException.class);
+            when(userDao.findByEmail(anyString())).thenThrow(ResourceNotFoundException.class);
 
             //Then
             assertThrows(ResourceNotFoundException.class, () -> service.updateImageUrl(TEST_NAME, user));
-            verify(userDao,times(1)).findByEmailAndPassword(anyString(), anyString());
+            verify(userDao,times(1)).findByEmail(anyString());
         }
 
         @Test

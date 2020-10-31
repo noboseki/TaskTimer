@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
+public class TaskControllerIT extends ControllerIntegrationTest {
 
     private final String POST_URL = "/task/create/";
     private final String GET_URL = "/task/get/";
@@ -36,7 +36,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("Create")
-    class TaskControllerIntegrationTestCreate extends ControllerIntegrationTest {
+    class TaskControllerITCreate extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -71,7 +71,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("Get")
-    class TaskControllerIntegrationTestGet extends ControllerIntegrationTest {
+    class TaskControllerITGet extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -102,7 +102,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("GetAll")
-    class TaskControllerIntegrationTestGetAll extends ControllerIntegrationTest {
+    class TaskControllerITGetAll extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -125,7 +125,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("Update Name")
-    class TaskControllerIntegrationTestUpdateName extends ControllerIntegrationTest {
+    class TaskControllerITUpdateName extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -165,7 +165,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("Update Status")
-    class TaskControllerIntegrationTestUpdateStatus extends ControllerIntegrationTest {
+    class TaskControllerITUpdateStatus extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -193,7 +193,7 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Nested
     @DisplayName("Delete")
-    class TaskControllerIntegrationTestDelete extends ControllerIntegrationTest {
+    class TaskControllerITDelete extends ControllerIntegrationTest {
 
         @Test
         @DisplayName("Correct")
@@ -216,26 +216,6 @@ public class TaskControllerIntegrationTest extends ControllerIntegrationTest {
         @DisplayName("Unauthorized")
         void DeleteUnauthorized() throws Exception {
             useBasicMvc(HttpMethod.DELETE, DELETE_URL + TEST_NAME, 401);
-        }
-    }
-
-    private MvcResult useBasicMvc(HttpMethod httpMethod, String url,
-                                  Integer status) throws Exception {
-        switch (httpMethod){
-            case POST:
-                return mockMvc.perform(post(url))
-                        .andExpect(status().is(status)).andReturn();
-            case GET:
-                return mockMvc.perform(get(url))
-                        .andExpect(status().is(status)).andReturn();
-            case PUT:
-                return mockMvc.perform(put(url))
-                        .andExpect(status().is(status)).andReturn();
-            case DELETE:
-                return mockMvc.perform(delete(url))
-                        .andExpect(status().is(status)).andReturn();
-            default:
-                throw new RuntimeException();
         }
     }
 }

@@ -11,12 +11,17 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -31,9 +36,6 @@ public abstract class ControllerIntegrationTest {
     MockMvc mockMvc;
 
     protected Gson gson = new Gson();
-
-    @Autowired
-    ClassCreator classCreator;
 
     @Autowired
     TaskDao taskDao;
@@ -52,5 +54,25 @@ public abstract class ControllerIntegrationTest {
         user = userDao.findByUsername("user").orElseThrow();
         admin = userDao.findByUsername("admin").orElseThrow();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
+    }
+
+    protected MvcResult useBasicMvc(HttpMethod httpMethod, String url,
+                                  Integer status) throws Exception {
+        switch (httpMethod) {
+            case POST:
+                return mockMvc.perform(post(url))
+                        .andExpect(status().is(status)).andReturn();
+            case GET:
+                return mockMvc.perform(get(url))
+                        .andExpect(status().is(status)).andReturn();
+            case PUT:
+                return mockMvc.perform(put(url))
+                        .andExpect(status().is(status)).andReturn();
+            case DELETE:
+                return mockMvc.perform(delete(url))
+                        .andExpect(status().is(status)).andReturn();
+            default:
+                throw new RuntimeException();
+        }
     }
 }

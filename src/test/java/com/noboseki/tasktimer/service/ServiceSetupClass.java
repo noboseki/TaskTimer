@@ -1,8 +1,10 @@
 package com.noboseki.tasktimer.service;
 
+import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +32,11 @@ public class ServiceSetupClass {
     @Mock
     protected UserDao userDao;
 
+    @Mock
+    protected TaskDao taskDao;
+
     protected User user;
+    protected Task task;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +46,7 @@ public class ServiceSetupClass {
                 .password(TEST_PASSWORD)
                 .email(TEST_EMAIL)
                 .imageUrl(TEST_IMAGE).build();
+
     }
 
     protected void checkApiResponse(ApiResponse response, String message, boolean isTrue) {
@@ -48,6 +56,11 @@ public class ServiceSetupClass {
 
     protected void testUserNotFound(Executable executable) {
         when(userDao.findByEmail(anyString())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, executable);
+    }
+
+    protected void testTaskNotFound(Executable executable) {
+        when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, executable);
     }
 }
