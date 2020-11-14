@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Timer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" >
+    <link rel="stylesheet" media="screen and (min-width:576px)" th:href="@{/css/small.css}">
+    <link rel="stylesheet" media="screen and (min-width:768px)" th:href="@{/css/medium.css}">
+    <link rel="stylesheet" media="screen and (min-width:992px)" th:href="@{/css/large.css}">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Oswald:wght@600&family=Raleway:wght@700&display=swap');
+        </style>
+    <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="title">
+                <h1><i class="fas fa-tasks"></i> Task timer</h1>
+                <p>App for work time manage</p>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <div class="nav-mobile">
+            <button><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="nav-desktop">
+            <ul>
+                <li><a href="">Main</a></li>
+                <li><a href="">Profile</a></li>
+                <li><a href="">statistic</a></li>
+                <li><a href="">contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <main>
+        <div class="login">
+                <form action="">
+                    <input type="email" name="" id="email" placeholder="Email"><br>
+                    <input type="password" name="" id="password" placeholder="Password"><br>
+                    <button>Login</button>
+                </form>
+        </div>
+    </main>
+    <footer>
+        <p>Created by : <a href="https://github.com/noboseki" target="_blank"><i class="fab fa-github"></i></a></p>
+    </footer>
+</body>
+</html>
