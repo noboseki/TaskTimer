@@ -4,6 +4,7 @@ import com.noboseki.tasktimer.security.RestHeaderAuthFilter;
 import com.noboseki.tasktimer.security.SFGPasswordEncoderFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
+                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**" , "/js/**", "/css/**").permitAll();
                     authorize.antMatchers("/h2-console/**").permitAll();
                     authorize.antMatchers("/user/create/").permitAll();
                 })
