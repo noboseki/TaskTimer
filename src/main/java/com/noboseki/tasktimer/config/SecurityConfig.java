@@ -44,14 +44,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**" , "/js/**", "/css/**").permitAll();
+                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**" , "/js/**", "/css/**", "/favicon.*").permitAll();
                     authorize.antMatchers("/h2-console/**").permitAll();
                     authorize.antMatchers("/user/create/").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().and()
+                .formLogin(loginConfig -> loginConfig
+                        .loginProcessingUrl("/login")
+                        .loginPage("/").permitAll()
+                        .successForwardUrl("/")
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/?error"))
+                .logout(logoutConfig -> logoutConfig
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                        .logoutSuccessUrl("/?logout").permitAll())
                 .httpBasic();
 
         //h2 console config

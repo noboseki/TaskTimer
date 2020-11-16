@@ -2,8 +2,7 @@
 <html lang="pl"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +11,8 @@
     <link rel="stylesheet" media="screen and (min-width:576px)" th:href="@{/css/small.css}">
     <link rel="stylesheet" media="screen and (min-width:768px)" th:href="@{/css/medium.css}">
     <link rel="stylesheet" media="screen and (min-width:992px)" th:href="@{/css/large.css}">
-    <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Oswald:wght@600&family=Raleway:wght@700&display=swap');
-        </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -31,7 +30,7 @@
         </div>
         <div class="nav-desktop">
             <ul>
-                <li><a href="">Main</a></li>
+                <li><a th:href="@{http://localhost:8080/}">Main</a></li>
                 <li><a href="">Profile</a></li>
                 <li><a href="">statistic</a></li>
                 <li><a href="">contact</a></li>
@@ -39,12 +38,28 @@
         </div>
     </nav>
     <main>
-        <div class="login">
-                <form action="">
-                    <input type="email" name="" id="email" placeholder="Email"><br>
-                    <input type="password" name="" id="password" placeholder="Password"><br>
-                    <button>Login</button>
+        <div class="login" sec:authorize="!isAuthenticated()">
+                <form th:action="@{/login}" method="post">
+                    <input type="email" name="username" id="username" placeholder="Email" autofocus autocomplete="off"><br>
+                    <input type="password" name="password" id="password" placeholder="Password" autofocus autocomplete="off"><br>
+                    <button type="submit" value="Log In">Login</button>
                 </form>
+            <div th:if="${param.error}" class="alert alert-error">
+                <p>Invalid login or password</p>
+            </div>
+            <div th:if="${param.logout}" class="alert alert-logout">
+                <p>Logout successful</p>
+            </div>
+        </div>
+        <div class="login" sec:authorize="isAuthenticated()">
+            <div class="logged-info">
+                <p style="color: #ff8766;">Welcome</p>
+                <p>Public id : ... </p>
+                <p th:text="'Username: ' + ${#authentication?.getName()}">Username : ... </p>
+            </div>
+            <form th:action="@{/logout}">
+                <button type="submit" value="Log out" id="logout">Logout</button>
+            </form>
         </div>
     </main>
     <footer>
