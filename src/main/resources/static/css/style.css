@@ -93,7 +93,7 @@ nav {
     border-color: #ff8766;
 }
 
-.login #email {
+.login #username {
     position: absolute;
     top: 50px;
     left: 50%;
@@ -126,9 +126,51 @@ nav {
     transition: border-color .3s, color .3s;
 }
 
+#logout {
+    top: 15px;
+}
+
 .login button:hover {
     border-color: #ff8766;
     color: #ff8766;
+}
+
+.logged-info p {
+    margin: 5px;
+}
+
+.alert {
+    position: absolute;
+    top: 330px;
+    left: 50%;
+    width: 250px;
+    height: 30px;
+    line-height: 30px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 1px 1px 1px rgb(0, 0, 0);
+}
+
+.logged-info {
+    width: 300px;
+    margin: 20px auto;
+    text-align: left;
+    color: #6c58af;
+    font-family: 'Raleway', sans-serif;
+    font-size: 28px;
+    transform: translate(10% ,0%);
+}
+
+.alert-logout {
+    background-color: rgba(0, 151, 0, 0.6);
+}
+
+.alert-error {
+    background-color: 	rgba(255, 0, 0, 0.6);
 }
 
 /* FOOTER */
