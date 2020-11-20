@@ -1,5 +1,6 @@
 package com.noboseki.tasktimer.controller;
 
+import com.noboseki.tasktimer.security.perms.UserPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,24 @@ public class WebsiteController {
 
     @GetMapping("/")
     public String mainPage() {
-        return "index";
+        return "main";
+    }
+
+    @UserPermission
+    @GetMapping("/profile")
+    public String profilePage() {
+        return "profile";
+    }
+
+    @UserPermission
+    @GetMapping("/statistic")
+    public String statisticPage() {
+        return "statistic";
+    }
+
+    @UserPermission
+    @GetMapping("/contact")
+    public String contactPage() {
+        return "contact";
     }
 }

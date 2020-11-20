@@ -7,37 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Timer</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" >
-    <link rel="stylesheet" media="screen and (min-width:576px)" th:href="@{/css/small.css}">
-    <link rel="stylesheet" media="screen and (min-width:768px)" th:href="@{/css/medium.css}">
-    <link rel="stylesheet" media="screen and (min-width:992px)" th:href="@{/css/large.css}">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" th:href="@{/css/main.css}" >
     <link th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="header">
-            <div class="title">
-                <h1><i class="fas fa-tasks"></i> Task timer</h1>
-                <p>App for work time manage</p>
-            </div>
-        </div>
-    </header>
-    <nav>
-        <div class="nav-mobile">
-            <button><i class="fas fa-bars"></i></button>
-        </div>
-        <div class="nav-desktop">
-            <ul>
-                <li><a th:href="@{http://localhost:8080/}">Main</a></li>
-                <li><a href="">Profile</a></li>
-                <li><a href="">statistic</a></li>
-                <li><a href="">contact</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div th:replace="basicHtml/header :: header"></div>
+    <div th:replace="basicHtml/navigation :: navigation"></div>
     <main>
         <div class="login" sec:authorize="!isAuthenticated()">
                 <form th:action="@{/login}" method="post">
@@ -64,8 +41,6 @@
             </form>
         </div>
     </main>
-    <footer>
-        <p>Created by : <a href="https://github.com/noboseki" target="_blank"><i class="fab fa-github"></i></a></p>
-    </footer>
+    <div th:replace="basicHtml/footer :: footer"></div>
 </body>
 </html>
