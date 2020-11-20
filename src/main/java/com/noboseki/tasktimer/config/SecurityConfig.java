@@ -44,7 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**" , "/js/**", "/css/**", "/favicon.*").permitAll();
+                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**" , "/js/**", "/css/**", "/favicon.*", "/img/**" +
+                            "").permitAll();
                     authorize.antMatchers("/h2-console/**").permitAll();
                     authorize.antMatchers("/user/create/").permitAll();
                 })
