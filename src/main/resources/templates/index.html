@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <header>
@@ -53,9 +54,10 @@
         </div>
         <div class="login" sec:authorize="isAuthenticated()">
             <div class="logged-info">
-                <p style="color: #ff8766;">Welcome</p>
-                <p>Public id : ... </p>
-                <p th:text="'Username: ' + ${#authentication?.getName()}">Username : ... </p>
+                <div style="color: #ff8766;"> Welcome</div>
+                <div id="main-publicId"></div>
+                <div id="main-user"></div>
+                <script src="/js/mainPageData.js"></script>
             </div>
             <form th:action="@{/logout}">
                 <button type="submit" value="Log out" id="logout">Logout</button>
