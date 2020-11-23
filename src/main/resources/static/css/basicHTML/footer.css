@@ -1,0 +1,34 @@
+/* FOOTER */
+footer {
+    position: fixed;
+    bottom: 0;
+    height: 70px;
+    line-height: 70px;
+    color: #fff;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(108,88,175,1) 0%, rgba(135,88,175,1) 100%);
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 24px;
+    text-shadow: 1px 1px 1px black;
+}
+
+footer a {
+    color: white;
+    transition: color .3s;
+}
+
+footer a:visited{
+    color: white;
+}
+
+footer a:hover{
+    color: #ff8766;
+}
+
+@media (max-height: 550px) {
+    footer {
+        top: 480px;
+    }
+}
+

@@ -1,0 +1,43 @@
+/* HEADER */
+.header {
+    height: 80px;
+    background: linear-gradient(90deg, rgba(108,88,175,1) 0%, rgba(135,88,175,1) 100%);
+    color: white;
+}
+
+.title {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-family: 'Raleway', sans-serif;
+}
+
+.title h1 {
+    position: relative;
+    top: 5px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 1px black;
+    letter-spacing: 2px;
+    font-size: 30px;
+}
+
+.title p {
+    position: relative;
+    top: 8px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.title i {
+    color: #ff8766;
+}
+
+@media (max-width: 320px) {
+    .header {
+        width: 320px;
+    }
+
+}
