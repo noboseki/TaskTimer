@@ -20,19 +20,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class TaskService extends MainService{
+public class TaskService extends MainService {
     private final String TASK_HAS_BEEN = "Task has been ";
-    private final  String THE_SAME_NAME = "Duplicate task name";
+    private final String THE_SAME_NAME = "Duplicate task name";
 
     public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao) {
         super(taskDao, userDao, sessionDao);
     }
 
     public ResponseEntity<ApiResponse> create(User user, @Min(6) @Max(40) String name) {
-        User dbUser =  checkGetUser(user.getEmail());
+        User dbUser = checkGetUser(user.getEmail());
 
-        if (taskDao.findByNameAndUser(name,dbUser).isPresent()){
-            return getApiResponse(false,THE_SAME_NAME);
+        if (taskDao.findByNameAndUser(name, dbUser).isPresent()) {
+            return getApiResponse(false, THE_SAME_NAME);
         }
 
         Task task = Task.builder()
@@ -43,7 +43,7 @@ public class TaskService extends MainService{
     }
 
     public ResponseEntity<TaskGetResponse> get(User user, String name) {
-        Task task = getTaskByUserAndName(user,name);
+        Task task = getTaskByUserAndName(user, name);
         return ResponseEntity.ok(mapToGetResponse(task));
     }
 
@@ -56,20 +56,20 @@ public class TaskService extends MainService{
         return ResponseEntity.ok(tasks);
     }
 
-    public ResponseEntity<ApiResponse> updateName(User user, String oldName, @Min(6) @Max(40) String newName){
+    public ResponseEntity<ApiResponse> updateName(User user, String oldName, @Min(6) @Max(40) String newName) {
         User dbUser = checkGetUser(user.getEmail());
-        if (taskDao.findByNameAndUser(newName,dbUser).isPresent()){
-            return getApiResponse(false,THE_SAME_NAME);
+        if (taskDao.findByNameAndUser(newName, dbUser).isPresent()) {
+            return getApiResponse(false, THE_SAME_NAME);
         }
-        Task task = checkGetTask(dbUser,oldName);
+        Task task = checkGetTask(dbUser, oldName);
         task.setName(newName);
-        return getApiResponse(checkSaveTask(task),"Task name has been updated");
+        return getApiResponse(checkSaveTask(task), "Task name has been updated");
     }
 
     public ResponseEntity<ApiResponse> updateIsComplete(User user, String name) {
         Task task = getTaskByUserAndName(user, name);
         task.setComplete(!task.getComplete());
-        return getApiResponse(checkSaveTask(task),"Task status has been updated");
+        return getApiResponse(checkSaveTask(task), "Task status has been updated");
     }
 
     public ResponseEntity<ApiResponse> delete(User user, String name) {
@@ -88,7 +88,7 @@ public class TaskService extends MainService{
         }
     }
 
-    private boolean checkSaveTask(Task task){
+    private boolean checkSaveTask(Task task) {
         try {
             taskDao.save(task);
             log.info(TASK_HAS_BEEN + "saved");
@@ -100,6 +100,6 @@ public class TaskService extends MainService{
     }
 
     private TaskGetResponse mapToGetResponse(Task task) {
-        return new TaskGetResponse(task.getName(),task.getComplete());
+        return new TaskGetResponse(task.getName(), task.getComplete());
     }
 }
