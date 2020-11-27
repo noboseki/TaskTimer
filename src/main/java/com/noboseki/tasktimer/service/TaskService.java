@@ -29,7 +29,7 @@ public class TaskService extends MainService {
     }
 
     public ResponseEntity<ApiResponse> create(User user, @Min(6) @Max(40) String name) {
-        User dbUser = checkGetUser(user.getEmail());
+        User dbUser = checkUserPresenceInDb(user.getEmail());
 
         if (taskDao.findByNameAndUser(name, dbUser).isPresent()) {
             return getApiResponse(false, THE_SAME_NAME);
@@ -48,7 +48,7 @@ public class TaskService extends MainService {
     }
 
     public ResponseEntity<List<TaskGetResponse>> getAll(User user) {
-        User dbUser = checkGetUser(user.getEmail());
+        User dbUser = checkUserPresenceInDb(user.getEmail());
         List<TaskGetResponse> tasks = taskDao.findAllByUser(dbUser).stream()
                 .map(this::mapToGetResponse)
                 .collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class TaskService extends MainService {
     }
 
     public ResponseEntity<ApiResponse> updateName(User user, String oldName, @Min(6) @Max(40) String newName) {
-        User dbUser = checkGetUser(user.getEmail());
+        User dbUser = checkUserPresenceInDb(user.getEmail());
         if (taskDao.findByNameAndUser(newName, dbUser).isPresent()) {
             return getApiResponse(false, THE_SAME_NAME);
         }

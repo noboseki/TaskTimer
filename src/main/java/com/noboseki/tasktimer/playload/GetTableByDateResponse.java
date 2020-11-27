@@ -9,10 +9,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetBetweenDateSessionResponse {
+public class GetTableByDateResponse {
 
     private LocalDate date;
     private String time;
-    private long timeByNumber;
     private int sessions;
 }

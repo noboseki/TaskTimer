@@ -83,35 +83,49 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
                     .name("Task User 2")
                     .user(user).build());
 
+            Task taskUser2 = taskDao.save(Task.builder()
+                    .name("Task User 3")
+                    .user(user).build());
+
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 20)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 20)))
                     .time(Time.valueOf(LocalTime.of(4, 6)))
                     .task(taskAdmin).build());
 
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 21)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 21)))
                     .time(Time.valueOf(LocalTime.of(5, 24)))
                     .task(taskAdmin).build());
 
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 15)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 15)))
                     .time(Time.valueOf(LocalTime.of(2, 55)))
                     .task(taskUser).build());
 
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 15)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 15)))
                     .time(Time.valueOf(LocalTime.of(3, 55)))
                     .task(taskUser).build());
 
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 15)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 15)))
                     .time(Time.valueOf(LocalTime.of(3, 55)))
                     .task(taskUser1).build());
 
             sessionDao.save(Session.builder()
-                    .date(Date.valueOf(LocalDate.of(2020, 3, 16)))
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 16)))
                     .time(Time.valueOf(LocalTime.of(3, 41)))
                     .task(taskUser).build());
+
+            sessionDao.save(Session.builder()
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 15)))
+                    .time(Time.valueOf(LocalTime.of(3, 55)))
+                    .task(taskUser2).build());
+
+            sessionDao.save(Session.builder()
+                    .date(Date.valueOf(LocalDate.of(2020, 11, 16)))
+                    .time(Time.valueOf(LocalTime.of(3, 41)))
+                    .task(taskUser2).build());
         }
     }
 }

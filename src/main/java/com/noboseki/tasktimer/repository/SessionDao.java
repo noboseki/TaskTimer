@@ -15,7 +15,5 @@ public interface SessionDao extends JpaRepository<Session, UUID> {
 
     List<Session> findAllByTask(Task task);
 
-    List<Session> findAllByTask_UserAndDate(User email, Date date);
-
     List<Session> findAllByTask_UserAndDateBetween(User user, Date fromDate, Date toDate);
 }

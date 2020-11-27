@@ -6,7 +6,6 @@ import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.CreateSessionRequest;
-import com.noboseki.tasktimer.playload.GetBetweenDateSessionResponse;
 import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
 import org.junit.jupiter.api.BeforeEach;

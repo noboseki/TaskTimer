@@ -5,13 +5,12 @@ import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DateTimeException;
 import com.noboseki.tasktimer.exeption.SaveException;
-import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.playload.CreateSessionRequest;
-import com.noboseki.tasktimer.playload.GetBetweenDateSessionResponse;
-import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
+import com.noboseki.tasktimer.playload.*;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.service.util.SessionServiceGetBarChainByDateUtil;
+import com.noboseki.tasktimer.service.util.SessionServiceGetTableByDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,9 +26,15 @@ import java.util.stream.Collectors;
 @Service
 public class SessionService extends MainService {
     private final String SESSION_TIME_HAS_BEEN = "Session has been ";
+    private final SessionServiceGetTableByDateUtil getTableByDateUtil;
+    private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
 
-    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao) {
+    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
+                          SessionServiceGetTableByDateUtil getTableByDateUtil,
+                          SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
         super(taskDao, userDao, sessionDao);
+        this.getTableByDateUtil = getTableByDateUtil;
+        this.getBarChainByDateUtil = getBarChainByDateUtil;
     }
 
     public ResponseEntity<ApiResponse> create(User user, String taskName, CreateSessionRequest request) {
@@ -46,30 +50,63 @@ public class SessionService extends MainService {
         return getApiResponse(checkSaveSession(session), SESSION_TIME_HAS_BEEN + "created");
     }
 
-    public List<GetBetweenDateSessionResponse> getBetweenDate(User user, String fromDate, String toDate) {
-        checkGetUser(user.getEmail());
-        DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public List<GetTableByDateResponse> getTableByDate(User user, String fromDate, LocalDate toDate) {
+        checkUserPresenceInDb(user.getEmail());
+        List<GetTableByDateResponse> responseList = new ArrayList<>();
+        LocalDate loopDate = LocalDate.parse(fromDate);
 
-        List<Session> dbList;
+        List<Session> sessionsListBetweenDate = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
 
-        LocalDate localTo = LocalDate.parse(toDate);
-        List<GetBetweenDateSessionResponse> responseList = new ArrayList<>();
-
-        for (LocalDate localFrom = LocalDate.parse(fromDate); localFrom.isBefore(localTo.plusDays(1));localFrom.plusDays(1)) {
-            dbList = sessionDao.findAllByTask_UserAndDate(user, Date.valueOf(localFrom));
-            if (dbList.isEmpty()) {
-                responseList.add(new GetBetweenDateSessionResponse(
-                        localFrom,
+        if (sessionsListBetweenDate.isEmpty()) {
+            while (loopDate.isBefore(toDate) || loopDate.equals(toDate)) {
+                responseList.add(new GetTableByDateResponse(
+                        loopDate,
                         "00:00:00",
-                        0, 0));
-            } else {
-                GetBetweenDateSessionResponse response = listToGetBetweenDateSessionResponse(dbList, localFrom);
-                responseList.add(response);
+                        0));
+                loopDate = loopDate.plusDays(1);
             }
+            return responseList;
         }
+
+        while (loopDate.isBefore(toDate) || loopDate.equals(toDate)) {
+            List<Session> tempSessionsByDateList = getTableByDateUtil.extractSessionsByDateAndRemove(sessionsListBetweenDate, loopDate);
+            getTableByDateUtil.fillingResponseListByDate(tempSessionsByDateList, responseList, loopDate);
+            loopDate = loopDate.plusDays(1);
+        }
+
         return responseList;
     }
 
+    public GetSessionChainByDateResponse getBarChainByDate(User user, String fromDate, String toDate) {
+        checkUserPresenceInDb(user.getEmail());
+
+        GetSessionChainByDateResponse response = new GetSessionChainByDateResponse();
+        response.setDataList(new ArrayList<>());
+        response.setDateLabel(getBarChainByDateUtil.createDateLabel(fromDate, toDate));
+
+        List<Session> sessionsBetweenDateForUser = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
+
+        if (sessionsBetweenDateForUser.isEmpty()) {
+            return response;
+        }
+
+        for (String taskName : getBarChainByDateUtil.getTaskNamesFromList(sessionsBetweenDateForUser)) {
+
+            GetSessionChainDataForTask data = new GetSessionChainDataForTask(new ArrayList<>(), taskName);
+            LocalDate loopDate = LocalDate.parse(fromDate);
+
+            while (loopDate.isBefore(LocalDate.parse(toDate).plusDays(1))) {
+                List<Time> sessions = getBarChainByDateUtil.extractSessionsTimeByDateAndTaskName(sessionsBetweenDateForUser, taskName, loopDate);
+                data.getData().add(getBarChainByDateUtil.listToLongTime(sessions));
+                loopDate = loopDate.plusDays(1);
+            }
+
+            response.getDataList().add(data);
+        }
+        return response;
+    }
+
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     public ResponseEntity<List<GetByTaskSessionResponse>> getAllByTask(User user, String taskName) {
         Task task = getTaskByUserAndName(user, taskName);
         List<GetByTaskSessionResponse> session = sessionDao.findAllByTask(task).stream()
@@ -81,45 +118,6 @@ public class SessionService extends MainService {
 
     private GetByTaskSessionResponse mapToGetByTaskResponse(Session session) {
         return new GetByTaskSessionResponse(session.getDate(), session.getTime());
-    }
-
-    private GetBetweenDateSessionResponse listToGetBetweenDateSessionResponse(List<Session> list, LocalDate date) {
-        String time;
-        long timeByNumber;
-        int session = 0;
-        int hours = 0;
-        int minutes = 0;
-
-        for (Session s : list) {
-            hours += s.getTime().getHours();
-            minutes += s.getTime().getMinutes();
-            session++;
-        }
-
-        hours += minutes / 60;
-        minutes = minutes % 60;
-        time = timeIntsToTimeString(hours, minutes);
-        timeByNumber = hours + (long)Math.round((minutes / 60) * 100) / 100;
-
-        return new GetBetweenDateSessionResponse(date, time, timeByNumber, session);
-    }
-
-    private String timeIntsToTimeString(int hours, int minutes) {
-        String time = "";
-
-        if (hours >= 10) {
-            time += String.valueOf(hours);
-        } else {
-            time += "0" + hours;
-        }
-
-        if (minutes >= 10) {
-            time += ":" + minutes;
-        } else {
-            time += ":0" + minutes;
-        }
-
-        return time;
     }
 
     private boolean checkSaveSession(Session session) {

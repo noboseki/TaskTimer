@@ -19,7 +19,7 @@ public class MainService {
     protected final UserDao userDao;
     protected final SessionDao sessionDao;
 
-    protected User checkGetUser(String email) {
+    protected User checkUserPresenceInDb(String email) {
         return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, "email", email));
     }
 
@@ -32,7 +32,7 @@ public class MainService {
     }
 
     protected Task getTaskByUserAndName(User user, String name) {
-        User dbUser = checkGetUser(user.getEmail());
+        User dbUser = checkUserPresenceInDb(user.getEmail());
         return checkGetTask(dbUser, name);
     }
 }

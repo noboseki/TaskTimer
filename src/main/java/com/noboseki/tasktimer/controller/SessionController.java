@@ -2,7 +2,8 @@ package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.CreateSessionRequest;
-import com.noboseki.tasktimer.playload.GetBetweenDateSessionResponse;
+import com.noboseki.tasktimer.playload.GetTableByDateResponse;
+import com.noboseki.tasktimer.playload.GetSessionChainByDateResponse;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.SessionService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequestMapping("session")
@@ -35,10 +37,18 @@ public class SessionController {
     }
 
     @UserPermission
-    @GetMapping("getBetweenDate/{from}/{to}")
-    public ResponseEntity<List<GetBetweenDateSessionResponse>> getByDate(@AuthenticationPrincipal User user,
-                                                                         @PathVariable String from,
-                                                                         @PathVariable String to) {
-        return ResponseEntity.ok(service.getBetweenDate(user, from, to));
+    @GetMapping("getChainByDate/{from}/{to}")
+    public ResponseEntity<GetSessionChainByDateResponse> getChainByDate(@AuthenticationPrincipal User user,
+                                                                        @PathVariable String from,
+                                                                        @PathVariable String to) {
+        return ResponseEntity.ok(service.getBarChainByDate(user, from, to));
+    }
+
+    @UserPermission
+    @GetMapping("getTableByDate/{from}/{to}")
+    public ResponseEntity<List<GetTableByDateResponse>> getTableByDate(@AuthenticationPrincipal User user,
+                                                                       @PathVariable String from,
+                                                                       @PathVariable String to) {
+        return ResponseEntity.ok(service.getTableByDate(user, from, LocalDate.parse(to)));
     }
 }
