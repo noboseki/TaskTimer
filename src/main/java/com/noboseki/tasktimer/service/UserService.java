@@ -38,30 +38,30 @@ public class UserService  extends MainService{
     }
 
     public ResponseEntity<UserGetResponse> get(User user) {
-        User dbUser = checkGetUser(user.getEmail());
+        User dbUser = checkUserPresenceInDb(user.getEmail());
         return ResponseEntity.ok(mapToResponse(dbUser));
     }
 
     public ResponseEntity<UserGetResponse> getByEmail(String email) {
-        User user = checkGetUser(email);
+        User user = checkUserPresenceInDb(email);
         checkAdminAuthority(user.getAuthorities());
         return ResponseEntity.ok(mapToResponse(user));
     }
 
     public ResponseEntity<ApiResponse> updateImageUrl(String url, User user) {
-        User updateUser = checkGetUser(user.getEmail());
+        User updateUser = checkUserPresenceInDb(user.getEmail());
         updateUser.setImageUrl(url);
         return getApiResponse(checkSaveUser(updateUser),"Image has been changed");
     }
 
     public ResponseEntity<ApiResponse> updateName(String name, User user) {
-        User updateUser = checkGetUser(user.getEmail());
+        User updateUser = checkUserPresenceInDb(user.getEmail());
         updateUser.setUsername(name);
         return getApiResponse(checkSaveUser(updateUser), "Username has been changed");
     }
 
     public ResponseEntity<ApiResponse> delete(String email) {
-        User deleteUser = checkGetUser(email);
+        User deleteUser = checkUserPresenceInDb(email);
         checkAdminAuthority(deleteUser.getAuthorities());
         return getApiResponse(checkDeleteUser(deleteUser), USER_HAS_BEEN + "deleted");
     }

@@ -1,7 +1,10 @@
 /* FOOTER */
+main {
+    min-height: calc(100vh - 70px - 80px - 40px);
+}
+
 footer {
-    position: fixed;
-    bottom: 0;
+    position: relative;
     height: 70px;
     line-height: 70px;
     color: #fff;
@@ -12,6 +15,7 @@ footer {
     font-size: 24px;
     text-shadow: 1px 1px 1px black;
 }
+
 
 footer a {
     color: white;
@@ -25,10 +29,3 @@ footer a:visited{
 footer a:hover{
     color: #ff8766;
 }
-
-@media (max-height: 550px) {
-    footer {
-        top: 480px;
-    }
-}
-

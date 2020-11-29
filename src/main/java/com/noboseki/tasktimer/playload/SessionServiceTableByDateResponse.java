@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetByDateSessionResponse {
+public class SessionServiceTableByDateResponse {
 
-    private Date date;
-    private Time time;
-    private String taskName;
+    private LocalDate date;
+    private String time;
+    private int sessions;
 }
