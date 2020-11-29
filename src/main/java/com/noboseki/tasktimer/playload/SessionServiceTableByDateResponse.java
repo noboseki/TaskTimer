@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetTableByDateResponse {
+public class SessionServiceTableByDateResponse {
 
     private LocalDate date;
     private String time;

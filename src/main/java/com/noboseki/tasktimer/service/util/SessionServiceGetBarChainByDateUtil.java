@@ -1,54 +1,58 @@
 package com.noboseki.tasktimer.service.util;
 
 import com.noboseki.tasktimer.domain.Session;
+import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
+import com.noboseki.tasktimer.playload.TaskDataForSessionChain;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @NoArgsConstructor
 public class SessionServiceGetBarChainByDateUtil {
 
-    public List<String> createDateLabel(String fromDate, String toDate) {
-        List<String> dataLabel = new ArrayList<>();
-        LocalDate localTo = LocalDate.parse(toDate);
+    public SessionServiceChainByDateResponse fillBarChainByDate (List<Session> sessionsBetweenDateForUser, LocalDate fromDate, LocalDate toDate) {
+        SessionServiceChainByDateResponse response = SessionServiceChainByDateResponse.builder()
+                .dataList(new ArrayList<>())
+                .dateLabel(createDateLabel(fromDate, toDate)).build();
 
-        for (LocalDate localFrom = LocalDate.parse(fromDate); localFrom.isBefore(localTo.plusDays(1)); localFrom = localFrom.plusDays(1)) {
-            dataLabel.add(localFrom.toString());
+        for (String taskName : getTaskNamesFromList(sessionsBetweenDateForUser)) {
+            TaskDataForSessionChain data = new TaskDataForSessionChain(new ArrayList<>(), taskName);
+            LocalDate tmpDate = fromDate;
+            while (tmpDate.isBefore(toDate.plusDays(1))) {
+                List<Time> sessions = extractSessionsTimeByDateAndTaskName(sessionsBetweenDateForUser, taskName, tmpDate);
+                data.getData().add(listToLongTime(sessions));
+                tmpDate = tmpDate.plusDays(1);
+            }
+            response.getDataList().add(data);
         }
+        return response;
+    }
 
-        return dataLabel;
+    public List<String> createDateLabel(LocalDate fromDate, LocalDate toDate) {
+        Stream<LocalDate> localDates = fromDate.datesUntil(toDate.plusDays(1));
+        return localDates
+                .map(LocalDate::toString)
+                .collect(Collectors.toList());
     }
 
     public Set<String> getTaskNamesFromList(List<Session> list) {
-        Set<String> taskNameSet = new HashSet<>();
-
-        for (Session s : list) {
-            taskNameSet.add(s.getTask().getName());
-        }
-
-        return taskNameSet;
+        return list.stream().map( session -> session.getTask().getName())
+                .collect(Collectors.toSet());
     }
 
     public List<Time> extractSessionsTimeByDateAndTaskName(List<Session> startList, String taskName, LocalDate date) {
-        List<Time> extractedTimeList = new ArrayList<>();
-        for (Session session: startList) {
-
-            boolean theSameYear = session.getDate().toLocalDate().getYear() == date.getYear();
-            boolean theSameMonth = session.getDate().toLocalDate().getMonth() == date.getMonth();
-            boolean theSameDay = session.getDate().toLocalDate().getDayOfMonth() == date.getDayOfMonth();
-
-            if (theSameYear && theSameMonth &&  theSameDay && session.getTask().getName().equals(taskName)) {
-                extractedTimeList.add(session.getTime());
-            }
-        }
-        return extractedTimeList;
+        return startList.stream()
+                .filter(session -> session.getDate().toLocalDate().isEqual(date) && session.getTask().getName().equals(taskName))
+                .map(Session::getTime)
+                .collect(Collectors.toList());
     }
 
     public float listToLongTime(List<Time> times) {

@@ -61,7 +61,7 @@ public class TaskService extends MainService {
         if (taskDao.findByNameAndUser(newName, dbUser).isPresent()) {
             return getApiResponse(false, THE_SAME_NAME);
         }
-        Task task = checkGetTask(dbUser, oldName);
+        Task task = checkTaskPresenceInDbForUser(dbUser, oldName);
         task.setName(newName);
         return getApiResponse(checkSaveTask(task), "Task name has been updated");
     }

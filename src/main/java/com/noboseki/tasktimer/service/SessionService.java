@@ -50,63 +50,31 @@ public class SessionService extends MainService {
         return getApiResponse(checkSaveSession(session), SESSION_TIME_HAS_BEEN + "created");
     }
 
-    public List<GetTableByDateResponse> getTableByDate(User user, String fromDate, LocalDate toDate) {
+    public List<SessionServiceTableByDateResponse> getTableByDate(User user, LocalDate fromDate, LocalDate toDate) {
         checkUserPresenceInDb(user.getEmail());
-        List<GetTableByDateResponse> responseList = new ArrayList<>();
-        LocalDate loopDate = LocalDate.parse(fromDate);
 
         List<Session> sessionsListBetweenDate = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
 
         if (sessionsListBetweenDate.isEmpty()) {
-            while (loopDate.isBefore(toDate) || loopDate.equals(toDate)) {
-                responseList.add(new GetTableByDateResponse(
-                        loopDate,
-                        "00:00:00",
-                        0));
-                loopDate = loopDate.plusDays(1);
-            }
-            return responseList;
+            return getTableByDateUtil.fillEmptyResponseList(fromDate, toDate);
         }
 
-        while (loopDate.isBefore(toDate) || loopDate.equals(toDate)) {
-            List<Session> tempSessionsByDateList = getTableByDateUtil.extractSessionsByDateAndRemove(sessionsListBetweenDate, loopDate);
-            getTableByDateUtil.fillingResponseListByDate(tempSessionsByDateList, responseList, loopDate);
-            loopDate = loopDate.plusDays(1);
-        }
-
-        return responseList;
+        return getTableByDateUtil.fillResponseList(sessionsListBetweenDate, fromDate, toDate);
     }
 
-    public GetSessionChainByDateResponse getBarChainByDate(User user, String fromDate, String toDate) {
+    public SessionServiceChainByDateResponse getBarChainByDate(User user, LocalDate fromDate, LocalDate toDate) {
         checkUserPresenceInDb(user.getEmail());
-
-        GetSessionChainByDateResponse response = new GetSessionChainByDateResponse();
-        response.setDataList(new ArrayList<>());
-        response.setDateLabel(getBarChainByDateUtil.createDateLabel(fromDate, toDate));
 
         List<Session> sessionsBetweenDateForUser = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
 
         if (sessionsBetweenDateForUser.isEmpty()) {
-            return response;
+            return SessionServiceChainByDateResponse.builder()
+                    .dataList(new ArrayList<>())
+                    .dateLabel(getBarChainByDateUtil.createDateLabel(fromDate, toDate)).build();
         }
-
-        for (String taskName : getBarChainByDateUtil.getTaskNamesFromList(sessionsBetweenDateForUser)) {
-
-            GetSessionChainDataForTask data = new GetSessionChainDataForTask(new ArrayList<>(), taskName);
-            LocalDate loopDate = LocalDate.parse(fromDate);
-
-            while (loopDate.isBefore(LocalDate.parse(toDate).plusDays(1))) {
-                List<Time> sessions = getBarChainByDateUtil.extractSessionsTimeByDateAndTaskName(sessionsBetweenDateForUser, taskName, loopDate);
-                data.getData().add(getBarChainByDateUtil.listToLongTime(sessions));
-                loopDate = loopDate.plusDays(1);
-            }
-
-            response.getDataList().add(data);
-        }
-        return response;
+        return getBarChainByDateUtil.fillBarChainByDate(sessionsBetweenDateForUser, fromDate, toDate);
     }
 
-    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     public ResponseEntity<List<GetByTaskSessionResponse>> getAllByTask(User user, String taskName) {
         Task task = getTaskByUserAndName(user, taskName);
         List<GetByTaskSessionResponse> session = sessionDao.findAllByTask(task).stream()

@@ -6,11 +6,11 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class GetSessionChainByDateResponse {
+public class SessionServiceChainByDateResponse {
 
     private List<String> dateLabel;
-    private List<GetSessionChainDataForTask> dataList;
+    private List<TaskDataForSessionChain> dataList;
 }

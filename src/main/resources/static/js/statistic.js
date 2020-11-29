@@ -12,18 +12,18 @@ inputFromDate.value = date.toISOString().substr(0, 10);
 getTableData();
 getChainDataAndBuild();
 
-function getTableData() {
-    const api = axios.create({
-        withCredentials: true
-    });
+    function getTableData() {
+        const api = axios.create({
+            withCredentials: true
+        });
 
-    api.get('http://localhost:8080/session/getTableByDate/' + inputFromDate.value + "/" + inputToDate.value).then(res => {
-        tableBody.innerHTML = "";
-        res.data.forEach( f => {
-            addRow('tBody', f.date, f.time, f.sessions)
+        api.get('http://localhost:8080/session/getTableByDate/' + inputFromDate.value + "/" + inputToDate.value).then(res => {
+            tableBody.innerHTML = "";
+            res.data.forEach( f => {
+                addRow('tBody', f.date, f.time, f.sessions)
+            })
         })
-    })
-}
+    }
 
     function getChainDataAndBuild() {
         const api = axios.create({
@@ -31,6 +31,7 @@ function getTableData() {
         });
 
         api.get('http://localhost:8080/session/getChainByDate/' + inputFromDate.value + "/" + inputToDate.value).then(res => {
+            console.log(res)
             buildChart(res.data.dateLabel, res.data.dataList)
             })
     }
@@ -98,7 +99,7 @@ function getTableData() {
                 backgroundColor: colours[i],
             });
 
-            if (i == 3) {
+            if (i === 3) {
                 i = 0;
             } else {
                 i++;

@@ -2,8 +2,8 @@ package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.CreateSessionRequest;
-import com.noboseki.tasktimer.playload.GetTableByDateResponse;
-import com.noboseki.tasktimer.playload.GetSessionChainByDateResponse;
+import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
+import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.SessionService;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +38,17 @@ public class SessionController {
 
     @UserPermission
     @GetMapping("getChainByDate/{from}/{to}")
-    public ResponseEntity<GetSessionChainByDateResponse> getChainByDate(@AuthenticationPrincipal User user,
-                                                                        @PathVariable String from,
-                                                                        @PathVariable String to) {
-        return ResponseEntity.ok(service.getBarChainByDate(user, from, to));
+    public ResponseEntity<SessionServiceChainByDateResponse> getChainByDate(@AuthenticationPrincipal User user,
+                                                                            @PathVariable String from,
+                                                                            @PathVariable String to) {
+        return ResponseEntity.ok(service.getBarChainByDate(user, LocalDate.parse(from), LocalDate.parse(to)));
     }
 
     @UserPermission
     @GetMapping("getTableByDate/{from}/{to}")
-    public ResponseEntity<List<GetTableByDateResponse>> getTableByDate(@AuthenticationPrincipal User user,
-                                                                       @PathVariable String from,
-                                                                       @PathVariable String to) {
-        return ResponseEntity.ok(service.getTableByDate(user, from, LocalDate.parse(to)));
+    public ResponseEntity<List<SessionServiceTableByDateResponse>> getTableByDate(@AuthenticationPrincipal User user,
+                                                                                  @PathVariable String from,
+                                                                                  @PathVariable String to) {
+        return ResponseEntity.ok(service.getTableByDate(user, LocalDate.parse(from), LocalDate.parse(to)));
     }
 }
