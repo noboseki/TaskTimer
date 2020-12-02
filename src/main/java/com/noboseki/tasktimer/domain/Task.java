@@ -29,6 +29,10 @@ public class Task {
     @Builder.Default
     private Boolean complete = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean archived = false;
+
     @NotNull
     @ManyToOne(
             fetch = FetchType.EAGER,

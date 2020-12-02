@@ -2,6 +2,7 @@ package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.generator.UserIdGenerator;
+import com.noboseki.tasktimer.playload.Sex;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.CredentialsContainer;
@@ -45,6 +46,8 @@ public class User implements UserDetails, CredentialsContainer {
     @NotEmpty
     @Column(nullable = false)
     private String username;
+
+    private Sex sex;
 
     @Singular
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

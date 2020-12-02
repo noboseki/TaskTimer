@@ -1,0 +1,98 @@
+* {
+    margin:0;
+    padding:0;
+}
+
+.isHidden {
+    display:none;
+}
+
+disableButtonHover {
+    pointer-events: none;
+}
+
+disableButtonHover:hover {
+    border-color: #6c58af;
+}
+
+.icon {
+    text-align:center;
+    padding:15px 0;
+}
+
+#icon-button {
+    position:relative;
+    width:60px;
+    height:60px;
+    border:3px solid #6c58af;
+    border-radius:50%;
+}
+
+#icon-button:hover {
+    border-color:#ff8766;
+}
+
+.icon img {
+    position:absolute;
+    transform:translate(-50%,-50%);
+    height:80%;
+}
+
+#change-icon-window {
+    position:absolute;
+    top:130px;
+    left:50%;
+    transform:translateX(-50%);
+    width:300px;
+    background-color:#FFF;
+    border:2px solid #6c58af;
+    z-index:2;
+}
+
+#icon-list img {
+    height:40px;
+    padding:10px;
+}
+
+#profileForm {
+    width:300px;
+    padding-bottom:15px;
+    margin:0 auto;
+}
+
+form label {
+    display:inline-block;
+    font-family:Raleway, sans-serif;
+    font-weight:700;
+    width: 100px;
+    color:#6c58af;
+    padding:15px 0px;
+}
+
+.formInput {
+    width:120px;
+    color:#6c58af;
+    font-family:Raleway, sans-serif;
+    font-size:16px;
+    font-weight: 700;
+    height:18px;
+}
+
+.fromInputEditable {
+    outline:none;
+    border-color:#6c58af;
+    border-width:0 0 1px;
+}
+
+.fromInputUnEditable {
+    border:none;
+    background:none;
+}
+
+#button-save-changes {
+    position:absolute;
+    left:50%;
+    top:410px;
+    transform:translateX(-50%);
+    padding:0 10px;
+}

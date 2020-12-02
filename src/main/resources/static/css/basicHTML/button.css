@@ -1,0 +1,20 @@
+main button {
+    height:25px;
+    color:#6c58af;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-weight:700;
+    font-family:Raleway, sans-serif;
+    font-size:12px;
+    cursor:pointer;
+    background:none;
+    outline:none;
+    transition:border-color .3s, color .3s;
+    border-color:#6c58af;
+    border-style:solid;
+}
+
+main button:hover {
+    color:#ff8766;
+    border-color:#ff8766;
+}

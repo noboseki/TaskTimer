@@ -6,6 +6,7 @@ import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DateTimeException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.*;
+import com.noboseki.tasktimer.repository.ProfileImgDao;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
@@ -29,10 +30,8 @@ public class SessionService extends MainService {
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
 
-    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
-                          SessionServiceGetTableByDateUtil getTableByDateUtil,
-                          SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
-        super(taskDao, userDao, sessionDao);
+    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, ProfileImgDao profileImgDao, SessionServiceGetTableByDateUtil getTableByDateUtil, SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
+        super(taskDao, userDao, sessionDao, profileImgDao);
         this.getTableByDateUtil = getTableByDateUtil;
         this.getBarChainByDateUtil = getBarChainByDateUtil;
     }

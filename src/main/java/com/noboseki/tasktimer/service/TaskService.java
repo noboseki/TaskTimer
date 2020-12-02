@@ -6,6 +6,7 @@ import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskGetResponse;
+import com.noboseki.tasktimer.repository.ProfileImgDao;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
@@ -24,8 +25,8 @@ public class TaskService extends MainService {
     private final String TASK_HAS_BEEN = "Task has been ";
     private final String THE_SAME_NAME = "Duplicate task name";
 
-    public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao) {
-        super(taskDao, userDao, sessionDao);
+    public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, ProfileImgDao profileImgDao) {
+        super(taskDao, userDao, sessionDao, profileImgDao);
     }
 
     public ResponseEntity<ApiResponse> create(User user, @Min(6) @Max(40) String name) {
