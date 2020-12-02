@@ -44,8 +44,7 @@ public class ServiceSetupClass {
                 .username(TEST_NAME)
                 .publicId(10001L)
                 .password(TEST_PASSWORD)
-                .email(TEST_EMAIL)
-                .imageUrl(TEST_IMAGE).build();
+                .email(TEST_EMAIL).build();
 
     }
 

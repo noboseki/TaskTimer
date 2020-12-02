@@ -16,7 +16,6 @@ public class ClassCreator {
         return User.builder()
                 .username("user")
                 .email("test1@test.com")
-                .imageUrl("testURL")
                 .password(passwordEncoder.encode("password")).build();
     }
 

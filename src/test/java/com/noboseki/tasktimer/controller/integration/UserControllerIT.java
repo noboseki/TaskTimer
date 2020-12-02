@@ -89,7 +89,6 @@ public class UserControllerIT extends ControllerIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
                     .andExpect(jsonPath("$.email",is(user.getEmail())))
-                    .andExpect(jsonPath("$.imageUrl",is(user.getImageUrl())))
                     .andExpect(jsonPath("$.username",is(user.getUsername())))
                     .andReturn();
         }
@@ -116,7 +115,6 @@ public class UserControllerIT extends ControllerIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.publicId",is(user.getPublicId().intValue())))
                     .andExpect(jsonPath("$.email",is(user.getEmail())))
-                    .andExpect(jsonPath("$.imageUrl",is(user.getImageUrl())))
                     .andExpect(jsonPath("$.username",is(user.getUsername())))
                     .andReturn();
         }

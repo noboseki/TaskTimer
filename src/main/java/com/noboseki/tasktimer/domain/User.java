@@ -38,8 +38,6 @@ public class User implements UserDetails, CredentialsContainer {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String imageUrl;
-
     @JsonIgnore
     @Column(nullable = false)
     private String password;
@@ -54,6 +52,13 @@ public class User implements UserDetails, CredentialsContainer {
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private Set<Authority> authorities;
+
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            targetEntity = ProfileImg.class)
+    @JoinColumn(name = "profileImg_Id")
+    private ProfileImg profileImg;
 
     @Singular
     @OneToMany(
