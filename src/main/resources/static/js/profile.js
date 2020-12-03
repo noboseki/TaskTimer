@@ -9,7 +9,6 @@ let inpUsername = document.getElementById('inpUsername');
 let inpEmail = document.getElementById('inpEmail');
 let labelPublicId = document.getElementById('labelPublicId');
 
-// addImages();
 editFrom();
 getIconList();
 getUser();
@@ -22,6 +21,7 @@ function getUser() {
     api.get('http://localhost:8080/user/get/').then(res => {
         inpUsername.setAttribute('value', res.data.username);
         inpEmail.setAttribute('value', res.data.email);
+        profileImage.setAttribute('alt', res.data.profileImg.name);
         labelPublicId.innerHTML = "" + res.data.publicId;
         profileImage.src = res.data.profileImg.urlAddress;
         res.data.taskList.forEach(f => addRow(f.taskName, f.time, f.complete));
@@ -29,42 +29,19 @@ function getUser() {
 }
 
 function updateProfile() {
-    // const api = axios.create({
-    //     withCredentials: true,
-    //     headers: { "Content-Type": "application/json" }
-    // });
-    // console.log(inpUsername.value)
-    // console.log(inpEmail.value)
-    // console.log(profileImage.value)
-    // api.put('http://localhost:8080/user/update/', {
-    //     'username': inpUsername.value,
-    //     'emile':  inpEmail.value,
-    //     'profileImgName': profileImage.value
-    // },
-    //     {
-    //     withCredentials: true
-    // }).then( res => {
-    //     console.log(res);
-    //     // getUser();
-    // })
+     const api = axios.create({
+         withCredentials: true,
+         headers: {
+             "Access-Control-Allow-Origin": "*",
+             "Content-Type": "application/json"
+             }
+     });
 
-    axios("http://localhost:8080/user/update/", {
-        method: "put",
-        data: {
-                'username': inpUsername.value,
-                'emile':  inpEmail.value,
-                'profileImgName': profileImage.value
-            },
-        withCredentials: true,
-        auth: {
-            username: 'user@test.com',
-            password: 'password'
-        },
-        headers: {"Access-Control-Allow-Origin": "*"}
-    }).then( res => {
-            console.log(res);
-            // getUser();
-        })
+     axios.put("http://localhost:8080/user/update/", {
+        username: inpUsername.value,
+        email:  inpEmail.value,
+        profileImgName: profileImage.alt,
+     });
 }
 
 function getIconList() {
@@ -76,7 +53,7 @@ function getIconList() {
         res.data.forEach(f => {
             let tmp = new Image();
             tmp.setAttribute('onclick', 'setNewIcon();');
-            tmp.setAttribute('value', f.name);
+            tmp.setAttribute('alt', f.name);
             tmp.src = f.urlAddress;
             iconList.appendChild(tmp);
         })
@@ -112,6 +89,7 @@ function displayIconList() {
 function setNewIcon() {
     document.addEventListener('click', res => {
         profileImage.src = res.target.src;
+        profileImage.alt = res.target.alt;
         changeIconWindow.classList.add('isHidden');
     }, {
         once: true

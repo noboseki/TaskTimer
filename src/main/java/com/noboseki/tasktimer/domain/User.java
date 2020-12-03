@@ -118,5 +118,4 @@ public class User implements UserDetails, CredentialsContainer {
     public void eraseCredentials() {
         this.password = null;
     }
-
 }

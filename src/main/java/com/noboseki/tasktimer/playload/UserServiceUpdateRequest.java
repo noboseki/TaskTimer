@@ -1,9 +1,6 @@
 package com.noboseki.tasktimer.playload;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
@@ -11,6 +8,7 @@ import javax.validation.constraints.Min;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserServiceUpdateRequest {

@@ -32,7 +32,6 @@ public class UserController {
     @UserPermission
     @PutMapping("update")
     public ResponseEntity<ApiResponse> updateProfile(@AuthenticationPrincipal User user, @RequestBody UserServiceUpdateRequest request) {
-        System.out.println("updating");
         return ResponseEntity.ok(service.updateProfile(user, request));
     }
 
