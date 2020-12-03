@@ -1,27 +1,22 @@
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.ProfileImg;
-import com.noboseki.tasktimer.domain.Session;
-import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
-import com.noboseki.tasktimer.playload.UserServiceGetTaskList;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
 import com.noboseki.tasktimer.repository.ProfileImgDao;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.service.util.UserServiceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,10 +25,14 @@ public class UserService extends MainService {
     private final String ADMIN_ROLE = "ROLE_ADMIN";
 
     private PasswordEncoder passwordEncoder;
+    private UserServiceUtil userServiceUtil;
 
-    public UserService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, ProfileImgDao profileImgDao, PasswordEncoder passwordEncoder) {
+    public UserService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
+                       ProfileImgDao profileImgDao, PasswordEncoder passwordEncoder,
+                       UserServiceUtil userServiceUtil) {
         super(taskDao, userDao, sessionDao, profileImgDao);
         this.passwordEncoder = passwordEncoder;
+        this.userServiceUtil = userServiceUtil;
     }
 
     //    public ResponseEntity<ApiResponse> create(UserCreateRequest request) {
@@ -43,7 +42,7 @@ public class UserService extends MainService {
 
     public UserServiceGetResponse get(User user) {
         User dbUser = checkUserPresenceInDb(user.getEmail());
-        return mapToResponse(dbUser);
+        return userServiceUtil.mapToResponse(dbUser);
     }
 
     public ApiResponse updateProfile(User user, @Valid UserServiceUpdateRequest request) {
@@ -116,55 +115,7 @@ public class UserService extends MainService {
         }
     }
 
-    private UserServiceGetResponse mapToResponse(User user) {
-        return UserServiceGetResponse.builder()
-                .publicId(user.getPublicId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .sex(user.getSex())
-                .taskList(mapToGetTaskList(user.getTasks()))
-                .profileImg(user.getProfileImg()).build();
-    }
-
-    private List<UserServiceGetTaskList> mapToGetTaskList(Set<Task> tasks) {
-        return tasks.stream()
-                .map(this::mapToGetTaskResponse)
-                .collect(Collectors.toList());
-    }
-
-    private UserServiceGetTaskList mapToGetTaskResponse(Task task) {
-        int hours = 0;
-        int minutes = 0;
-
-        for (Session session : task.getSessions()) {
-            hours += session.getTime().getHours();
-            minutes += session.getTime().getMinutes();
-        }
-
-        hours += minutes / 60;
-        minutes = minutes % 60;
-
-        return new UserServiceGetTaskList(task.getName(), mapTimeToString(hours, minutes), task.getComplete());
-    }
-
     //!!!!!!!!!!!!
-    private String mapTimeToString(int hours, int minutes) {
-        String time = "";
-
-        if (hours >= 10) {
-            time += String.valueOf(hours);
-        } else {
-            time += "0" + hours;
-        }
-
-        if (minutes >= 10) {
-            time += ":" + minutes;
-        } else {
-            time += ":0" + minutes;
-        }
-
-        return time;
-    }
 //
 //    private User mapToUser(UserCreateRequest request) {
 //        return User.builder()

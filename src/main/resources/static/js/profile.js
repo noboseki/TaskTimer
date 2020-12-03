@@ -1,10 +1,10 @@
 let checkboxEdit = document.getElementById('checkboxEdit');
 let formInput = document.getElementsByClassName('formInput');
-let buttonSaveChanges = document.getElementById('button-save-changes');
-let iconList = document.getElementById('icon-list');
-let changeIconWindow = document.getElementById('change-icon-window');
-let profileImage = document.getElementById('profile-image');
-let iconButton = document.getElementById('icon-button');
+let buttonSaveChanges = document.getElementById('buttonSaveChanges');
+let iconList = document.getElementById('iconList');
+let changeIconWindow = document.getElementById('changeIconWindow');
+let profileImage = document.getElementById('profileImage');
+let iconButton = document.getElementById('iconButton');
 let inpUsername = document.getElementById('inpUsername');
 let inpEmail = document.getElementById('inpEmail');
 let labelPublicId = document.getElementById('labelPublicId');
@@ -19,10 +19,10 @@ function getUser() {
     });
 
     api.get('http://localhost:8080/user/get/').then(res => {
+        labelPublicId.innerHTML = "" + res.data.publicId;
         inpUsername.setAttribute('value', res.data.username);
         inpEmail.setAttribute('value', res.data.email);
         profileImage.setAttribute('alt', res.data.profileImg.name);
-        labelPublicId.innerHTML = "" + res.data.publicId;
         profileImage.src = res.data.profileImg.urlAddress;
         res.data.taskList.forEach(f => addRow(f.taskName, f.time, f.complete));
     })

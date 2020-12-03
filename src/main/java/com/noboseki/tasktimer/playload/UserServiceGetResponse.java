@@ -16,6 +16,5 @@ public class UserServiceGetResponse {
     private String email;
     private String username;
     private ProfileImg profileImg;
-    private Sex sex;
     private List<UserServiceGetTaskList> taskList;
 }

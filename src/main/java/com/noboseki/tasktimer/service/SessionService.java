@@ -30,7 +30,10 @@ public class SessionService extends MainService {
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
 
-    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, ProfileImgDao profileImgDao, SessionServiceGetTableByDateUtil getTableByDateUtil, SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
+    public SessionService(TaskDao taskDao, UserDao userDao,
+                          SessionDao sessionDao, ProfileImgDao profileImgDao,
+                          SessionServiceGetTableByDateUtil getTableByDateUtil,
+                          SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
         super(taskDao, userDao, sessionDao, profileImgDao);
         this.getTableByDateUtil = getTableByDateUtil;
         this.getBarChainByDateUtil = getBarChainByDateUtil;

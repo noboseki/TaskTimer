@@ -20,7 +20,7 @@ disableButtonHover:hover {
     padding:15px 0;
 }
 
-#icon-button {
+#iconButton {
     position:relative;
     width:60px;
     height:60px;
@@ -28,7 +28,7 @@ disableButtonHover:hover {
     border-radius:50%;
 }
 
-#icon-button:hover {
+#iconButton:hover {
     border-color:#ff8766;
 }
 
@@ -38,7 +38,7 @@ disableButtonHover:hover {
     height:80%;
 }
 
-#change-icon-window {
+#changeIconWindow {
     position:absolute;
     top:130px;
     left:50%;
@@ -49,7 +49,7 @@ disableButtonHover:hover {
     z-index:2;
 }
 
-#icon-list img {
+#iconList img {
     height:40px;
     padding:10px;
 }
@@ -89,7 +89,7 @@ form label {
     background:none;
 }
 
-#button-save-changes {
+#buttonSaveChanges {
     position:absolute;
     left:50%;
     top:410px;

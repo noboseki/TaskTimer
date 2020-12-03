@@ -1,7 +1,6 @@
 package com.noboseki.tasktimer.bootstrap;
 
 import com.noboseki.tasktimer.domain.*;
-import com.noboseki.tasktimer.playload.Sex;
 import com.noboseki.tasktimer.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +62,6 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
                     .password(passwordEncoder.encode("spring"))
                     .profileImg(adminIcon)
                     .authority(adminA)
-                    .sex(Sex.FEMALE)
                     .authority(userA).build());
 
             User user = userDao.save(User.builder()

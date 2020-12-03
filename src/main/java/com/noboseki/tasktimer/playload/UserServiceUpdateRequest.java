@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,5 +20,6 @@ public class UserServiceUpdateRequest {
     @Email
     private String email;
 
+    @NotNull
     private String profileImgName;
 }

@@ -25,7 +25,8 @@ public class TaskService extends MainService {
     private final String TASK_HAS_BEEN = "Task has been ";
     private final String THE_SAME_NAME = "Duplicate task name";
 
-    public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao, ProfileImgDao profileImgDao) {
+    public TaskService(TaskDao taskDao, UserDao userDao,
+                       SessionDao sessionDao, ProfileImgDao profileImgDao) {
         super(taskDao, userDao, sessionDao, profileImgDao);
     }
 

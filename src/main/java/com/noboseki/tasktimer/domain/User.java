@@ -2,7 +2,6 @@ package com.noboseki.tasktimer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.noboseki.tasktimer.generator.UserIdGenerator;
-import com.noboseki.tasktimer.playload.Sex;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.CredentialsContainer;
@@ -47,8 +46,6 @@ public class User implements UserDetails, CredentialsContainer {
     @Column(nullable = false)
     private String username;
 
-    private Sex sex;
-
     @Singular
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
@@ -58,14 +55,14 @@ public class User implements UserDetails, CredentialsContainer {
 
     @ManyToOne(
             fetch = FetchType.EAGER,
-            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = ProfileImg.class)
     @JoinColumn(name = "profileImg_Id")
     private ProfileImg profileImg;
 
     @Singular
     @OneToMany(
-            fetch =  FetchType.LAZY,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             targetEntity = Task.class,
             mappedBy = "user")
@@ -117,5 +114,16 @@ public class User implements UserDetails, CredentialsContainer {
     @Override
     public void eraseCredentials() {
         this.password = null;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", publicId=" + publicId +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                '}';
     }
 }
