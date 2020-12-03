@@ -13,7 +13,7 @@
 }
 
 .date label {
-    color: rgb(108, 88, 175);
+    color: rgb(108,88,175);
     font-family: 'Raleway', sans-serif;
     font-weight: bold;
 }
@@ -28,7 +28,7 @@ input {
     border-style: solid;
     border-color: #6c58af;
     text-transform: uppercase;
-    color: #6c58af;
+    color: #6c58af ;
     letter-spacing: 4px;
     font-size: 16px;
     font-weight: bold;
@@ -50,40 +50,6 @@ canvas {
     height: 100px;
 }
 
-table {
-    margin: 50px auto;
-    color: white;
-    font-family: 'Raleway', sans-serif;
-    position: relative;
-    border-spacing: 0;
-}
-
-thead {
-    font-size: 22px;
-    letter-spacing: 2px;
-    background-color: rgb(108, 88, 175);
-}
-
-th {
-    height: 25px;
-    border: none;
-    width: 160px;
-}
-
-tbody {
-    font-size: 16px;
-    text-align: center;
-    color: rgb(108, 88, 175);
-}
-
-td {
-    height: 35px;
-}
-
-tr:nth-child(2n) {
-    background-color: #f6f6f6;
-}
-
 @media (max-width: 576px) {
     .date {
         width: 320px;
@@ -91,7 +57,7 @@ tr:nth-child(2n) {
 
     input {
         width: 85px;
-        margin-right: 0;
+        margin-right: 0px;
         height: 12px;
     }
 

@@ -32,4 +32,5 @@ public class ProfileImg {
             targetEntity = User.class,
             mappedBy = "profileImg")
     private Set<User> users;
+
 }

@@ -55,14 +55,14 @@ public class User implements UserDetails, CredentialsContainer {
 
     @ManyToOne(
             fetch = FetchType.EAGER,
-            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = ProfileImg.class)
     @JoinColumn(name = "profileImg_Id")
     private ProfileImg profileImg;
 
     @Singular
     @OneToMany(
-            fetch =  FetchType.LAZY,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             targetEntity = Task.class,
             mappedBy = "user")
@@ -116,4 +116,14 @@ public class User implements UserDetails, CredentialsContainer {
         this.password = null;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", publicId=" + publicId +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

@@ -1,0 +1,33 @@
+table {
+    color:#FFF;
+    font-family:Raleway, sans-serif;
+    position:relative;
+    border-spacing:0;
+    margin:50px auto;
+}
+
+thead {
+    font-size:22px;
+    letter-spacing:2px;
+    background-color:#6c58af;
+}
+
+th {
+    height:25px;
+    border:none;
+    width:160px;
+}
+
+tbody {
+    font-size:16px;
+    text-align:center;
+    color:#6c58af;
+}
+
+td {
+    height:35px;
+}
+
+tr:nth-child(2n) {
+    background-color:#f6f6f6;
+}

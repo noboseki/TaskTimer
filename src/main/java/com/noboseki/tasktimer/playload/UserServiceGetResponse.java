@@ -1,16 +1,20 @@
 package com.noboseki.tasktimer.playload;
 
+import com.noboseki.tasktimer.domain.ProfileImg;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserGetResponse {
+public class UserServiceGetResponse {
 
     private Long publicId;
     private String email;
     private String username;
-    private String imageUrl;
+    private ProfileImg profileImg;
+    private List<UserServiceGetTaskList> taskList;
 }
