@@ -8,48 +8,26 @@ let iconButton = document.getElementById('iconButton');
 let inpUsername = document.getElementById('inpUsername');
 let inpEmail = document.getElementById('inpEmail');
 let labelPublicId = document.getElementById('labelPublicId');
+const apiGet = axios.create({
+    withCredentials: true
+});
 
 editFrom();
 getIconList();
 getUser();
 
 function getUser() {
-    const api = axios.create({
-        withCredentials: true
-    });
-
-    api.get('http://localhost:8080/user/get/').then(res => {
+    apiGet.get('http://localhost:8080/user/get/').then(res => {
         labelPublicId.innerHTML = "" + res.data.publicId;
         inpUsername.setAttribute('value', res.data.username);
         inpEmail.setAttribute('value', res.data.email);
         profileImage.setAttribute('alt', res.data.profileImg.name);
         profileImage.src = res.data.profileImg.urlAddress;
-        res.data.taskList.forEach(f => addRow(f.taskName, f.time, f.complete));
     })
 }
 
-function updateProfile() {
-     const api = axios.create({
-         withCredentials: true,
-         headers: {
-             "Access-Control-Allow-Origin": "*",
-             "Content-Type": "application/json"
-             }
-     });
-
-     axios.put("http://localhost:8080/user/update/", {
-        username: inpUsername.value,
-        email:  inpEmail.value,
-        profileImgName: profileImage.alt,
-     });
-}
-
 function getIconList() {
-    const api = axios.create({
-        withCredentials: true
-    });
-
-    api.get('http://localhost:8080/profileImg/getAll/').then(res => {
+    apiGet.get('http://localhost:8080/profileImg/getAll/').then(res => {
         res.data.forEach(f => {
             let tmp = new Image();
             tmp.setAttribute('onclick', 'setNewIcon();');
@@ -60,8 +38,24 @@ function getIconList() {
     })
 }
 
+function updateProfile() {
+    const api = axios.create({
+        withCredentials: true,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json"
+        }
+    });
+
+    api.put("http://localhost:8080/user/update/", {
+        username: inpUsername.value,
+        email: inpEmail.value,
+        profileImgName: profileImage.alt,
+    });
+}
+
 function editFrom() {
-    if (checkboxEdit.checked == true) {
+    if (checkboxEdit.checked === true) {
         for (let item of formInput) {
             iconButton.classList.remove('disableButtonHover')
             iconButton.disabled = false;
@@ -96,20 +90,3 @@ function setNewIcon() {
     });
 }
 
-function addRow(taskName, time, complete) {
-    let tBodyRef = document.getElementById('tBody');
-
-    let newRow = tBodyRef.insertRow(-1);
-
-    let taskNameCell = newRow.insertCell(0);
-    let timeCell = newRow.insertCell(1);
-    let completeCell = newRow.insertCell(2);
-
-    let taskNameText = document.createTextNode(taskName);
-    let timeText = document.createTextNode(time);
-    let completeText = document.createTextNode(complete);
-
-    taskNameCell.appendChild(taskNameText);
-    timeCell.appendChild(timeText);
-    completeCell.appendChild(completeText);
-}

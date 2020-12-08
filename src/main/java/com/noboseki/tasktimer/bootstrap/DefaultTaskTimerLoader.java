@@ -81,6 +81,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
 
             Task taskUser1 = taskDao.save(Task.builder()
                     .name("Task User 2")
+                    .complete(true)
                     .user(user).build());
 
             Task taskUser2 = taskDao.save(Task.builder()

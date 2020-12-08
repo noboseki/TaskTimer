@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="pl"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Timer</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}" >
+    <link rel="stylesheet" href="css/basicHTML/table.css">
+    <link rel="stylesheet" href="css/basicHTML/button.css">
+    <link rel="stylesheet" href="/css/main.css">
     <link th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -16,31 +17,42 @@
     <div th:replace="basicHtml/header :: header"></div>
     <div th:replace="basicHtml/navigation :: navigation"></div>
     <main>
-        <div class="login" sec:authorize="!isAuthenticated()">
-                <form th:action="@{/login}" method="post">
-                    <input type="email" name="username" id="username" placeholder="Email" autofocus autocomplete="off"><br>
-                    <input type="password" name="password" id="password" placeholder="Password" autofocus autocomplete="off"><br>
-                    <button type="submit" value="Log In">Login</button>
-                </form>
-            <div th:if="${param.error}" class="alert alert-error">
-                <p>Invalid login or password</p>
+        <div id="taskSelectContainer">
+            <label for="tasksList">Choice task: </label>
+            <select name="tasks" id="tasksList"></select>
+        </div>
+        <div id="stopwatch">
+            <div id="timerContainer">
+                <time id="timer">0:00:00</time>
             </div>
-            <div th:if="${param.logout}" class="alert alert-logout">
-                <p>Logout successful</p>
+            <div id="buttonsContainer">
+                <button id="toggle"><i class="fas fa-play"></i></button>
+                <button id="clear"><i class="fas fa-stop"></i></button>
             </div>
         </div>
-        <div class="login" sec:authorize="isAuthenticated()">
-            <div class="logged-info">
-                <div style="color: #ff8766;"> Welcome</div>
-                <div id="main-publicId"></div>
-                <div id="main-user"></div>
-                <script src="/js/mainPageData.js"></script>
-            </div>
-            <form th:action="@{/logout}">
-                <button type="submit" value="Log out" id="logout">Logout</button>
-            </form>
+        <div class="alert alert-logout">
+            <p>Session Send Successful</p>
+        </div>
+        <div>
+            <table>
+                <thead>
+                <tr>
+                    <th class="tableTitle" colspan="4">Tasks</th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Complete</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="tBody">
+                </tbody>
+            </table>
         </div>
     </main>
     <div th:replace="basicHtml/footer :: footer"></div>
+    <script src="js/main.js"></script>
+    <script src="js/timer.js"></script>
 </body>
 </html>

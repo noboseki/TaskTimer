@@ -53,9 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin(loginConfig -> loginConfig
                         .loginProcessingUrl("/login")
-                        .loginPage("/").permitAll()
+                        .loginPage("/login").permitAll()
                         .successForwardUrl("/")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/login")
                         .failureUrl("/?error"))
                 .logout(logoutConfig -> logoutConfig
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))

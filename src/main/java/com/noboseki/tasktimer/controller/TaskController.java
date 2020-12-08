@@ -1,6 +1,8 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.playload.UserServiceGetTaskList;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -8,54 +10,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 
-@RequestMapping("task")
 @RestController
+@RequestMapping("task")
 @RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService service;
 
     @UserPermission
-    @PostMapping("create/{name}")
-    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
-                                    @Valid @PathVariable String name) {
-        return service.create(user,name);
+    @GetMapping("getTasks")
+    public ResponseEntity<List<UserServiceGetTaskList>> getTasks(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(service.getTasks(user));
     }
 
     @UserPermission
-    @GetMapping("get/{name}")
-    public ResponseEntity<?> get(@AuthenticationPrincipal User user,
-                                 @Valid @PathVariable String name) {
-        return service.get(user, name);
+    @PutMapping("changeTaskComplete")
+    public ResponseEntity<ApiResponse> changeTaskComplete(@AuthenticationPrincipal User user,
+                                                          @RequestBody String taskName) {
+        return ResponseEntity.ok(service.changeTaskComplete(user, taskName));
     }
 
     @UserPermission
-    @GetMapping("getAll")
-    public ResponseEntity<?> get(@AuthenticationPrincipal User user) {
-        return service.getAll(user);
-    }
-
-    @UserPermission
-    @PutMapping("updateName/{oldName}/{newName}")
-    public ResponseEntity<?> updateName(@AuthenticationPrincipal User user,
-                                        @PathVariable String oldName,
-                                        @Valid@PathVariable String newName) {
-        return service.updateName(user, oldName, newName);
-    }
-
-    @UserPermission
-    @PutMapping("updateStatus/{name}")
-    public ResponseEntity<?> updateName(@AuthenticationPrincipal User user,
-                                        @PathVariable String name) {
-        return service.updateIsComplete(user, name);
-    }
-
-    @UserPermission
-    @DeleteMapping("delete/{name}")
-    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
-                                    @PathVariable String name) {
-        return service.delete(user, name);
+    @PutMapping("changeTaskArchive")
+    public ResponseEntity<ApiResponse> changeTaskArchive(@AuthenticationPrincipal User user,
+                                                         @RequestBody String taskName) {
+        return ResponseEntity.ok(service.changeArchiveTask(user, taskName));
     }
 }

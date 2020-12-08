@@ -1,7 +1,8 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.playload.CreateSessionRequest;
+import com.noboseki.tasktimer.playload.ApiResponse;
+import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.security.perms.UserPermission;
@@ -22,11 +23,10 @@ public class SessionController {
     private final SessionService service;
 
     @UserPermission
-    @PostMapping("create/{taskName}")
-    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
-                                    @PathVariable String taskName,
-                                    @RequestBody CreateSessionRequest request) {
-        return service.create(user, taskName, request);
+    @PostMapping("create")
+    public ResponseEntity<ApiResponse> create(@AuthenticationPrincipal User user,
+                                              @RequestBody SessionServiceCreateRequest request) {
+        return ResponseEntity.ok(service.create(user, request));
     }
 
     @UserPermission

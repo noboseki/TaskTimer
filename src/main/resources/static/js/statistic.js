@@ -31,7 +31,6 @@ getChainDataAndBuild();
         });
 
         api.get('http://localhost:8080/session/getChainByDate/' + inputFromDate.value + "/" + inputToDate.value).then(res => {
-            console.log(res)
             buildChart(res.data.dateLabel, res.data.dataList)
             })
     }
