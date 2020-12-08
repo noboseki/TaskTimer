@@ -11,4 +11,5 @@ public class CreateSessionRequest {
 
     private String date;
     private String time;
+    private String taskName;
 }

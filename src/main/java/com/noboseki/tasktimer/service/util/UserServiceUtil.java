@@ -23,28 +23,6 @@ public class UserServiceUtil {
                 .publicId(user.getPublicId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .taskList(mapToGetTaskList(user.getTasks()))
                 .profileImg(user.getProfileImg()).build();
-    }
-
-    private List<UserServiceGetTaskList> mapToGetTaskList(Set<Task> tasks) {
-        return tasks.stream()
-                .map(this::mapToGetTaskResponse)
-                .collect(Collectors.toList());
-    }
-
-    private UserServiceGetTaskList mapToGetTaskResponse(Task task) {
-        int hours = 0;
-        int minutes = 0;
-
-        for (Session session : task.getSessions()) {
-            hours += session.getTime().getHours();
-            minutes += session.getTime().getMinutes();
-        }
-
-        hours += minutes / 60;
-        minutes = minutes % 60;
-
-        return new UserServiceGetTaskList(task.getName(), serviceUtil.mapTimeToString(hours, minutes), task.getComplete());
     }
 }

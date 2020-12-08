@@ -24,7 +24,6 @@ function getUser() {
         inpEmail.setAttribute('value', res.data.email);
         profileImage.setAttribute('alt', res.data.profileImg.name);
         profileImage.src = res.data.profileImg.urlAddress;
-        res.data.taskList.forEach(f => addRow(f.taskName, f.time, f.complete));
     })
 }
 
@@ -37,7 +36,7 @@ function updateProfile() {
              }
      });
 
-     axios.put("http://localhost:8080/user/update/", {
+    api.put("http://localhost:8080/user/update/", {
         username: inpUsername.value,
         email:  inpEmail.value,
         profileImgName: profileImage.alt,
@@ -61,7 +60,7 @@ function getIconList() {
 }
 
 function editFrom() {
-    if (checkboxEdit.checked == true) {
+    if (checkboxEdit.checked === true) {
         for (let item of formInput) {
             iconButton.classList.remove('disableButtonHover')
             iconButton.disabled = false;
@@ -96,20 +95,3 @@ function setNewIcon() {
     });
 }
 
-function addRow(taskName, time, complete) {
-    let tBodyRef = document.getElementById('tBody');
-
-    let newRow = tBodyRef.insertRow(-1);
-
-    let taskNameCell = newRow.insertCell(0);
-    let timeCell = newRow.insertCell(1);
-    let completeCell = newRow.insertCell(2);
-
-    let taskNameText = document.createTextNode(taskName);
-    let timeText = document.createTextNode(time);
-    let completeText = document.createTextNode(complete);
-
-    taskNameCell.appendChild(taskNameText);
-    timeCell.appendChild(timeText);
-    completeCell.appendChild(completeText);
-}

@@ -14,8 +14,8 @@ footer {
     font-family: 'Raleway', sans-serif;
     font-size: 24px;
     text-shadow: 1px 1px 1px black;
+    font-weight: 700;
 }
-
 
 footer a {
     color: white;

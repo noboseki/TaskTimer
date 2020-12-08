@@ -39,8 +39,8 @@ public class SessionService extends MainService {
         this.getBarChainByDateUtil = getBarChainByDateUtil;
     }
 
-    public ResponseEntity<ApiResponse> create(User user, String taskName, CreateSessionRequest request) {
-        Task task = getTaskByUserAndName(user, taskName);
+    public ResponseEntity<ApiResponse> create(User user, CreateSessionRequest request) {
+        Task task = getTaskByUserAndName(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());
 

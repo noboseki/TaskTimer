@@ -1,105 +1,110 @@
 * {
-    margin: 0;
     padding: 0;
+    margin: 0;
 }
 
-/* MAIN */
-
-.login form {
-    position: relative;
-    padding: 10px;
-    margin: 0 auto;
-}
-
-.login input {
-    outline: none;
-    border-width: 0 0 1px;
-    border-color: #6c58af;
-    color: #6c58af;
-    font-size: 24px;
-    transition: border-color .3s;
-}
-
-.login input:focus { 
-    border-color: #ff8766;
-}
-
-.login #username {
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.login #password {
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.login button {
-    position: absolute;
-    top: 160px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 0 35px;
-    font-family: 'Raleway', sans-serif;
-    border-style: solid;
-    border-color: #6c58af;
-    text-transform: uppercase;
-    color: #6c58af ;
-    letter-spacing: 4px;
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    outline: none;
-    transition: border-color .3s, color .3s;
-}
-
-#logout {
-    top: 15px;
-}
-
-.login button:hover {
-    border-color: #ff8766;
-    color: #ff8766;
-}
-
-.logged-info p {
-    margin: 5px;
+body {
+    color:  #6c58af;
+    font-family:Raleway, sans-serif;
 }
 
 .alert {
-    position: absolute;
-    top: 330px;
-    left: 50%;
+    display: none;
+}
+
+#taskSelectContainer {
+    padding-top: 25px;
+    text-align: center;
+    font-weight: 700;
+}
+
+#tasksList {
+    border: 2px solid  #6c58af;
+    width: 140px;
+    color: #6c58af;
+}
+
+#stopwatch {
+    text-align: center;
+}
+
+#timer {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#timerContainer {
+    padding-top: 30px;
+    font-size: 48px;
+}
+
+#buttonsContainer {
+    padding: 15px 0;
+}
+
+#buttonsContainer button {
+    padding: 0 25px;
+}
+
+#clear {
+    display: none;
+}
+
+.tableTitle {
+    font-size: 20px;
+}
+
+#tBody button {
+    padding: 0 5px;
+    border-radius: 25%;
+}
+
+.complete {
+    color: #299629;
+    border-color: #299629;
+
+}
+
+.complete:hover {
+    color: #00e300;
+    border-color:  #00e300;
+}
+
+.incomplete {
+    color:#b00000;
+    border-color: #b00000;
+}
+
+.incomplete:hover {
+    color:#ff1c1c;
+    border-color:  #ff3636;
+}
+
+.alert {
+    margin: 0 auto;
     width: 250px;
     height: 30px;
     line-height: 30px;
-    transform: translate(-50%, -50%);
     text-align: center;
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
     color: white;
     font-weight: bold;
-    box-shadow: 1px 1px 1px rgb(0, 0, 0);
-}
-
-.logged-info {
-    width: 300px;
-    margin: 20px auto;
-    text-align: left;
-    color: #6c58af;
-    font-family: 'Raleway', sans-serif;
-    font-size: 28px;
-    transform: translate(10% ,0%);
 }
 
 .alert-logout {
     background-color: rgba(0, 151, 0, 0.6);
 }
 
-.alert-error {
-    background-color: 	rgba(255, 0, 0, 0.6);
+.archive {
+    margin-left: 5px;
+}
+
+@media (min-width: 576px) {
+    .tableTitle {
+        font-size: 24px;
+    }
 }

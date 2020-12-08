@@ -20,7 +20,7 @@ public class SessionServiceGetTableByDateUtil {
         while (fromDate.isBefore(toDate.plusDays(1))) {
             responseList.add(new SessionServiceTableByDateResponse(
                     fromDate,
-                    "00:00:00",
+                    "00:00",
                     0));
             fromDate = fromDate.plusDays(1);
         }

@@ -22,11 +22,10 @@ public class SessionController {
     private final SessionService service;
 
     @UserPermission
-    @PostMapping("create/{taskName}")
+    @PostMapping("create")
     public ResponseEntity<?> create(@AuthenticationPrincipal User user,
-                                    @PathVariable String taskName,
                                     @RequestBody CreateSessionRequest request) {
-        return service.create(user, taskName, request);
+        return service.create(user, request);
     }
 
     @UserPermission

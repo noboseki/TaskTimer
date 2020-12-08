@@ -3,8 +3,6 @@ package com.noboseki.tasktimer.playload;
 import com.noboseki.tasktimer.domain.ProfileImg;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
@@ -16,5 +14,4 @@ public class UserServiceGetResponse {
     private String email;
     private String username;
     private ProfileImg profileImg;
-    private List<UserServiceGetTaskList> taskList;
 }
