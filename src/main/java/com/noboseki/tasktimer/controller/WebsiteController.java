@@ -7,35 +7,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping
+@RequiredArgsConstructor
 public class WebsiteController {
 
     @UserPermission
-    @GetMapping("/")
+    @GetMapping("")
     public String mainPage() {
         return "main";
     }
 
     @GetMapping("login")
     public String loginPage() {
-        return"login";
+        return "login";
     }
 
     @UserPermission
-    @GetMapping("/profile")
+    @GetMapping("profile")
     public String profilePage() {
         return "profile";
     }
 
     @UserPermission
-    @GetMapping("/statistic")
+    @GetMapping("statistic")
     public String statisticPage() {
         return "statistic";
     }
 
     @UserPermission
-    @GetMapping("/contact")
+    @GetMapping("contact")
     public String contactPage() {
         return "contact";
     }

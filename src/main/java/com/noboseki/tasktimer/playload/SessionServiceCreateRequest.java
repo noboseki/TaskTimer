@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CreateSessionRequest {
+public class SessionServiceCreateRequest {
 
     private String date;
     private String time;

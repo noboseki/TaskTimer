@@ -8,17 +8,16 @@ let iconButton = document.getElementById('iconButton');
 let inpUsername = document.getElementById('inpUsername');
 let inpEmail = document.getElementById('inpEmail');
 let labelPublicId = document.getElementById('labelPublicId');
+const apiGet = axios.create({
+    withCredentials: true
+});
 
 editFrom();
 getIconList();
 getUser();
 
 function getUser() {
-    const api = axios.create({
-        withCredentials: true
-    });
-
-    api.get('http://localhost:8080/user/get/').then(res => {
+    apiGet.get('http://localhost:8080/user/get/').then(res => {
         labelPublicId.innerHTML = "" + res.data.publicId;
         inpUsername.setAttribute('value', res.data.username);
         inpEmail.setAttribute('value', res.data.email);
@@ -27,28 +26,8 @@ function getUser() {
     })
 }
 
-function updateProfile() {
-     const api = axios.create({
-         withCredentials: true,
-         headers: {
-             "Access-Control-Allow-Origin": "*",
-             "Content-Type": "application/json"
-             }
-     });
-
-    api.put("http://localhost:8080/user/update/", {
-        username: inpUsername.value,
-        email:  inpEmail.value,
-        profileImgName: profileImage.alt,
-     });
-}
-
 function getIconList() {
-    const api = axios.create({
-        withCredentials: true
-    });
-
-    api.get('http://localhost:8080/profileImg/getAll/').then(res => {
+    apiGet.get('http://localhost:8080/profileImg/getAll/').then(res => {
         res.data.forEach(f => {
             let tmp = new Image();
             tmp.setAttribute('onclick', 'setNewIcon();');
@@ -57,6 +36,22 @@ function getIconList() {
             iconList.appendChild(tmp);
         })
     })
+}
+
+function updateProfile() {
+    const api = axios.create({
+        withCredentials: true,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json"
+        }
+    });
+
+    api.put("http://localhost:8080/user/update/", {
+        username: inpUsername.value,
+        email: inpEmail.value,
+        profileImgName: profileImage.alt,
+    });
 }
 
 function editFrom() {

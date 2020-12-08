@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("task")
 @RestController
+@RequestMapping("task")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -35,7 +35,7 @@ public class TaskController {
     @UserPermission
     @PutMapping("changeTaskArchive")
     public ResponseEntity<ApiResponse> changeTaskArchive(@AuthenticationPrincipal User user,
-                                                          @RequestBody String taskName) {
+                                                         @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeArchiveTask(user, taskName));
     }
 }

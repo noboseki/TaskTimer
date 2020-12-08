@@ -27,7 +27,7 @@ public class SessionServiceGetTableByDateUtil {
         return responseList;
     }
 
-    public List<SessionServiceTableByDateResponse> fillResponseList (List<Session> sessionsListBetweenDate, LocalDate fromDate, LocalDate toDate) {
+    public List<SessionServiceTableByDateResponse> fillResponseList(List<Session> sessionsListBetweenDate, LocalDate fromDate, LocalDate toDate) {
         List<SessionServiceTableByDateResponse> response = new ArrayList<>();
 
         while (fromDate.isBefore(toDate) || fromDate.equals(toDate)) {
@@ -51,7 +51,7 @@ public class SessionServiceGetTableByDateUtil {
         if (tempSessionsByDateList.isEmpty()) {
             responseList.add(new SessionServiceTableByDateResponse(
                     date,
-                    "00:00:00",
+                    "00:00",
                     0));
         } else {
             SessionServiceTableByDateResponse response = mapToGetBetweenDateSessionResponse(tempSessionsByDateList, date);
@@ -75,7 +75,7 @@ public class SessionServiceGetTableByDateUtil {
         return new SessionServiceTableByDateResponse(date, mapTimeToString(hours, minutes), session);
     }
 
-//    !!!!!!!!
+    //    !!!!!!!!
     private String mapTimeToString(int hours, int minutes) {
         String time = "";
 

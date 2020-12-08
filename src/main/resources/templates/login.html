@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Timer</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}" >
+    <link rel="stylesheet" th:href="@{/css/login.css}">
     <link th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/f264d63f36.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -17,11 +17,12 @@
     <div th:replace="basicHtml/navigation :: navigation"></div>
     <main>
         <div class="login" sec:authorize="!isAuthenticated()">
-                <form th:action="@{/login}" method="post">
-                    <input type="email" name="username" id="username" placeholder="Email" autofocus autocomplete="off"><br>
-                    <input type="password" name="password" id="password" placeholder="Password" autofocus autocomplete="off"><br>
-                    <button type="submit" value="Log In">Login</button>
-                </form>
+            <form th:action="@{/login}" method="post">
+                <input type="email" name="username" id="username" placeholder="Email" autofocus autocomplete="off"><br>
+                <input type="password" name="password" id="password" placeholder="Password" autofocus
+                       autocomplete="off"><br>
+                <button type="submit" value="Log In">Login</button>
+            </form>
             <div th:if="${param.error}" class="alert alert-error">
                 <p>Invalid login or password</p>
             </div>
@@ -30,11 +31,6 @@
             </div>
         </div>
         <div class="login" sec:authorize="isAuthenticated()">
-            <div class="logged-info">
-                <div style="color: #ff8766;"> Welcome</div>
-                <div id="main-publicId"></div>
-                <div id="main-user"></div>
-            </div>
             <form th:action="@{/logout}">
                 <button type="submit" value="Log out" id="logout">Logout</button>
             </form>

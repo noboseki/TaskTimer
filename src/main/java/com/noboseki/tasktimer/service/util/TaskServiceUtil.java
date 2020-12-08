@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @NoArgsConstructor
 public class TaskServiceUtil {
-    private  ServiceUtil serviceUtil = new ServiceUtil();
+    private ServiceUtil serviceUtil = new ServiceUtil();
 
 
     public UserServiceGetTaskList mapToGetTaskResponse(Task task) {

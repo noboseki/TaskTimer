@@ -1,48 +1,48 @@
 table {
-    color:#FFF;
-    font-family:Raleway, sans-serif;
-    position:relative;
-    border-spacing:0;
-    margin:30px auto;
+    position: relative;
+    margin: 30px auto;
+    border-spacing: 0;
+    color: #FFF;
+    font-family: Raleway, sans-serif;
 }
 
 thead {
-    font-size:15px;
-    letter-spacing:2px;
-    background-color:#6c58af;
+    font-size: 15px;
+    letter-spacing: 2px;
+    background-color: #6c58af;
 }
 
 th {
-    border:none;
-    width:80px;
+    border: none;
     height: 30px;
+    width: 80px;
 }
 
 tbody {
-    font-size:14px;
-    text-align:center;
-    color:#6c58af;
+    font-size: 14px;
+    text-align: center;
+    color: #6c58af;
 }
 
 td {
-    height:35px;
+    height: 35px;
 }
 
 tbody tr:nth-child(2n) {
-    background-color:#f6f6f6;
+    background-color: #f6f6f6;
 }
 
 @media (min-width: 576px) {
     thead {
-        font-size:20px;
+        font-size: 20px;
     }
 
     th {
-        width:140px;
+        width: 140px;
         height: 40px;
     }
 
     tbody {
-        font-size:16px;
+        font-size: 16px;
     }
 }

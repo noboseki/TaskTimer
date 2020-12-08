@@ -3,8 +3,6 @@
     padding: 0;
 }
 
-/* MAIN */
-
 .login form {
     position: relative;
     padding: 10px;
@@ -12,6 +10,9 @@
 }
 
 .login input {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
     outline: none;
     border-width: 0 0 1px;
     border-color: #6c58af;
@@ -20,22 +21,16 @@
     transition: border-color .3s;
 }
 
-.login input:focus { 
+.login input:focus {
     border-color: #ff8766;
 }
 
-.login #username {
-    position: absolute;
+#username {
     top: 50px;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
-.login #password {
-    position: absolute;
+#password {
     top: 100px;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .login button {
@@ -44,11 +39,11 @@
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 0 35px;
-    font-family: 'Raleway', sans-serif;
     border-style: solid;
     border-color: #6c58af;
     text-transform: uppercase;
-    color: #6c58af ;
+    font-family: 'Raleway', sans-serif;
+    color: #6c58af;
     letter-spacing: 4px;
     font-size: 24px;
     cursor: pointer;
@@ -70,19 +65,23 @@
     margin: 5px;
 }
 
+#logout {
+    margin-top: 30px;
+}
+
 .alert {
     position: absolute;
     top: 330px;
     left: 50%;
+    transform: translate(-50%, -50%);
     width: 250px;
     height: 30px;
     line-height: 30px;
-    transform: translate(-50%, -50%);
     text-align: center;
+    font-weight: bold;
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
     color: white;
-    font-weight: bold;
 }
 
 .logged-info {
@@ -92,7 +91,7 @@
     color: #6c58af;
     font-family: 'Raleway', sans-serif;
     font-size: 28px;
-    transform: translate(10% ,0%);
+    transform: translate(10%, 0%);
 }
 
 .alert-logout {
@@ -100,5 +99,5 @@
 }
 
 .alert-error {
-    background-color: 	rgba(255, 0, 0, 0.6);
+    background-color: rgba(255, 0, 0, 0.6);
 }

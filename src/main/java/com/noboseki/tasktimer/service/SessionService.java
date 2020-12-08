@@ -39,7 +39,7 @@ public class SessionService extends MainService {
         this.getBarChainByDateUtil = getBarChainByDateUtil;
     }
 
-    public ResponseEntity<ApiResponse> create(User user, CreateSessionRequest request) {
+    public ApiResponse create(User user, SessionServiceCreateRequest request) {
         Task task = getTaskByUserAndName(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());
@@ -49,7 +49,7 @@ public class SessionService extends MainService {
                 .time(time)
                 .task(task).build();
 
-        return getApiResponse(checkSaveSession(session), SESSION_TIME_HAS_BEEN + "created");
+        return new ApiResponse(checkSaveSession(session), SESSION_TIME_HAS_BEEN + "created");
     }
 
     public List<SessionServiceTableByDateResponse> getTableByDate(User user, LocalDate fromDate, LocalDate toDate) {

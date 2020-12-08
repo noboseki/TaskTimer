@@ -1,5 +1,12 @@
 let taskSelectContainer = document.getElementById('tasksList')
 let tBodyRef = document.getElementById('tBody');
+const apiPut = axios.create({
+    withCredentials: true,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain"
+    }
+});
 
 getTasks();
 
@@ -12,7 +19,7 @@ function getTasks() {
         tBodyRef.innerHTML = "";
         taskSelectContainer.innerHTML = "";
         res.data.forEach(f => {
-            if (f.complete === false){
+            if (f.complete === false) {
                 let opt = document.createElement('option');
                 opt.innerHTML = f.taskName;
                 opt.value = f.taskName;
@@ -38,11 +45,11 @@ function addRow(taskName, time, complete) {
     taskNameCell.appendChild(taskNameText);
     timeCell.appendChild(timeText);
     completeCell.appendChild(completeText);
-    buttonCell.appendChild(getCompleteButton(complete, taskName))
-    buttonCell.appendChild(getArchiveButton(taskName))
+    buttonCell.appendChild(createCompleteButton(complete, taskName))
+    buttonCell.appendChild(createArchiveButton(taskName))
 }
 
-function getArchiveButton(taskName) {
+function createArchiveButton(taskName) {
     let buttonArchive = document.createElement("button");
     buttonArchive.classList.add("archive")
     buttonArchive.innerHTML = "<i class=\"fas fa-archive\"></i>"
@@ -50,9 +57,10 @@ function getArchiveButton(taskName) {
     return buttonArchive;
 }
 
-function getCompleteButton(isComplete, taskName) {
+function createCompleteButton(isComplete, taskName) {
     let buttonComplete = document.createElement("button");
-    buttonComplete.setAttribute("onclick", "changeTaskComplete(" + "\"" + taskName + "\"" + ")")
+    buttonComplete.setAttribute("onclick",
+        "changeTaskComplete(" + "\"" + taskName + "\"" + ")")
 
     if (isComplete === true) {
         buttonComplete.classList.add("complete")
@@ -65,20 +73,13 @@ function getCompleteButton(isComplete, taskName) {
     return buttonComplete;
 }
 
-function sendStopTimerAlert() {
-    confirm("Are you sure to stop session?")
+function changeTaskComplete(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskComplete/",
+        taskName).then(res => getTasks());
 }
 
-function changeTaskComplete(taskName) {
-    const api = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/plain"
-        }
-    });
-
-    api.put("http://localhost:8080/task/changeTaskComplete/",
+function changeTaskArchive(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
         taskName).then(res => getTasks());
 }
 
@@ -90,16 +91,4 @@ function archiveAlert(taskName) {
     }
 }
 
-function changeTaskArchive(taskName) {
-    const api = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/plain"
-        }
-    });
-
-    api.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasks());
-}
 
