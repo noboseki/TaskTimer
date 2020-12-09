@@ -55,21 +55,21 @@ public class TaskService extends MainService {
         return new ApiResponse(true, taskName + "archive changed to" + task.getComplete());
     }
 
-    public ApiResponse delete(User user, String taskName){
-        Task task = checkTaskPresenceInDbForUser(user,taskName);
-        return new ApiResponse(checkTaskDelete(task),taskName + "has been deleted");
+    public ApiResponse delete(User user, String taskName) {
+        Task task = checkTaskPresenceInDbForUser(user, taskName);
+        return new ApiResponse(checkTaskDelete(task), taskName + "has been deleted");
     }
 
     private boolean checkTaskDelete(Task task) {
         try {
             taskDao.delete(task);
-            if (taskDao.findById(task.getId()).isPresent()){
-                throw new DeleteException("Task",task.getId());
+            if (taskDao.findById(task.getId()).isPresent()) {
+                throw new DeleteException("Task", task.getId());
             } else {
                 return true;
             }
         } catch (DeleteException e) {
-            throw new DeleteException("Task",task.getId());
+            throw new DeleteException("Task", task.getId());
         }
     }
 }

@@ -30,6 +30,16 @@ function getTasks() {
     })
 }
 
+function changeTaskComplete(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskComplete/",
+        taskName).then(res => getTasks());
+}
+
+function changeTaskArchive(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
+        taskName).then(res => getTasks());
+}
+
 function addRow(taskName, time, sessions, complete) {
     let newRow = tBodyRef.insertRow(-1);
 
@@ -46,33 +56,6 @@ function addRow(taskName, time, sessions, complete) {
     timeCell.appendChild(timeText);
     sessionCell.appendChild(sessionText);
     completeCell.appendChild(createCompleteButton(complete, taskName))
-    // buttonCell.appendChild(createArchiveButton(taskName))
-}
-
-function createArchiveButton(taskName) {
-    let buttonArchive = document.createElement("button");
-    buttonArchive.classList.add("archive")
-    buttonArchive.innerHTML = "<i class=\"fas fa-archive\"></i>"
-    buttonArchive.setAttribute("onclick", "archiveAlert(" + "\"" + taskName + "\"" + ")")
-    return buttonArchive;
-}
-
-function changeTaskComplete(taskName) {
-    apiPut.put("http://localhost:8080/task/changeTaskComplete/",
-        taskName).then(res => getTasks());
-}
-
-function changeTaskArchive(taskName) {
-    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasks());
-}
-
-function archiveAlert(taskName) {
-    let tmp = confirm("Are you sure to archive task?");
-    if (tmp === true) {
-        changeTaskArchive(taskName);
-    } else {
-    }
 }
 
 function createCompleteButton(isComplete, taskName) {
@@ -87,6 +70,5 @@ function createCompleteButton(isComplete, taskName) {
         buttonComplete.classList.add("incomplete")
         buttonComplete.innerHTML = "<i class=\"fas fa-times-circle\"></i>"
     }
-
     return buttonComplete;
 }

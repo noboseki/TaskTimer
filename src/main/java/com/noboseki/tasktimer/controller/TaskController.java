@@ -43,6 +43,6 @@ public class TaskController {
     @DeleteMapping("/{taskName}")
     public ResponseEntity<ApiResponse> delete(@AuthenticationPrincipal User user,
                                               @PathVariable String taskName) {
-        return ResponseEntity.ok(service.delete(user,taskName));
+        return ResponseEntity.ok(service.delete(user, taskName));
     }
 }

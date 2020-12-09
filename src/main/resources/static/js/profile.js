@@ -12,15 +12,8 @@ let tBody = document.getElementById('tBody');
 const apiGet = axios.create({
     withCredentials: true
 });
-const apiPut = axios.create({
-    withCredentials: true,
-    headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "text/plain"
-    }
-});
 
-editFrom();
+loadProfileData();
 getIconList();
 getUser();
 getTasksProfile();
@@ -73,7 +66,32 @@ function updateProfile() {
     });
 }
 
-function editFrom() {
+function changeTaskArchive(taskName) {
+    const apiPut = axios.create({
+        withCredentials: true,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "text/plain"
+        }
+    });
+
+    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
+        taskName).then(res => getTasksProfile());
+}
+
+function deleteTask(taskName) {
+    const apiDelete = axios.create({
+        withCredentials: true,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+        }
+    });
+    apiDelete.delete("http://localhost:8080/task/" + taskName)
+        .then(res => getTasksProfile())
+}
+
+
+function loadProfileData() {
     if (checkboxEdit.checked === true) {
         for (let item of formInput) {
             iconButton.classList.remove('disableButtonHover')
@@ -93,10 +111,6 @@ function editFrom() {
             buttonSaveChanges.style.display = 'none'
         }
     }
-}
-
-function displayIconList() {
-    changeIconWindow.classList.remove('isHidden');
 }
 
 function setNewIcon() {
@@ -123,20 +137,21 @@ function addRowProfile(taskName) {
     deleteCell.appendChild(createDeleteButton(taskName))
 }
 
-function changeTaskArchive(taskName) {
-    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasksProfile());
+
+function createArchiveButton(taskName) {
+    let buttonArchive = document.createElement("button");
+    buttonArchive.classList.add("archive")
+    buttonArchive.innerHTML = "<i class=\"fas fa-archive\"></i>"
+    buttonArchive.setAttribute("onclick", "archiveAlert(" + "\"" + taskName + "\"" + ")")
+    return buttonArchive;
 }
 
-function deleteTask(taskName) {
-    const apiDelete = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-        }
-    });
-    apiDelete.delete("http://localhost:8080/task/"+ taskName)
-        .then(res => getTasksProfile())
+function createDeleteButton(taskName) {
+    let buttonArchive = document.createElement("button");
+    buttonArchive.classList.add("delete")
+    buttonArchive.innerHTML = "<i class=\"fas fa-trash\"></i>"
+    buttonArchive.setAttribute("onclick", "deleteAlert(" + "\"" + taskName + "\"" + ")")
+    return buttonArchive;
 }
 
 function archiveAlert(taskName) {
@@ -155,18 +170,6 @@ function deleteAlert(taskName) {
     }
 }
 
-function createArchiveButton(taskName) {
-    let buttonArchive = document.createElement("button");
-    buttonArchive.classList.add("archive")
-    buttonArchive.innerHTML = "<i class=\"fas fa-archive\"></i>"
-    buttonArchive.setAttribute("onclick", "archiveAlert(" + "\"" + taskName + "\"" + ")")
-    return buttonArchive;
-}
-
-function createDeleteButton(taskName) {
-    let buttonArchive = document.createElement("button");
-    buttonArchive.classList.add("delete")
-    buttonArchive.innerHTML = "<i class=\"fas fa-trash\"></i>"
-    buttonArchive.setAttribute("onclick", "deleteAlert(" + "\"" + taskName + "\"" + ")")
-    return buttonArchive;
+function displayIconList() {
+    changeIconWindow.classList.remove('isHidden');
 }
