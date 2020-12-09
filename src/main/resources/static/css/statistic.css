@@ -14,7 +14,7 @@
 
 .date label {
     color: rgb(108,88,175);
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-weight: bold;
 }
 
@@ -24,7 +24,7 @@ input {
 
 #buttonFilter {
     padding: 0 20px;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     border-style: solid;
     border-color: #6c58af;
     text-transform: uppercase;
@@ -57,7 +57,7 @@ canvas {
 
     input {
         width: 85px;
-        margin-right: 0px;
+        margin-right: 0;
         height: 12px;
     }
 
