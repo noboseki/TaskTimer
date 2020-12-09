@@ -25,36 +25,37 @@ function getTasks() {
                 opt.value = f.taskName;
                 taskSelectContainer.appendChild(opt);
             }
-            addRow(f.taskName, f.time, f.complete)
+            addRow(f.taskName, f.time, f.sessionsNumber, f.complete)
         })
     })
 }
 
-function addRow(taskName, time, complete) {
+function changeTaskComplete(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskComplete/",
+        taskName).then(res => getTasks());
+}
+
+function changeTaskArchive(taskName) {
+    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
+        taskName).then(res => getTasks());
+}
+
+function addRow(taskName, time, sessions, complete) {
     let newRow = tBodyRef.insertRow(-1);
 
     let taskNameCell = newRow.insertCell(0);
     let timeCell = newRow.insertCell(1);
-    let completeCell = newRow.insertCell(2);
-    let buttonCell = newRow.insertCell(3);
+    let sessionCell = newRow.insertCell(2);
+    let completeCell = newRow.insertCell(3);
 
     let taskNameText = document.createTextNode(taskName);
     let timeText = document.createTextNode(time);
-    let completeText = document.createTextNode(complete);
+    let sessionText = document.createTextNode(sessions);
 
     taskNameCell.appendChild(taskNameText);
     timeCell.appendChild(timeText);
-    completeCell.appendChild(completeText);
-    buttonCell.appendChild(createCompleteButton(complete, taskName))
-    buttonCell.appendChild(createArchiveButton(taskName))
-}
-
-function createArchiveButton(taskName) {
-    let buttonArchive = document.createElement("button");
-    buttonArchive.classList.add("archive")
-    buttonArchive.innerHTML = "<i class=\"fas fa-archive\"></i>"
-    buttonArchive.setAttribute("onclick", "archiveAlert(" + "\"" + taskName + "\"" + ")")
-    return buttonArchive;
+    sessionCell.appendChild(sessionText);
+    completeCell.appendChild(createCompleteButton(complete, taskName))
 }
 
 function createCompleteButton(isComplete, taskName) {
@@ -69,26 +70,5 @@ function createCompleteButton(isComplete, taskName) {
         buttonComplete.classList.add("incomplete")
         buttonComplete.innerHTML = "<i class=\"fas fa-times-circle\"></i>"
     }
-
     return buttonComplete;
 }
-
-function changeTaskComplete(taskName) {
-    apiPut.put("http://localhost:8080/task/changeTaskComplete/",
-        taskName).then(res => getTasks());
-}
-
-function changeTaskArchive(taskName) {
-    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasks());
-}
-
-function archiveAlert(taskName) {
-    let tmp = confirm("Are you sure to archive task?");
-    if (tmp === true) {
-        changeTaskArchive(taskName);
-    } else {
-    }
-}
-
-

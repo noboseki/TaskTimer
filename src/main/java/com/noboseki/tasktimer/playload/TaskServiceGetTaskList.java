@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserServiceGetTaskList {
+public class TaskServiceGetTaskList {
 
     private String taskName;
     private String time;
-    private boolean isComplete;
+    private int sessionsNumber;
+    private boolean complete;
 }

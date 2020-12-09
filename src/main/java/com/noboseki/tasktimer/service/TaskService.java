@@ -2,8 +2,9 @@ package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.playload.UserServiceGetTaskList;
+import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.ProfileImgDao;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
@@ -28,7 +29,7 @@ public class TaskService extends MainService {
         this.taskServiceUtil = serviceUtil;
     }
 
-    public List<UserServiceGetTaskList> getTasks(User user) {
+    public List<TaskServiceGetTaskList> getTasks(User user) {
         checkUserPresenceInDb(user.getEmail());
         return taskDao.findAllByUser(user).stream()
                 .filter(task -> task.getArchived() == false)
@@ -52,5 +53,23 @@ public class TaskService extends MainService {
         task = taskDao.save(task);
 
         return new ApiResponse(true, taskName + "archive changed to" + task.getComplete());
+    }
+
+    public ApiResponse delete(User user, String taskName) {
+        Task task = checkTaskPresenceInDbForUser(user, taskName);
+        return new ApiResponse(checkTaskDelete(task), taskName + "has been deleted");
+    }
+
+    private boolean checkTaskDelete(Task task) {
+        try {
+            taskDao.delete(task);
+            if (taskDao.findById(task.getId()).isPresent()) {
+                throw new DeleteException("Task", task.getId());
+            } else {
+                return true;
+            }
+        } catch (DeleteException e) {
+            throw new DeleteException("Task", task.getId());
+        }
     }
 }

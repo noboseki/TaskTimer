@@ -7,14 +7,6 @@
     display:none;
 }
 
-disableButtonHover {
-    pointer-events: none;
-}
-
-disableButtonHover:hover {
-    border-color: #6c58af;
-}
-
 .icon {
     text-align:center;
     padding:15px 0;
@@ -66,7 +58,7 @@ form label {
     font-weight:700;
     width: 100px;
     color:#6c58af;
-    padding:15px 0px;
+    padding:15px 0;
 }
 
 .formInput {
@@ -95,4 +87,30 @@ form label {
     top:410px;
     transform:translateX(-50%);
     padding:0 10px;
+}
+
+#tBody button {
+    padding: 0 5px;
+    border-radius: 25%;
+}
+
+.complete {
+    color: #299629;
+    border-color: #299629;
+
+}
+
+.complete:hover {
+    color: #00e300;
+    border-color: #00e300;
+}
+
+.incomplete {
+    color: #b00000;
+    border-color: #b00000;
+}
+
+.incomplete:hover {
+    color: #ff1c1c;
+    border-color: #ff3636;
 }
