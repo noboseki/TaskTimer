@@ -5,7 +5,7 @@
 
 body {
     color: #6c58af;
-    font-family: Raleway, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .alert {
@@ -89,7 +89,7 @@ body {
     height: 30px;
     line-height: 30px;
     text-align: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 16px;
     font-weight: bold;
     color: white;

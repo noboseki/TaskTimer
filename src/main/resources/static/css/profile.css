@@ -54,7 +54,7 @@
 
 form label {
     display:inline-block;
-    font-family:Raleway, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-weight:700;
     width: 100px;
     color:#6c58af;
@@ -64,7 +64,7 @@ form label {
 .formInput {
     width:120px;
     color:#6c58af;
-    font-family:Raleway, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size:16px;
     font-weight: 700;
     height:18px;

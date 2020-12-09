@@ -32,7 +32,6 @@ function getTasksProfile() {
     apiGet.get('http://localhost:8080/task/getTasks/').then(res => {
         tBody.innerHTML = "";
         res.data.forEach(f => {
-            console.log(f.taskName)
             addRowProfile(f.taskName)
         })
     })
