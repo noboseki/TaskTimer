@@ -78,7 +78,6 @@ public class TaskService extends MainService {
             } else {
                 throw new SaveException("Task", task);
             }
-
         } catch (SaveException e) {
             throw new SaveException("Task", task);
         }
