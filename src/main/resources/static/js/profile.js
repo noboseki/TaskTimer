@@ -1,3 +1,4 @@
+
 let checkboxEdit = document.getElementById('checkboxEdit');
 let formInput = document.getElementsByClassName('formInput');
 let buttonSaveChanges = document.getElementById('buttonSaveChanges');
@@ -12,8 +13,15 @@ let tBody = document.getElementById('tBody');
 const apiGet = axios.create({
     withCredentials: true
 });
+const apiTextPlain = axios.create({
+    withCredentials: true,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain"
+    }
+});
 
-loadProfileData();
+editFrom();
 getIconList();
 getUser();
 getTasksProfile();
@@ -66,15 +74,12 @@ function updateProfile() {
 }
 
 function changeTaskArchive(taskName) {
-    const apiPut = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/plain"
-        }
-    });
+    apiTextPlain.put("http://localhost:8080/task/changeTaskArchive/",
+        taskName).then(res => getTasksProfile());
+}
 
-    apiPut.put("http://localhost:8080/task/changeTaskArchive/",
+function postTask(taskName) {
+    apiTextPlain.post("http://localhost:8080/task/",
         taskName).then(res => getTasksProfile());
 }
 
@@ -89,8 +94,12 @@ function deleteTask(taskName) {
         .then(res => getTasksProfile())
 }
 
+function createTask() {
+  postTask(document.getElementById('createTask').value);
+  document.getElementById('createTask').value = "";
+  }
 
-function loadProfileData() {
+function editFrom() {
     if (checkboxEdit.checked === true) {
         for (let item of formInput) {
             iconButton.classList.remove('disableButtonHover')

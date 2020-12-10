@@ -111,7 +111,7 @@ function createSession() {
 		date: getTodayDate(),
 		time:  timerValue.textContent,
 		taskName: taskSelectContainer.value,
-	});
+	}).then(res => getTasks());
 }
 
 function getTodayDate(){

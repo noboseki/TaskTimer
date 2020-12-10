@@ -48,11 +48,11 @@
 
 #profileForm {
     width:300px;
-    padding-bottom:15px;
+    padding-bottom:30px;
     margin:0 auto;
 }
 
-form label {
+label {
     display:inline-block;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight:700;
@@ -89,6 +89,45 @@ form label {
     padding:0 10px;
 }
 
+.createTaskContainer {
+    padding-top: 15px;
+    text-align: center;
+}
+
+#createTask {
+    font-family: 'Raleway', sans-serif;
+    outline: none;
+    border-width: 0 0 1px;
+    border-color: #6c58af;
+    color: #6c58af;
+    font-size: 24px;
+    transition: border-color .3s;
+}
+
+#createTask:focus {
+    border-color: #ff8766;
+}
+
+#buttonCreateTask {
+    padding: 0 10px;
+    margin-left: 10px;
+}
+
+#createTask {
+    width:220px;
+    color:#6c58af;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size:16px;
+    font-weight: 700;
+    height:18px;
+}
+
+@media (max-width: 576px) {
+    #createTask {
+        width:125px;
+    }
+}
+
 #tBody button {
     padding: 0 5px;
     border-radius: 25%;
@@ -97,7 +136,6 @@ form label {
 .complete {
     color: #299629;
     border-color: #299629;
-
 }
 
 .complete:hover {
