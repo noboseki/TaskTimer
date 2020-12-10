@@ -24,7 +24,7 @@ public class TaskController {
     @UserPermission
     @PostMapping("")
     public ResponseEntity<ApiResponse> create(@AuthenticationPrincipal User user,
-                                              @RequestBody String taskName) {
+                                              @RequestBody @Min(5) @Max(25) String taskName) {
         return ResponseEntity.ok(service.create(user, taskName));
     }
 
@@ -37,7 +37,7 @@ public class TaskController {
     @UserPermission
     @PutMapping("changeTaskComplete")
     public ResponseEntity<ApiResponse> changeTaskComplete(@AuthenticationPrincipal User user,
-                                                          @RequestBody @Min(5) @Max(25) String taskName) {
+                                                          @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeTaskComplete(user, taskName));
     }
 
