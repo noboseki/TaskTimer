@@ -47,11 +47,20 @@
             <button id="buttonSaveChanges" class="formElement" onclick="updateProfile()">Save change</button>
         </div>
     </form>
+    <div class="createTaskContainer">
+        <label for="createTask">Task name :</label>
+        <input type="text" id="createTask" autofocus
+               autocomplete="off">
+        <button id="buttonCreateTask" onclick="createTask()">Create</button>
+    </div>
     <div>
         <table>
             <thead>
             <tr>
-                <th>TaskName</th>
+                <th class="tableTitle" colspan="3">Task</th>
+            </tr>
+            <tr>
+                <th>Name</th>
                 <th>Archive</th>
                 <th>Delete</th>
             </tr>
@@ -63,5 +72,6 @@
 </main>
 <div th:replace="basicHtml/footer :: footer"></div>
 <script src="js/profile.js"></script>
+<script src="js/timer.js"></script>
 </body>
 </html>

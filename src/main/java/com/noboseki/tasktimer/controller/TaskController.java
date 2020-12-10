@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -20,6 +22,13 @@ public class TaskController {
     private final TaskService service;
 
     @UserPermission
+    @PostMapping("")
+    public ResponseEntity<ApiResponse> create(@AuthenticationPrincipal User user,
+                                              @RequestBody String taskName) {
+        return ResponseEntity.ok(service.create(user, taskName));
+    }
+
+    @UserPermission
     @GetMapping("getTasks")
     public ResponseEntity<List<TaskServiceGetTaskList>> getTasks(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(service.getTasks(user));
@@ -28,7 +37,7 @@ public class TaskController {
     @UserPermission
     @PutMapping("changeTaskComplete")
     public ResponseEntity<ApiResponse> changeTaskComplete(@AuthenticationPrincipal User user,
-                                                          @RequestBody String taskName) {
+                                                          @RequestBody @Min(5) @Max(25) String taskName) {
         return ResponseEntity.ok(service.changeTaskComplete(user, taskName));
     }
 

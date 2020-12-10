@@ -14,8 +14,8 @@ thead {
 
 th {
     border: none;
-    height: 30px;
     width: 80px;
+    height: 30px;
 }
 
 tbody {
@@ -32,6 +32,10 @@ tbody tr:nth-child(2n) {
     background-color: #f6f6f6;
 }
 
+.tableTitle {
+    font-size: 20px;
+}
+
 @media (min-width: 576px) {
     thead {
         font-size: 20px;
@@ -39,10 +43,13 @@ tbody tr:nth-child(2n) {
 
     th {
         width: 140px;
-        height: 40px;
     }
 
     tbody {
         font-size: 16px;
+    }
+
+    .tableTitle {
+        font-size: 24px;
     }
 }

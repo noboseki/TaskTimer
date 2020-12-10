@@ -53,10 +53,6 @@ body {
     display: none;
 }
 
-.tableTitle {
-    font-size: 20px;
-}
-
 #tBody button {
     padding: 0 5px;
     border-radius: 25%;
@@ -101,10 +97,4 @@ body {
 
 .archive {
     margin-left: 5px;
-}
-
-@media (min-width: 576px) {
-    .tableTitle {
-        font-size: 24px;
-    }
 }
