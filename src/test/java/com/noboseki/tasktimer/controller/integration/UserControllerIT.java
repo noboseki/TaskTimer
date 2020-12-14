@@ -1,6 +1,6 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.noboseki.tasktimer.playload.UserCreateRequest;
+import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,17 +35,16 @@ public class UserControllerIT extends ControllerIntegrationTest {
     @Nested
     @DisplayName("Create")
     class UserControllerITCreate {
-        private UserCreateRequest request;
+        private UserServiceCreateRequest request;
 
         @Test
         @DisplayName("Correct")
         void createCorrect() throws Exception {
             //Given
-            request = UserCreateRequest.builder()
+            request = UserServiceCreateRequest.builder()
                     .email("test@test.com")
                     .userName("test name")
-                    .password("TestPassword")
-                    .imageUrl("test.url.com").build();
+                    .password("TestPassword").build();
 
             String jsonRequest = gson.toJson(request);
 
@@ -63,7 +62,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
         @DisplayName("Valid request")
         void createValidRequest() throws Exception {
             //Given
-            request = UserCreateRequest.builder()
+            request = UserServiceCreateRequest.builder()
                     .email("test@test.com")
                     .password("TestPassword").build();
             String jsonRequest = gson.toJson(request);

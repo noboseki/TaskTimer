@@ -1,4 +1,3 @@
-
 let checkboxEdit = document.getElementById('checkboxEdit');
 let formInput = document.getElementsByClassName('formInput');
 let buttonSaveChanges = document.getElementById('buttonSaveChanges');

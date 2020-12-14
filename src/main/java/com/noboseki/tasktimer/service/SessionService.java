@@ -6,10 +6,7 @@ import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DateTimeException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.*;
-import com.noboseki.tasktimer.repository.ProfileImgDao;
-import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.repository.*;
 import com.noboseki.tasktimer.service.util.SessionServiceGetBarChainByDateUtil;
 import com.noboseki.tasktimer.service.util.SessionServiceGetTableByDateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +27,11 @@ public class SessionService extends MainService {
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
 
-    public SessionService(TaskDao taskDao, UserDao userDao,
-                          SessionDao sessionDao, ProfileImgDao profileImgDao,
+    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
+                          ProfileImgDao profileImgDao, AuthorityDao authorityDao,
                           SessionServiceGetTableByDateUtil getTableByDateUtil,
                           SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
-        super(taskDao, userDao, sessionDao, profileImgDao);
+        super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
         this.getTableByDateUtil = getTableByDateUtil;
         this.getBarChainByDateUtil = getBarChainByDateUtil;
     }
