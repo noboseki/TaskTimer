@@ -10,22 +10,23 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateRequest {
+public class UserServiceCreateRequest {
 
     @NotNull
     @Email
     private String email;
 
     @NotNull
-    @Min(10)
+    @Min(6)
+    @Max(30)
     private String password;
 
     @NotNull
-    @Max(14) @Min(6)
+    @Min(6)
+    @Max(14)
     private String userName;
 
-    @NotNull
-    private String imageUrl;
 }

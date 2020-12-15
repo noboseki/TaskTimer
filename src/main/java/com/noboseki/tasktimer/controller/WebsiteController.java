@@ -11,15 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class WebsiteController {
 
-    @UserPermission
-    @GetMapping("")
-    public String mainPage() {
-        return "main";
+    @GetMapping("create")
+    public String createPage() {
+        return "create";
     }
 
     @GetMapping("login")
     public String loginPage() {
         return "login";
+    }
+
+    @UserPermission
+    @GetMapping("")
+    public String mainPage() {
+        return "main";
     }
 
     @UserPermission

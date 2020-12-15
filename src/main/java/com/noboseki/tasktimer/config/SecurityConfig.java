@@ -4,6 +4,7 @@ import com.noboseki.tasktimer.security.RestHeaderAuthFilter;
 import com.noboseki.tasktimer.security.SFGPasswordEncoderFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,12 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 UsernamePasswordAuthenticationFilter.class)
                 .csrf().ignoringAntMatchers("/h2-console/**", "/api/**", "/**");
 
+
         http
                 .authorizeRequests(authorize -> {
                     authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**", "/js/**", "/css/**", "/favicon.*", "/img/**" +
                             "").permitAll();
                     authorize.antMatchers("/h2-console/**").permitAll();
-                    authorize.antMatchers("/user/create/").permitAll();
+                    authorize.antMatchers("/create/**", "create", "/create", "/user/create").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()

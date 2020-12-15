@@ -4,10 +4,7 @@ import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.repository.ProfileImgDao;
-import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
@@ -20,6 +17,7 @@ public class MainService {
     protected final UserDao userDao;
     protected final SessionDao sessionDao;
     protected final ProfileImgDao profileImgDao;
+    protected final AuthorityDao authorityDao;
 
     protected User checkUserPresenceInDb(String email) {
         return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, "email", email));

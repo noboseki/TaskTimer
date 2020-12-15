@@ -1,4 +1,3 @@
-
 let checkboxEdit = document.getElementById('checkboxEdit');
 let formInput = document.getElementsByClassName('formInput');
 let buttonSaveChanges = document.getElementById('buttonSaveChanges');
@@ -95,9 +94,9 @@ function deleteTask(taskName) {
 }
 
 function createTask() {
-  postTask(document.getElementById('createTask').value);
-  document.getElementById('createTask').value = "";
-  }
+    postTask(document.getElementById('createTask').value);
+    document.getElementById('createTask').value = "";
+}
 
 function editFrom() {
     if (checkboxEdit.checked === true) {

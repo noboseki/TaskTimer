@@ -6,10 +6,7 @@ import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
-import com.noboseki.tasktimer.repository.ProfileImgDao;
-import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.repository.*;
 import com.noboseki.tasktimer.service.util.TaskServiceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,14 +21,14 @@ public class TaskService extends MainService {
 
     private final TaskServiceUtil taskServiceUtil;
 
-    public TaskService(TaskDao taskDao, UserDao userDao,
-                       SessionDao sessionDao, ProfileImgDao profileImgDao,
-                       TaskServiceUtil serviceUtil) {
-        super(taskDao, userDao, sessionDao, profileImgDao);
-        this.taskServiceUtil = serviceUtil;
+    public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
+                       ProfileImgDao profileImgDao, AuthorityDao authorityDao,
+                       TaskServiceUtil taskServiceUtil) {
+        super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
+        this.taskServiceUtil = taskServiceUtil;
     }
 
-    public ApiResponse create(User user,@Valid String taskName) {
+    public ApiResponse create(User user, @Valid String taskName) {
         User dbUser = checkUserPresenceInDb(user.getEmail());
         Task task = Task.builder()
                 .name(taskName)
