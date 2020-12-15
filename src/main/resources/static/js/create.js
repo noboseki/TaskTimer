@@ -56,7 +56,7 @@ function checkFields() {
         }
     }
 
-    if(checkLength(9, 31, createInpPassword, "pPasswordLength")) {
+    if(checkLength(7, 31, createInpPassword, "pPasswordLength")) {
         if (checkValid(createInpPassword, "pPasswordValid")) {
             createInpPassword.style.backgroundColor = 'rgba(74, 209, 74, 0.7)';
             passwordCorrect= true;
@@ -130,14 +130,12 @@ function alert(input, pId) {
     document.getElementById(pId).style.display = 'block';
 }
 
-function usernameIsValid(input ,username) {
+function usernameIsValid(input) {
     let usernameRegex = /^[a-zA-Z0-9]+$/;
     let validUsername = input.value.match(usernameRegex);
-    if(validUsername == null){
-        return false;
-    }
+    return validUsername != null;
 
-   return true;
+
 }
 
 function createPForInfoTable(idName, text) {
@@ -148,6 +146,3 @@ function createPForInfoTable(idName, text) {
 
     return p;
 }
-
-
-

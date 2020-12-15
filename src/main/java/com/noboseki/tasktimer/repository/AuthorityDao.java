@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AuthorityDao extends JpaRepository<Authority , UUID> {
+public interface AuthorityDao extends JpaRepository<Authority, UUID> {
 
     Optional<Authority> findByRole(String role);
 }

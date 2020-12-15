@@ -94,9 +94,9 @@ function deleteTask(taskName) {
 }
 
 function createTask() {
-  postTask(document.getElementById('createTask').value);
-  document.getElementById('createTask').value = "";
-  }
+    postTask(document.getElementById('createTask').value);
+    document.getElementById('createTask').value = "";
+}
 
 function editFrom() {
     if (checkboxEdit.checked === true) {

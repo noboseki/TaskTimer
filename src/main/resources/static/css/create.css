@@ -11,7 +11,7 @@
     width: 320px;
 }
 
-#formContainer div{
+#formContainer div {
     text-align: left;
 }
 
@@ -32,14 +32,14 @@ input:focus {
 }
 
 label {
-    display:inline-block;
+    display: inline-block;
     font-family: 'Source Sans Pro', sans-serif;
     text-align: left;
-    font-weight:700;
+    font-weight: 700;
     font-size: 14px;
     width: 130px;
-    color:#6c58af;
-    padding:15px 0;
+    color: #6c58af;
+    padding: 15px 0;
 }
 
 form {
@@ -47,7 +47,7 @@ form {
 }
 
 button {
-    font-size:12px;
+    font-size: 12px;
     padding: 0 25px;
     margin-top: 20px;
 }

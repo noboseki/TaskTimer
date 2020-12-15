@@ -22,8 +22,6 @@ public class UserController {
 
     @PostMapping("create")
     public ResponseEntity<ApiResponse> create(@RequestBody UserServiceCreateRequest request) {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        System.out.println(request);
         return ResponseEntity.ok(service.create(request));
     }
 
@@ -38,30 +36,4 @@ public class UserController {
     public ResponseEntity<ApiResponse> updateProfile(@AuthenticationPrincipal User user, @RequestBody UserServiceUpdateRequest request) {
         return ResponseEntity.ok(service.updateProfile(user, request));
     }
-
-//    @AdminPermission
-//    @GetMapping("get/{email}")
-//    public ResponseEntity<?> getByEmail(@PathVariable String email) {
-//        return service.getByEmail(email);
-//    }
-//
-//    @UserPermission
-//    @PutMapping("update/name/{name}")
-//    public ResponseEntity<?> updateName(@PathVariable String name,
-//                                        @AuthenticationPrincipal User user) {
-//        return service.updateName(name, user);
-//    }
-//
-//    @UserPermission
-//    @PutMapping("update/imageUrl/{imageUrl}")
-//    public ResponseEntity<?> updateImageUrl(@PathVariable String imageUrl,
-//                                        @AuthenticationPrincipal User user) {
-//        return service.updateImageUrl(imageUrl, user);
-//    }
-//
-//    @AdminPermission
-//    @DeleteMapping("delete/{email}")
-//    public ResponseEntity<?> delete(@PathVariable String email) {
-//        return service.delete(email);
-//    }
 }

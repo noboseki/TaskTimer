@@ -32,7 +32,7 @@ public class UserService extends MainService {
     }
 
     public ApiResponse create(@Valid UserServiceCreateRequest request) {
-        if (userDao.findByEmail(request.getEmail()).isPresent()){
+        if (userDao.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException();
         }
         Authority userAuthority = authorityDao.findByRole("ROLE_USER").orElseThrow(() -> new ResourceNotFoundException("Authority", "name", "role"));

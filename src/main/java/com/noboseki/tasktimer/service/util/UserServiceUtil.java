@@ -31,5 +31,4 @@ public class UserServiceUtil {
                 .authority(authority)
                 .profileImg(profileImg).build();
     }
-
 }

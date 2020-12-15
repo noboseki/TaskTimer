@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WebsiteController {
 
     @GetMapping("create")
-    public String createPage(){
+    public String createPage() {
         return "create";
+    }
+
+    @GetMapping("login")
+    public String loginPage() {
+        return "login";
     }
 
     @UserPermission
     @GetMapping("")
     public String mainPage() {
         return "main";
-    }
-
-    @GetMapping("login")
-    public String loginPage() {
-        return "login";
     }
 
     @UserPermission

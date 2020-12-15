@@ -20,11 +20,13 @@ public class UserServiceCreateRequest {
     private String email;
 
     @NotNull
-    @Min(10) @Max(30)
+    @Min(6)
+    @Max(30)
     private String password;
 
     @NotNull
-    @Max(14) @Min(6)
+    @Min(6)
+    @Max(14)
     private String userName;
 
 }
