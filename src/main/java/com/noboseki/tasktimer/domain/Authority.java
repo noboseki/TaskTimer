@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
 @Builder
 @Entity
 @Table(name = "authority")
