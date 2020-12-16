@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -36,7 +37,7 @@ public class SessionService extends MainService {
         this.getBarChainByDateUtil = getBarChainByDateUtil;
     }
 
-    public ApiResponse create(User user, SessionServiceCreateRequest request) {
+    public ApiResponse create(User user, @Valid SessionServiceCreateRequest request) {
         Task task = getTaskByUserAndName(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());

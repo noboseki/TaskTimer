@@ -19,8 +19,6 @@ import javax.validation.Valid;
 @Slf4j
 @Service
 public class UserService extends MainService {
-    private final String USER_HAS_BEEN = "User has been ";
-    private final String ADMIN_ROLE = "ROLE_ADMIN";
 
     private UserServiceUtil userServiceUtil;
 
