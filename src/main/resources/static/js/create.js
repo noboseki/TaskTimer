@@ -9,7 +9,7 @@ infoTable.appendChild(createPForInfoTable("pUsernameValid", "Valid username symb
 infoTable.appendChild(createPForInfoTable("pEmail", "Valid email"));
 infoTable.appendChild(createPForInfoTable("pPasswordValid", "Valid password symbol"));
 infoTable.appendChild(createPForInfoTable("pPasswordLength", "Password length between 10 and 30"));
-infoTable.appendChild(createPForInfoTable("pUserCreated", "User has been created"));
+infoTable.appendChild(createPForInfoTable("pUserCreated", "Active emile has been send"));
 
 document.getElementById('navLogout').style.display = 'none';
 

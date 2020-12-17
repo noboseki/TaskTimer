@@ -1,0 +1,21 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    color: #6c58af;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.messageContainer {
+    text-align: center;
+    padding-top: 200px;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+#navLogout {
+    display: none;
+}
+

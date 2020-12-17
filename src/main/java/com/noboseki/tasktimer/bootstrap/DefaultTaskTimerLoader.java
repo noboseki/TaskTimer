@@ -22,6 +22,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private final TaskDao taskDao;
     private final UserDao userDao;
     private final AuthorityDao authorityDao;
+    private final ConfirmationTokenDao confirmationTokenDao;
     private final PasswordEncoder passwordEncoder;
     private final ProfileImgDao profileImgDao;
 
@@ -84,20 +85,26 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
             Authority admin = authorityDao.findByRole("ROLE_ADMIN").orElseThrow(RuntimeException::new);
             ProfileImg profileImg = profileImgDao.findByName("SpiderMan").orElseThrow(RuntimeException::new);
 
-            userDao.save(User.builder()
+            User Uadmin = userDao.save(User.builder()
                     .username("admin")
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("spring"))
                     .profileImg(profileImg)
+                    .enabled(true)
                     .authority(user)
                     .authority(admin).build());
 
-            userDao.save(User.builder()
+            User Uuser = userDao.save(User.builder()
                     .username("user")
                     .email("user@test.com")
                     .password(passwordEncoder.encode("password"))
+                    .enabled(true)
                     .profileImg(profileImg)
                     .authority(user).build());
+
+            confirmationTokenDao.save(new ConfirmationToken(Uadmin));
+            confirmationTokenDao.save(new ConfirmationToken(Uuser));
+
         } else {
             throw new RuntimeException();
         }
