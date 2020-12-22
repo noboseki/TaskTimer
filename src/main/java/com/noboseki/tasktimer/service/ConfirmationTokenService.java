@@ -2,7 +2,6 @@ package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.ConfirmationToken;
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.repository.ConfirmationTokenDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import lombok.RequiredArgsConstructor;

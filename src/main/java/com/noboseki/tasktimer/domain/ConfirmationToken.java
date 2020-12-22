@@ -16,11 +16,13 @@ public class ConfirmationToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="token_id")
-    private UUID  id;
+    @Column(name = "token_id")
+    private UUID id;
 
+    @Column(nullable = false)
     private String confirmationToken;
 
+    @Column(nullable = false)
     private Timestamp timestamp;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)

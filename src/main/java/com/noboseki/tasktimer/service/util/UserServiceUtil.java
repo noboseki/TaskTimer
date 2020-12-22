@@ -39,7 +39,7 @@ public class UserServiceUtil {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(emile);
         mailMessage.setSubject("Complete Registration!");
-        mailMessage.setFrom("chand312902@gmail.com");
+        mailMessage.setFrom("");
         mailMessage.setText("To confirm your account, please click here : "
                 +"http://localhost:8080/confirm/confirm-account?token=" + token);
 
