@@ -5,7 +5,9 @@ import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
+import com.noboseki.tasktimer.service.EmailSenderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class UserServiceUtil {
 
     private final PasswordEncoder passwordEncoder;
+    private final EmailSenderService emailSenderService;
 
     public UserServiceGetResponse mapToResponse(User user) {
         return UserServiceGetResponse.builder()
@@ -30,5 +33,18 @@ public class UserServiceUtil {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .authority(authority)
                 .profileImg(profileImg).build();
+    }
+
+    public boolean activationEmileSender(String token, String emile) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(emile);
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom("");
+        mailMessage.setText("To confirm your account, please click here : "
+                +"http://localhost:8080/confirm/confirm-account?token=" + token);
+
+        emailSenderService.sendEmail(mailMessage);
+
+        return true;
     }
 }

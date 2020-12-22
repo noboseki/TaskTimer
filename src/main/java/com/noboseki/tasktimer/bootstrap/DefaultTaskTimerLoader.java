@@ -22,6 +22,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private final TaskDao taskDao;
     private final UserDao userDao;
     private final AuthorityDao authorityDao;
+    private final ConfirmationTokenDao confirmationTokenDao;
     private final PasswordEncoder passwordEncoder;
     private final ProfileImgDao profileImgDao;
 
@@ -89,6 +90,7 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("spring"))
                     .profileImg(profileImg)
+                    .enabled(true)
                     .authority(user)
                     .authority(admin).build());
 
@@ -96,8 +98,10 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
                     .username("user")
                     .email("user@test.com")
                     .password(passwordEncoder.encode("password"))
+                    .enabled(true)
                     .profileImg(profileImg)
                     .authority(user).build());
+
         } else {
             throw new RuntimeException();
         }

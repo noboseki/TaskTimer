@@ -89,7 +89,7 @@ public class User implements UserDetails, CredentialsContainer {
     private Boolean credentialsNonExpired = true;
 
     @Builder.Default
-    private Boolean enabled = true;
+    private Boolean enabled = false;
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,6 +1,7 @@
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.Authority;
+import com.noboseki.tasktimer.domain.ConfirmationToken;
 import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
@@ -21,12 +22,14 @@ import javax.validation.Valid;
 public class UserService extends MainService {
 
     private UserServiceUtil userServiceUtil;
+    private ConfirmationTokenDao confirmationTokenDao;
 
     public UserService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
                        ProfileImgDao profileImgDao, AuthorityDao authorityDao,
-                       UserServiceUtil userServiceUtil) {
+                       UserServiceUtil userServiceUtil, ConfirmationTokenDao confirmationTokenDao) {
         super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
         this.userServiceUtil = userServiceUtil;
+        this.confirmationTokenDao = confirmationTokenDao;
     }
 
     public ApiResponse create(@Valid UserServiceCreateRequest request) {
@@ -36,8 +39,10 @@ public class UserService extends MainService {
         Authority userAuthority = authorityDao.findByRole("ROLE_USER").orElseThrow(() -> new ResourceNotFoundException("Authority", "name", "role"));
         ProfileImg profileImg = profileImgDao.findByName("Yondu").orElseThrow(() -> new ResourceNotFoundException("Profile img", "name", "standard"));
         User user = userServiceUtil.mapToUser(request, userAuthority, profileImg);
-
-        return new ApiResponse(checkUserSave(user), "User has been created");
+        ApiResponse response = new ApiResponse(checkUserSave(user), "User has been created");
+        ConfirmationToken token = confirmationTokenDao.save(new ConfirmationToken(userDao.findByEmail(request.getEmail()).get()));
+        userServiceUtil.activationEmileSender(token.getConfirmationToken(), request.getEmail());
+        return response;
     }
 
     public UserServiceGetResponse get(User user) {
