@@ -11,7 +11,8 @@ import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
 import com.noboseki.tasktimer.repository.*;
-import com.noboseki.tasktimer.service.util.UserServiceUtil;
+import com.noboseki.tasktimer.service.util.UserService.UserServiceUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,54 +20,61 @@ import javax.validation.Valid;
 
 @Slf4j
 @Service
-public class UserService extends MainService {
+@RequiredArgsConstructor
+public class UserService {
 
-    private UserServiceUtil userServiceUtil;
-    private ConfirmationTokenDao confirmationTokenDao;
-
-    public UserService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
-                       ProfileImgDao profileImgDao, AuthorityDao authorityDao,
-                       UserServiceUtil userServiceUtil, ConfirmationTokenDao confirmationTokenDao) {
-        super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
-        this.userServiceUtil = userServiceUtil;
-        this.confirmationTokenDao = confirmationTokenDao;
-    }
+    private final UserDao userDao;
+    private final UserServiceUtil userServiceUtil;
+    private final AuthorityService authorityService;
+    private final ProfileImgService profileImgService;
+    private final ConfirmationTokenService tokenService;
 
     public ApiResponse create(@Valid UserServiceCreateRequest request) {
         if (userDao.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException();
         }
-        Authority userAuthority = authorityDao.findByRole("ROLE_USER").orElseThrow(() -> new ResourceNotFoundException("Authority", "name", "role"));
-        ProfileImg profileImg = profileImgDao.findByName("Yondu").orElseThrow(() -> new ResourceNotFoundException("Profile img", "name", "standard"));
+        Authority userAuthority = authorityService.findByRole("ROLE_USER");
+        ProfileImg profileImg = profileImgService.findByName("Yondu");
         User user = userServiceUtil.mapToUser(request, userAuthority, profileImg);
-        ApiResponse response = new ApiResponse(checkUserSave(user), "User has been created");
-        ConfirmationToken token = confirmationTokenDao.save(new ConfirmationToken(userDao.findByEmail(request.getEmail()).get()));
-        userServiceUtil.activationEmileSender(token.getConfirmationToken(), request.getEmail());
-        return response;
+        User dbUser = saveUser(user);
+
+        try {
+            ConfirmationToken token = tokenService.createTokenForUser(dbUser);
+            userServiceUtil.activationEmileSender(token.getConfirmationToken(), request.getEmail());
+            return new ApiResponse(true, "User has been created");
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     public UserServiceGetResponse get(User user) {
-        User dbUser = checkUserPresenceInDb(user.getEmail());
+        User dbUser = findByEmile(user.getEmail());
         return userServiceUtil.mapToResponse(dbUser);
     }
 
     public ApiResponse updateProfile(User user, @Valid UserServiceUpdateRequest request) {
-        User dbUser = checkUserPresenceInDb(user.getEmail());
-        ProfileImg profileImg = profileImgDao.findByName(request.getProfileImgName()).orElseThrow(() -> new ResourceNotFoundException("Profile Img", "profile img", profileImgDao));
+        User dbUser = findByEmile(user.getEmail());
+        ProfileImg profileImg = profileImgService.findByName(request.getProfileImgName());
 
         dbUser.setUsername(request.getUsername());
         dbUser.setEmail(request.getEmail());
         dbUser.setProfileImg(profileImg);
 
-        return new ApiResponse(checkUserSave(dbUser), "User profile has been updated");
+        saveUser(dbUser);
+
+        return new ApiResponse(true, "User profile has been updated");
     }
 
-    private boolean checkUserSave(User user) {
+    public User findByEmile(String email) {
+        return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+    }
+
+    public User saveUser(User user) {
         try {
-            userDao.save(user);
+            User dbUser = userDao.save(user);
             if (userDao.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
                 System.out.println("User has been created");
-                return true;
+                return dbUser;
             } else {
                 throw new SaveException("User", user);
             }

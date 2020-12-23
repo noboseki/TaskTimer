@@ -1,6 +1,7 @@
 package com.noboseki.tasktimer.service;
 
 import com.noboseki.tasktimer.domain.ProfileImg;
+import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.repository.ProfileImgDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,9 @@ public class ProfileImgService {
 
     public List<ProfileImg> getAllIcons() {
         return profileImgDao.findAll();
+    }
+
+    public ProfileImg findByName(String name) {
+        return profileImgDao.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Profile img", "name", "standard"));
     }
 }

@@ -3,11 +3,13 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
+import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
-import com.noboseki.tasktimer.repository.*;
-import com.noboseki.tasktimer.service.util.TaskServiceUtil;
+import com.noboseki.tasktimer.repository.TaskDao;
+import com.noboseki.tasktimer.service.util.TaskService.TaskServiceUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +19,16 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class TaskService extends MainService {
+@RequiredArgsConstructor
+public class TaskService {
 
     private final TaskServiceUtil taskServiceUtil;
+    private final UserService userService;
+    private final TaskDao taskDao;
 
-    public TaskService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
-                       ProfileImgDao profileImgDao, AuthorityDao authorityDao,
-                       TaskServiceUtil taskServiceUtil) {
-        super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
-        this.taskServiceUtil = taskServiceUtil;
-    }
 
     public ApiResponse create(User user, @Valid String taskName) {
-        User dbUser = checkUserPresenceInDb(user.getEmail());
+        User dbUser = userService.findByEmile(user.getEmail());
         Task task = Task.builder()
                 .name(taskName)
                 .user(dbUser).build();
@@ -37,7 +36,7 @@ public class TaskService extends MainService {
     }
 
     public List<TaskServiceGetTaskList> getTasks(User user) {
-        checkUserPresenceInDb(user.getEmail());
+        userService.findByEmile(user.getEmail());
         return taskDao.findAllByUser(user).stream()
                 .filter(task -> task.getArchived() == false)
                 .map(taskServiceUtil::mapToGetTaskResponse)
@@ -45,7 +44,7 @@ public class TaskService extends MainService {
     }
 
     public ApiResponse changeTaskComplete(User user, String taskName) {
-        checkUserPresenceInDb(user.getEmail());
+        userService.findByEmile(user.getEmail());
         Task task = checkTaskPresenceInDbForUser(user, taskName);
         task.setComplete(!task.getComplete());
         task = taskDao.save(task);
@@ -54,7 +53,7 @@ public class TaskService extends MainService {
     }
 
     public ApiResponse changeArchiveTask(User user, String taskName) {
-        checkUserPresenceInDb(user.getEmail());
+        userService.findByEmile(user.getEmail());
         Task task = checkTaskPresenceInDbForUser(user, taskName);
         task.setArchived(!task.getArchived());
         task = taskDao.save(task);
@@ -65,6 +64,15 @@ public class TaskService extends MainService {
     public ApiResponse delete(User user, String taskName) {
         Task task = checkTaskPresenceInDbForUser(user, taskName);
         return new ApiResponse(checkTaskDelete(task), taskName + "has been deleted");
+    }
+
+    public Task checkTaskPresenceInDbForUser(User user, String name) {
+        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
+    }
+
+    public Task getTaskByUserAndName(User user, String name) {
+        User dbUser = userService.findByEmile(user.getEmail());
+        return checkTaskPresenceInDbForUser(dbUser, name);
     }
 
     private boolean checkTaskSave(Task task) {
