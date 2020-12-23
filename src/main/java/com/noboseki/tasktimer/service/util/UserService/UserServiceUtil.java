@@ -1,4 +1,4 @@
-package com.noboseki.tasktimer.service.util;
+package com.noboseki.tasktimer.service.util.UserService;
 
 import com.noboseki.tasktimer.domain.Authority;
 import com.noboseki.tasktimer.domain.ProfileImg;

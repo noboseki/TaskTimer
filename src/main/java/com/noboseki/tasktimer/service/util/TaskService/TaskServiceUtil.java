@@ -1,8 +1,9 @@
-package com.noboseki.tasktimer.service.util;
+package com.noboseki.tasktimer.service.util.TaskService;
 
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
+import com.noboseki.tasktimer.service.util.ServiceUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 

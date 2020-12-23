@@ -9,6 +9,7 @@ import com.noboseki.tasktimer.playload.*;
 import com.noboseki.tasktimer.repository.*;
 import com.noboseki.tasktimer.service.util.SessionServiceGetBarChainByDateUtil;
 import com.noboseki.tasktimer.service.util.SessionServiceGetTableByDateUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,22 +24,18 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class SessionService extends MainService {
+@RequiredArgsConstructor
+public class SessionService {
     private final String SESSION_TIME_HAS_BEEN = "Session has been ";
+
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
-
-    public SessionService(TaskDao taskDao, UserDao userDao, SessionDao sessionDao,
-                          ProfileImgDao profileImgDao, AuthorityDao authorityDao,
-                          SessionServiceGetTableByDateUtil getTableByDateUtil,
-                          SessionServiceGetBarChainByDateUtil getBarChainByDateUtil) {
-        super(taskDao, userDao, sessionDao, profileImgDao, authorityDao);
-        this.getTableByDateUtil = getTableByDateUtil;
-        this.getBarChainByDateUtil = getBarChainByDateUtil;
-    }
+    private final TaskService taskService;
+    private final UserService userService;
+    private final SessionDao sessionDao;
 
     public ApiResponse create(User user, @Valid SessionServiceCreateRequest request) {
-        Task task = getTaskByUserAndName(user, request.getTaskName());
+        Task task = taskService.checkTaskPresenceInDbForUser(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());
 
@@ -51,7 +48,7 @@ public class SessionService extends MainService {
     }
 
     public List<SessionServiceTableByDateResponse> getTableByDate(User user, LocalDate fromDate, LocalDate toDate) {
-        checkUserPresenceInDb(user.getEmail());
+        userService.findByEmile(user.getEmail());
 
         List<Session> sessionsListBetweenDate = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
 
@@ -63,7 +60,7 @@ public class SessionService extends MainService {
     }
 
     public SessionServiceChainByDateResponse getBarChainByDate(User user, LocalDate fromDate, LocalDate toDate) {
-        checkUserPresenceInDb(user.getEmail());
+        userService.findByEmile(user.getEmail());
 
         List<Session> sessionsBetweenDateForUser = sessionDao.findAllByTask_UserAndDateBetween(user, Date.valueOf(fromDate), Date.valueOf(toDate));
 
@@ -76,7 +73,7 @@ public class SessionService extends MainService {
     }
 
     public ResponseEntity<List<GetByTaskSessionResponse>> getAllByTask(User user, String taskName) {
-        Task task = getTaskByUserAndName(user, taskName);
+        Task task = taskService.getTaskByUserAndName(user, taskName);
         List<GetByTaskSessionResponse> session = sessionDao.findAllByTask(task).stream()
                 .map(this::mapToGetByTaskResponse)
                 .collect(Collectors.toList());
