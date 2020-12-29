@@ -35,7 +35,6 @@ function getUser() {
         profileImage.setAttribute('alt', res.data.profileImg.name);
         profileImage.src = res.data.profileImg.urlAddress;
     }).catch(error => {
-        console.log(error.response.data.message);
         alert(error.response.data.message)
     })
 }
@@ -45,6 +44,8 @@ function getTasksProfile() {
         tBody.innerHTML = "";
         res.data.forEach(f => {
             addRowProfile(f.taskName)
+        }).catch(error => {
+            alert(error.response.data.message)
         })
     })
 }
@@ -81,12 +82,20 @@ function updateProfile() {
 
 function changeTaskArchive(taskName) {
     apiTextPlain.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasksProfile());
+        taskName)
+            .then(res => getTasksProfile())
+            .catch(error => {
+                alert(error.response.data.message)
+        });
 }
 
 function postTask(taskName) {
     apiTextPlain.post("http://localhost:8080/task/",
-        taskName).then(res => getTasksProfile());
+        taskName)
+            .then(res => getTasksProfile())
+            .catch(error => {
+                alert(error.response.data.message)
+        });
 }
 
 function deleteTask(taskName) {
@@ -97,7 +106,10 @@ function deleteTask(taskName) {
         }
     });
     apiDelete.delete("http://localhost:8080/task/" + taskName)
-        .then(res => getTasksProfile())
+            .then(res => getTasksProfile())
+            .catch(error => {
+                alert(error.response.data.message)
+        })
 }
 
 function createTask() {

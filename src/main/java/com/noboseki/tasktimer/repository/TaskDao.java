@@ -15,4 +15,6 @@ public interface TaskDao extends JpaRepository<Task, UUID> {
     Optional<Task> findByNameAndUser(String name, User user);
 
     List<Task> findAllByUser(User user);
+
+    Optional<Task> findByUserAndName(User user, String name);
 }

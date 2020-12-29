@@ -26,44 +26,45 @@ public class TaskService {
     private final UserService userService;
     private final TaskDao taskDao;
 
-
-    public ApiResponse create(User user, @Valid String taskName) {
+    public String create(User user, @Valid String taskName) {
         User dbUser = userService.findByEmile(user.getEmail());
-        Task task = Task.builder()
+        taskSave(Task.builder()
                 .name(taskName)
-                .user(dbUser).build();
-        return new ApiResponse(checkTaskSave(task), taskName + "has been created");
+                .user(dbUser).build());
+
+        return taskName + "has been created";
     }
 
     public List<TaskServiceGetTaskList> getTasks(User user) {
         userService.findByEmile(user.getEmail());
         return taskDao.findAllByUser(user).stream()
-                .filter(task -> task.getArchived() == false)
+                .filter(task -> !task.getArchived())
                 .map(taskServiceUtil::mapToGetTaskResponse)
                 .collect(Collectors.toList());
     }
 
-    public ApiResponse changeTaskComplete(User user, String taskName) {
+    public String changeTaskComplete(User user, String taskName) {
         userService.findByEmile(user.getEmail());
         Task task = checkTaskPresenceInDbForUser(user, taskName);
         task.setComplete(!task.getComplete());
-        task = taskDao.save(task);
+        task = taskSave(task);
 
-        return new ApiResponse(true, taskName + "complete changed to" + task.getComplete());
+        return taskName + "complete changed to" + task.getComplete();
     }
 
-    public ApiResponse changeArchiveTask(User user, String taskName) {
+    public String changeArchiveTask(User user, String taskName) {
         userService.findByEmile(user.getEmail());
         Task task = checkTaskPresenceInDbForUser(user, taskName);
         task.setArchived(!task.getArchived());
-        task = taskDao.save(task);
+        task = taskSave(task);
 
-        return new ApiResponse(true, taskName + "archive changed to" + task.getComplete());
+        return taskName + "archive changed to" + task.getComplete();
     }
 
-    public ApiResponse delete(User user, String taskName) {
+    public String delete(User user, String taskName) {
         Task task = checkTaskPresenceInDbForUser(user, taskName);
-        return new ApiResponse(checkTaskDelete(task), taskName + "has been deleted");
+        deleteTask(task);
+        return taskName + "has been deleted";
     }
 
     public Task checkTaskPresenceInDbForUser(User user, String name) {
@@ -71,33 +72,36 @@ public class TaskService {
     }
 
     public Task getTaskByUserAndName(User user, String name) {
-        User dbUser = userService.findByEmile(user.getEmail());
-        return checkTaskPresenceInDbForUser(dbUser, name);
+        return taskDao.findByUserAndName(user, name).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
     }
 
-    private boolean checkTaskSave(Task task) {
+    private Task taskSave(Task task) {
+        SaveException saveException = new SaveException("Task :" + task.getName());
+
         try {
-            taskDao.save(task);
+            Task dbTask = taskDao.save(task);
             if (taskDao.findByNameAndUser(task.getName(), task.getUser()).isPresent()) {
-                return true;
+                return dbTask;
             } else {
-                throw new SaveException("Task " + task.getName());
+                throw saveException;
             }
         } catch (SaveException e) {
-            throw new SaveException("Task"  + task.getName());
+            throw saveException;
         }
     }
 
-    private boolean checkTaskDelete(Task task) {
+    private boolean deleteTask(Task task) {
+        DeleteException deleteException = new DeleteException("Task", "name", task.getName());
+
         try {
             taskDao.delete(task);
             if (taskDao.findById(task.getId()).isPresent()) {
-                throw new DeleteException("Task", "name", task.getName());
+                throw deleteException;
             } else {
                 return true;
             }
         } catch (DeleteException e) {
-            throw new DeleteException("Task", "name", task.getName());
+            throw deleteException;
         }
     }
 }
