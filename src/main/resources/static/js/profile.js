@@ -83,18 +83,18 @@ function updateProfile() {
 function changeTaskArchive(taskName) {
     apiTextPlain.put("http://localhost:8080/task/changeTaskArchive/",
         taskName)
-            .then(res => getTasksProfile())
-            .catch(error => {
-                alert(error.response.data.message)
+        .then(res => getTasksProfile())
+        .catch(error => {
+            alert(error.response.data.message)
         });
 }
 
 function postTask(taskName) {
     apiTextPlain.post("http://localhost:8080/task/",
         taskName)
-            .then(res => getTasksProfile())
-            .catch(error => {
-                alert(error.response.data.message)
+        .then(res => getTasksProfile())
+        .catch(error => {
+            alert(error.response.data.message)
         });
 }
 
@@ -106,9 +106,9 @@ function deleteTask(taskName) {
         }
     });
     apiDelete.delete("http://localhost:8080/task/" + taskName)
-            .then(res => getTasksProfile())
-            .catch(error => {
-                alert(error.response.data.message)
+        .then(res => getTasksProfile())
+        .catch(error => {
+            alert(error.response.data.message)
         })
 }
 

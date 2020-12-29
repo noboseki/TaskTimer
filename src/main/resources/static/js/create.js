@@ -13,17 +13,17 @@ infoTable.appendChild(createPForInfoTable("pUserCreated", "Active emile has been
 
 document.getElementById('navLogout').style.display = 'none';
 
-function createUser(){
+function createUser() {
     document.getElementById('pUserCreated').style.display = 'none';
     infoTable.style.display = 'none';
     if (checkFields()) {
-    const createApi = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
-        }
-    });
+        const createApi = axios.create({
+            withCredentials: true,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+            }
+        });
 
         createApi.post("http://localhost:8080/user/create", {
             email: createInpEmail.value,
@@ -48,15 +48,15 @@ function checkFields() {
 
     if (checkLength(5, 15, createInpUsername, "pUsernameLength")) {
         if (checkValid(createInpUsername, "pUsernameValid")) {
-        createInpUsername.style.backgroundColor = 'rgba(74, 209, 74, 0.7)';
-                usernameCorrect = true;
+            createInpUsername.style.backgroundColor = 'rgba(74, 209, 74, 0.7)';
+            usernameCorrect = true;
         }
     }
 
-    if(checkLength(7, 31, createInpPassword, "pPasswordLength")) {
+    if (checkLength(7, 31, createInpPassword, "pPasswordLength")) {
         if (checkValid(createInpPassword, "pPasswordValid")) {
             createInpPassword.style.backgroundColor = 'rgba(74, 209, 74, 0.7)';
-            passwordCorrect= true;
+            passwordCorrect = true;
         }
     }
 
@@ -71,23 +71,23 @@ function checkFields() {
     return usernameCorrect && passwordCorrect && repeatPasswordCorrect && emailCorrect;
 }
 
-function cleanForm(){
-        createInpEmail.value = "";
-        createInpUsername.value = "";
-        createInpPassword.value = "";
-        createInpRepeatPassword.value = "";
+function cleanForm() {
+    createInpEmail.value = "";
+    createInpUsername.value = "";
+    createInpPassword.value = "";
+    createInpRepeatPassword.value = "";
 
-        createInpEmail.style.backgroundColor = 'white';
-        createInpUsername.style.backgroundColor = 'white';
-        createInpPassword.style.backgroundColor = 'white';
-        createInpRepeatPassword.style.backgroundColor = 'white';
+    createInpEmail.style.backgroundColor = 'white';
+    createInpUsername.style.backgroundColor = 'white';
+    createInpPassword.style.backgroundColor = 'white';
+    createInpRepeatPassword.style.backgroundColor = 'white';
 }
 
 function checkEmail() {
     let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
     let text = createInpEmail.value;
 
-    if(text.match(pattern) == null) {
+    if (text.match(pattern) == null) {
         alert(createInpEmail, "pEmail")
         return false;
     } else {
@@ -99,7 +99,7 @@ function checkEmail() {
 }
 
 function checkLength(from, to, input, pIdForInput) {
-    if(from < input.value.length && input.value.length < to) {
+    if (from < input.value.length && input.value.length < to) {
         let p = document.getElementById(pIdForInput);
         p.style.display = 'none'
         return true;
@@ -110,7 +110,7 @@ function checkLength(from, to, input, pIdForInput) {
 }
 
 function checkValid(input, pIdForInput) {
-    if(usernameIsValid(input, input.value)) {
+    if (usernameIsValid(input, input.value)) {
         let p = document.getElementById(pIdForInput);
         p.style.display = 'none'
         return true;

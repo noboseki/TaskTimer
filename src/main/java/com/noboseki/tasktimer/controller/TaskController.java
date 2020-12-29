@@ -23,7 +23,7 @@ public class TaskController {
     @UserPermission
     @PostMapping("")
     public ResponseEntity<String> create(@AuthenticationPrincipal User user,
-                                              @RequestBody @Min(5) @Max(25) String taskName) {
+                                         @RequestBody @Min(5) @Max(25) String taskName) {
         return ResponseEntity.ok(service.create(user, taskName));
     }
 
@@ -36,21 +36,21 @@ public class TaskController {
     @UserPermission
     @PutMapping("changeTaskComplete")
     public ResponseEntity<String> changeTaskComplete(@AuthenticationPrincipal User user,
-                                                          @RequestBody String taskName) {
+                                                     @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeTaskComplete(user, taskName));
     }
 
     @UserPermission
     @PutMapping("changeTaskArchive")
     public ResponseEntity<String> changeTaskArchive(@AuthenticationPrincipal User user,
-                                                         @RequestBody String taskName) {
+                                                    @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeArchiveTask(user, taskName));
     }
 
     @UserPermission
     @DeleteMapping("/{taskName}")
     public ResponseEntity<String> delete(@AuthenticationPrincipal User user,
-                                              @PathVariable String taskName) {
+                                         @PathVariable String taskName) {
         return ResponseEntity.ok(service.delete(user, taskName));
     }
 }

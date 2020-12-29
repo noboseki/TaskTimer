@@ -62,4 +62,17 @@ public class ApiExceptionHandler {
 
         return new ResponseEntity<>(apiException, internalServerError);
     }
+
+    @ExceptionHandler(value = {DateTimeException.class})
+    public ResponseEntity<ApiException> handleDateTimeException(ResourceNotFoundException exception) {
+        HttpStatus internalServerError = HttpStatus.BAD_REQUEST;
+
+        ApiException apiException = new ApiException(
+                exception.getMessage(),
+                internalServerError,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+
+        return new ResponseEntity<>(apiException, internalServerError);
+    }
 }

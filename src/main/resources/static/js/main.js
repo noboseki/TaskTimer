@@ -35,18 +35,18 @@ function getTasks() {
 function changeTaskComplete(taskName) {
     apiPut.put("http://localhost:8080/task/changeTaskComplete/",
         taskName)
-            .then(res => getTasks())
-            .catch(error => {
-                alert(error.response.data.message)
+        .then(res => getTasks())
+        .catch(error => {
+            alert(error.response.data.message)
         });
 }
 
 function changeTaskArchive(taskName) {
     apiPut.put("http://localhost:8080/task/changeTaskArchive/",
         taskName)
-            .then(res => getTasks())
-            .catch(error => {
-                alert(error.response.data.message)
+        .then(res => getTasks())
+        .catch(error => {
+            alert(error.response.data.message)
         });
 }
 
