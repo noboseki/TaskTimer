@@ -34,12 +34,9 @@ function createUser(){
             infoTable.style.backgroundColor = "rgba(16, 194, 16, 0.7)"
             infoTable.style.display = 'block';
             document.getElementById('pUserCreated').style.display = 'block';
-        }).catch(
-              function (error) {
-                console.log('Show error notification!')
-                return Promise.reject(error)
-              }
-            );
+        }).catch(error => {
+            alert(error.response.data.message)
+        });
     }
 }
 

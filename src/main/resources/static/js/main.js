@@ -27,17 +27,27 @@ function getTasks() {
             }
             addRow(f.taskName, f.time, f.sessionsNumber, f.complete)
         })
+    }).catch(error => {
+        alert(error.response.data.message)
     })
 }
 
 function changeTaskComplete(taskName) {
     apiPut.put("http://localhost:8080/task/changeTaskComplete/",
-        taskName).then(res => getTasks());
+        taskName)
+            .then(res => getTasks())
+            .catch(error => {
+                alert(error.response.data.message)
+        });
 }
 
 function changeTaskArchive(taskName) {
     apiPut.put("http://localhost:8080/task/changeTaskArchive/",
-        taskName).then(res => getTasks());
+        taskName)
+            .then(res => getTasks())
+            .catch(error => {
+                alert(error.response.data.message)
+        });
 }
 
 function addRow(taskName, time, sessions, complete) {

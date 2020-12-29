@@ -1,7 +1,6 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.TaskService;
@@ -23,7 +22,7 @@ public class TaskController {
 
     @UserPermission
     @PostMapping("")
-    public ResponseEntity<ApiResponse> create(@AuthenticationPrincipal User user,
+    public ResponseEntity<String> create(@AuthenticationPrincipal User user,
                                               @RequestBody @Min(5) @Max(25) String taskName) {
         return ResponseEntity.ok(service.create(user, taskName));
     }
@@ -36,21 +35,21 @@ public class TaskController {
 
     @UserPermission
     @PutMapping("changeTaskComplete")
-    public ResponseEntity<ApiResponse> changeTaskComplete(@AuthenticationPrincipal User user,
+    public ResponseEntity<String> changeTaskComplete(@AuthenticationPrincipal User user,
                                                           @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeTaskComplete(user, taskName));
     }
 
     @UserPermission
     @PutMapping("changeTaskArchive")
-    public ResponseEntity<ApiResponse> changeTaskArchive(@AuthenticationPrincipal User user,
+    public ResponseEntity<String> changeTaskArchive(@AuthenticationPrincipal User user,
                                                          @RequestBody String taskName) {
         return ResponseEntity.ok(service.changeArchiveTask(user, taskName));
     }
 
     @UserPermission
     @DeleteMapping("/{taskName}")
-    public ResponseEntity<ApiResponse> delete(@AuthenticationPrincipal User user,
+    public ResponseEntity<String> delete(@AuthenticationPrincipal User user,
                                               @PathVariable String taskName) {
         return ResponseEntity.ok(service.delete(user, taskName));
     }
