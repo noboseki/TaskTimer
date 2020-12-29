@@ -1,18 +1,19 @@
 package com.noboseki.tasktimer.exeption;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
-@ResponseStatus(HttpStatus.EXPECTATION_FAILED)
 public class DeleteException extends RuntimeException {
-    private Object fieldValue;
+    private String objectName;
     private String fieldName;
+    private String fieldValue;
 
-    public DeleteException(String fieldName, Object fieldValue) {
-        super(String.format("%s delete error of id : '%s'", fieldName, fieldValue));
+
+    public DeleteException(String objectName, String fieldName, String fieldValue) {
+        super(String.format("%s delete error of '%s' : '%s'", objectName, fieldName, fieldValue));
+        this.objectName = objectName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
     }
+
 }

@@ -4,13 +4,14 @@ import com.noboseki.tasktimer.domain.Authority;
 import com.noboseki.tasktimer.domain.ConfirmationToken;
 import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.DeleteException;
+import com.noboseki.tasktimer.exeption.DuplicateException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
-import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
-import com.noboseki.tasktimer.repository.*;
+import com.noboseki.tasktimer.repository.UserDao;
 import com.noboseki.tasktimer.service.util.UserService.UserServiceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,9 @@ public class UserService {
     private final ProfileImgService profileImgService;
     private final ConfirmationTokenService tokenService;
 
-    public ApiResponse create(@Valid UserServiceCreateRequest request) {
+    public String create(@Valid UserServiceCreateRequest request) {
         if (userDao.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException();
+            throw new DuplicateException("User", "emile", request.getEmail());
         }
         Authority userAuthority = authorityService.findByRole("ROLE_USER");
         ProfileImg profileImg = profileImgService.findByName("Yondu");
@@ -41,9 +42,10 @@ public class UserService {
         try {
             ConfirmationToken token = tokenService.createTokenForUser(dbUser);
             userServiceUtil.activationEmileSender(token.getConfirmationToken(), request.getEmail());
-            return new ApiResponse(true, "User has been created");
-        } catch (Exception e) {
-            throw e;
+            return "User has been created";
+        } catch (SaveException e) {
+            deleteUser(dbUser);
+            throw new SaveException("account activate token");
         }
     }
 
@@ -52,7 +54,7 @@ public class UserService {
         return userServiceUtil.mapToResponse(dbUser);
     }
 
-    public ApiResponse updateProfile(User user, @Valid UserServiceUpdateRequest request) {
+    public String updateProfile(User user, @Valid UserServiceUpdateRequest request) {
         User dbUser = findByEmile(user.getEmail());
         ProfileImg profileImg = profileImgService.findByName(request.getProfileImgName());
 
@@ -62,7 +64,7 @@ public class UserService {
 
         saveUser(dbUser);
 
-        return new ApiResponse(true, "User profile has been updated");
+        return "User profile has been updated";
     }
 
     public User findByEmile(String email) {
@@ -70,16 +72,32 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        SaveException saveException = new SaveException("User " + user.getEmail());
+
         try {
             User dbUser = userDao.save(user);
             if (userDao.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
-                System.out.println("User has been created");
                 return dbUser;
             } else {
-                throw new SaveException("User", user);
+                throw saveException;
             }
         } catch (SaveException e) {
-            throw new SaveException("User", user);
+            throw saveException;
+        }
+    }
+
+    public boolean deleteUser(User user) {
+        DeleteException deleteException = new DeleteException("User", "emile", user.getEmail());
+
+        try {
+            userDao.delete(user);
+            if (userDao.findByEmail(user.getEmail()).isPresent()) {
+                return true;
+            } else {
+                throw deleteException;
+            }
+        } catch (DeleteException e) {
+            throw deleteException;
         }
     }
 }
