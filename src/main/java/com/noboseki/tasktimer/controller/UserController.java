@@ -1,7 +1,6 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
@@ -21,7 +20,7 @@ public class UserController {
     private final UserService service;
 
     @PostMapping("create")
-    public ResponseEntity<ApiResponse> create(@RequestBody UserServiceCreateRequest request) {
+    public ResponseEntity<String> create(@RequestBody UserServiceCreateRequest request) {
         return ResponseEntity.ok(service.create(request));
     }
 
@@ -33,7 +32,7 @@ public class UserController {
 
     @UserPermission
     @PutMapping("update")
-    public ResponseEntity<ApiResponse> updateProfile(@AuthenticationPrincipal User user, @RequestBody UserServiceUpdateRequest request) {
+    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal User user, @RequestBody UserServiceUpdateRequest request) {
         return ResponseEntity.ok(service.updateProfile(user, request));
     }
 }

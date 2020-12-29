@@ -81,10 +81,10 @@ public class TaskService {
             if (taskDao.findByNameAndUser(task.getName(), task.getUser()).isPresent()) {
                 return true;
             } else {
-                throw new SaveException("Task", task);
+                throw new SaveException("Task " + task.getName());
             }
         } catch (SaveException e) {
-            throw new SaveException("Task", task);
+            throw new SaveException("Task"  + task.getName());
         }
     }
 
@@ -92,12 +92,12 @@ public class TaskService {
         try {
             taskDao.delete(task);
             if (taskDao.findById(task.getId()).isPresent()) {
-                throw new DeleteException("Task", task.getId());
+                throw new DeleteException("Task", "name", task.getName());
             } else {
                 return true;
             }
         } catch (DeleteException e) {
-            throw new DeleteException("Task", task.getId());
+            throw new DeleteException("Task", "name", task.getName());
         }
     }
 }
