@@ -5,7 +5,6 @@ import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
-import com.noboseki.tasktimer.playload.ApiResponse;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
 import com.noboseki.tasktimer.service.util.TaskService.TaskServiceUtil;
@@ -45,7 +44,7 @@ public class TaskService {
 
     public String changeTaskComplete(User user, String taskName) {
         userService.findByEmile(user.getEmail());
-        Task task = checkTaskPresenceInDbForUser(user, taskName);
+        Task task = findByNameAndUser(user, taskName);
         task.setComplete(!task.getComplete());
         task = taskSave(task);
 
@@ -54,7 +53,7 @@ public class TaskService {
 
     public String changeArchiveTask(User user, String taskName) {
         userService.findByEmile(user.getEmail());
-        Task task = checkTaskPresenceInDbForUser(user, taskName);
+        Task task = findByNameAndUser(user, taskName);
         task.setArchived(!task.getArchived());
         task = taskSave(task);
 
@@ -62,12 +61,12 @@ public class TaskService {
     }
 
     public String delete(User user, String taskName) {
-        Task task = checkTaskPresenceInDbForUser(user, taskName);
+        Task task = findByNameAndUser(user, taskName);
         deleteTask(task);
         return taskName + "has been deleted";
     }
 
-    public Task checkTaskPresenceInDbForUser(User user, String name) {
+    public Task findByNameAndUser(User user, String name) {
         return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
     }
 

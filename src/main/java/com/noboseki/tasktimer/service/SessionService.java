@@ -5,13 +5,15 @@ import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DateTimeException;
 import com.noboseki.tasktimer.exeption.SaveException;
-import com.noboseki.tasktimer.playload.*;
-import com.noboseki.tasktimer.repository.*;
+import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
+import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
+import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
+import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
+import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.service.util.SessionServiceGetBarChainByDateUtil;
 import com.noboseki.tasktimer.service.util.SessionServiceGetTableByDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -26,7 +28,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SessionService {
-    private final String SESSION_TIME_HAS_BEEN = "Session has been ";
 
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
@@ -34,17 +35,17 @@ public class SessionService {
     private final UserService userService;
     private final SessionDao sessionDao;
 
-    public ApiResponse create(User user, @Valid SessionServiceCreateRequest request) {
-        Task task = taskService.checkTaskPresenceInDbForUser(user, request.getTaskName());
+    public String create(User user, @Valid SessionServiceCreateRequest request) {
+        Task task = taskService.findByNameAndUser(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());
 
-        Session session = Session.builder()
+        saveSession(Session.builder()
                 .date(date)
                 .time(time)
-                .task(task).build();
+                .task(task).build());
 
-        return new ApiResponse(checkSaveSession(session), SESSION_TIME_HAS_BEEN + "created");
+        return "Session has been " + "created";
     }
 
     public List<SessionServiceTableByDateResponse> getTableByDate(User user, LocalDate fromDate, LocalDate toDate) {
@@ -72,24 +73,26 @@ public class SessionService {
         return getBarChainByDateUtil.fillBarChainByDate(sessionsBetweenDateForUser, fromDate, toDate);
     }
 
-    public ResponseEntity<List<GetByTaskSessionResponse>> getAllByTask(User user, String taskName) {
+    public List<GetByTaskSessionResponse> getAllByTask(User user, String taskName) {
         Task task = taskService.getTaskByUserAndName(user, taskName);
-        List<GetByTaskSessionResponse> session = sessionDao.findAllByTask(task).stream()
+        return sessionDao.findAllByTask(task).stream()
                 .map(this::mapToGetByTaskResponse)
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(session);
     }
 
     private GetByTaskSessionResponse mapToGetByTaskResponse(Session session) {
         return new GetByTaskSessionResponse(session.getDate(), session.getTime());
     }
 
-    private boolean checkSaveSession(Session session) {
+    private Session saveSession(Session session) {
         try {
-            sessionDao.save(session);
-            log.info(SESSION_TIME_HAS_BEEN + "saved");
-            return true;
+            Session dbSession = sessionDao.save(session);
+            if (sessionDao.findById(dbSession.getId()).isPresent()) {
+                log.info("Session has been saved");
+                return dbSession;
+            } else {
+                throw new SaveException("Session " + session.getTime().toString());
+            }
         } catch (Exception e) {
             log.error("Session save error", e);
             throw new SaveException("Session " + session.getTime().toString());

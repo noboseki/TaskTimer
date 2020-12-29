@@ -1,10 +1,7 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.playload.ApiResponse;
-import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
-import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
-import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
+import com.noboseki.tasktimer.playload.*;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.SessionService;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +21,16 @@ public class SessionController {
 
     @UserPermission
     @PostMapping("create")
-    public ResponseEntity<ApiResponse> create(@AuthenticationPrincipal User user,
-                                              @RequestBody SessionServiceCreateRequest request) {
+    public ResponseEntity<String> create(@AuthenticationPrincipal User user,
+                                         @RequestBody SessionServiceCreateRequest request) {
         return ResponseEntity.ok(service.create(user, request));
     }
 
     @UserPermission
     @GetMapping("getByTask/{task}")
-    public ResponseEntity<?> getByTask(@AuthenticationPrincipal User user,
-                                       @PathVariable String task) {
-        return service.getAllByTask(user, task);
+    public ResponseEntity<List<GetByTaskSessionResponse>> getByTask(@AuthenticationPrincipal User user,
+                                                                    @PathVariable String task) {
+        return ResponseEntity.ok(service.getAllByTask(user, task));
     }
 
     @UserPermission
