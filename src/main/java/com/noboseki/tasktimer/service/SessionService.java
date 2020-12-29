@@ -92,7 +92,7 @@ public class SessionService {
             return true;
         } catch (Exception e) {
             log.error("Session save error", e);
-            throw new SaveException("Session", session);
+            throw new SaveException("Session " + session.getTime().toString());
         }
     }
 

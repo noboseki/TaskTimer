@@ -9,9 +9,11 @@ let inpUsername = document.getElementById('inpUsername');
 let inpEmail = document.getElementById('inpEmail');
 let labelPublicId = document.getElementById('labelPublicId');
 let tBody = document.getElementById('tBody');
+
 const apiGet = axios.create({
     withCredentials: true
 });
+
 const apiTextPlain = axios.create({
     withCredentials: true,
     headers: {
@@ -32,6 +34,9 @@ function getUser() {
         inpEmail.setAttribute('value', res.data.email);
         profileImage.setAttribute('alt', res.data.profileImg.name);
         profileImage.src = res.data.profileImg.urlAddress;
+    }).catch(error => {
+        console.log(error.response.data.message);
+        alert(error.response.data.message)
     })
 }
 
@@ -69,6 +74,8 @@ function updateProfile() {
         username: inpUsername.value,
         email: inpEmail.value,
         profileImgName: profileImage.alt,
+    }).catch(error => {
+        alert(error.response.data.message)
     });
 }
 

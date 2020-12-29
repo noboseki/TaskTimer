@@ -22,7 +22,6 @@ public class DefaultTaskTimerLoader implements CommandLineRunner {
     private final TaskDao taskDao;
     private final UserDao userDao;
     private final AuthorityDao authorityDao;
-    private final ConfirmationTokenDao confirmationTokenDao;
     private final PasswordEncoder passwordEncoder;
     private final ProfileImgDao profileImgDao;
 
