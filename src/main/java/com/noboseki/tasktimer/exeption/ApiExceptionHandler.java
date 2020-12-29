@@ -64,7 +64,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(value = {DateTimeException.class})
-    public ResponseEntity<ApiException> handleDateTimeException(ResourceNotFoundException exception) {
+    public ResponseEntity<ApiException> handleDateTimeException(DateTimeException exception) {
         HttpStatus internalServerError = HttpStatus.BAD_REQUEST;
 
         ApiException apiException = new ApiException(
