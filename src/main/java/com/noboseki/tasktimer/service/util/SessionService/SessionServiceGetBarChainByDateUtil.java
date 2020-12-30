@@ -1,4 +1,4 @@
-package com.noboseki.tasktimer.service.util;
+package com.noboseki.tasktimer.service.util.SessionService;
 
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public class SessionServiceGetBarChainByDateUtil {
 
-    public SessionServiceChainByDateResponse fillBarChainByDate (List<Session> sessionsBetweenDateForUser, LocalDate fromDate, LocalDate toDate) {
+    public SessionServiceChainByDateResponse fillBarChainByDate(List<Session> sessionsBetweenDateForUser, LocalDate fromDate, LocalDate toDate) {
         SessionServiceChainByDateResponse response = SessionServiceChainByDateResponse.builder()
                 .dataList(new ArrayList<>())
                 .dateLabel(createDateLabel(fromDate, toDate)).build();
@@ -44,7 +44,7 @@ public class SessionServiceGetBarChainByDateUtil {
     }
 
     public Set<String> getTaskNamesFromList(List<Session> list) {
-        return list.stream().map( session -> session.getTask().getName())
+        return list.stream().map(session -> session.getTask().getName())
                 .collect(Collectors.toSet());
     }
 

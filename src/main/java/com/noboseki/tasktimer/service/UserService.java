@@ -45,7 +45,7 @@ public class UserService {
             return "User has been created";
         } catch (SaveException e) {
             deleteUser(dbUser);
-            throw new SaveException("account activate token");
+            throw new SaveException("token" , "create activate token");
         }
     }
 
@@ -72,7 +72,7 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        SaveException saveException = new SaveException("User " + user.getEmail());
+        SaveException saveException = new SaveException("User" , user.getEmail());
 
         try {
             User dbUser = userDao.save(user);
