@@ -59,7 +59,9 @@ function getIconList() {
             tmp.src = f.urlAddress;
             iconList.appendChild(tmp);
         })
-    })
+    }).catch(error => {
+        alert(error.response.data.message)
+    });
 }
 
 function updateProfile() {
@@ -83,7 +85,7 @@ function updateProfile() {
 function changeTaskArchive(taskName) {
     apiTextPlain.put("http://localhost:8080/task/changeTaskArchive/",
         taskName)
-        .then(res => getTasksProfile())
+        .then(() => getTasksProfile())
         .catch(error => {
             alert(error.response.data.message)
         });
@@ -92,7 +94,7 @@ function changeTaskArchive(taskName) {
 function postTask(taskName) {
     apiTextPlain.post("http://localhost:8080/task/",
         taskName)
-        .then(res => getTasksProfile())
+        .then(() => getTasksProfile())
         .catch(error => {
             alert(error.response.data.message)
         });
@@ -106,7 +108,7 @@ function deleteTask(taskName) {
         }
     });
     apiDelete.delete("http://localhost:8080/task/" + taskName)
-        .then(res => getTasksProfile())
+        .then(() => getTasksProfile())
         .catch(error => {
             alert(error.response.data.message)
         })

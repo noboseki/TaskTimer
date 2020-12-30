@@ -75,7 +75,7 @@ public class TaskService {
     }
 
     private Task taskSave(Task task) {
-        SaveException saveException = new SaveException("Task :" + task.getName());
+        SaveException saveException = new SaveException("Task", task.getName());
 
         try {
             Task dbTask = taskDao.save(task);

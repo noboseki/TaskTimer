@@ -37,8 +37,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, internalServerError);
     }
 
-    @ExceptionHandler(value = {DuplicateException.class})
-    public ResponseEntity<ApiException> handleDuplicateException(DuplicateException exception) {
+    @ExceptionHandler(value = {DuplicateException.class, InvalidException.class})
+    public ResponseEntity<ApiException> handleDuplicateException(RuntimeException exception) {
         HttpStatus internalServerError = HttpStatus.CONFLICT;
 
         ApiException apiException = new ApiException(

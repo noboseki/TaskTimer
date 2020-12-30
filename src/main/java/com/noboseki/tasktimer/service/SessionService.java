@@ -10,8 +10,8 @@ import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
-import com.noboseki.tasktimer.service.util.SessionServiceGetBarChainByDateUtil;
-import com.noboseki.tasktimer.service.util.SessionServiceGetTableByDateUtil;
+import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetBarChainByDateUtil;
+import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetTableByDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -91,11 +91,11 @@ public class SessionService {
                 log.info("Session has been saved");
                 return dbSession;
             } else {
-                throw new SaveException("Session " + session.getTime().toString());
+                throw new SaveException("Session", session.getTime().toString());
             }
         } catch (Exception e) {
             log.error("Session save error", e);
-            throw new SaveException("Session " + session.getTime().toString());
+            throw new SaveException("Session", session.getTime().toString());
         }
     }
 
