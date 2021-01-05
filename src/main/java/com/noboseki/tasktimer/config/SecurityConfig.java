@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             "").permitAll();
                     authorize.antMatchers("/h2-console/**", "/confirm/**").permitAll();
                     authorize.antMatchers("/confirm/css/basicHTML/**", "/confirm/js/changePassword.js").permitAll();
-                    authorize.antMatchers("/create/**", "create", "/create", "/user/create" , "/user/changePassword/").permitAll();
+                    authorize.antMatchers("/create/**", "create", "/create", "/user/create", "/user/changePassword/").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()

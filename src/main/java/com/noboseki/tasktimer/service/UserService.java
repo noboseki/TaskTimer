@@ -66,10 +66,6 @@ public class UserService {
         ConfirmationToken token = tokenService.getByTokenAndType(request.getToken(), TokenType.PASSWORD);
         User dbUser = findByEmile(token.getUser().getEmail());
 
-        String oldEncode = passwordEncoder.encode(request.getOldPassword());
-        System.out.println(oldEncode);
-        System.out.println(dbUser.getPassword());
-        System.out.println(passwordEncoder.matches(dbUser.getPassword(), oldEncode));
         if (!passwordEncoder.matches(request.getOldPassword(), dbUser.getPassword())) {
             throw new InvalidException("OldPassword", request.getOldPassword());
         }

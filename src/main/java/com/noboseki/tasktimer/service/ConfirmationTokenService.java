@@ -30,12 +30,8 @@ public class ConfirmationTokenService {
     }
 
     public String activateAccount(String token) {
-        InvalidException exception = new InvalidException("Token", token);
-        ConfirmationToken confirmationToken = tokenDao.findByConfirmationToken(token).orElseThrow(() -> exception);
-
-        if (confirmationToken.getType() != TokenType.ACTIVATE) {
-            throw exception;
-        }
+        ConfirmationToken confirmationToken = tokenDao.findByConfirmationTokenAndType(token, TokenType.ACTIVATE)
+                .orElseThrow(() -> new InvalidException("Token", token));
 
         @Email
         String email = confirmationToken.getUser().getEmail();
@@ -62,6 +58,7 @@ public class ConfirmationTokenService {
             throw saveException;
         }
     }
+
     public boolean deleteToken(ConfirmationToken token) {
         DeleteException exception = new DeleteException("token", token.getConfirmationToken());
 
@@ -77,7 +74,7 @@ public class ConfirmationTokenService {
     }
 
     public ConfirmationToken getByTokenAndType(String token, TokenType type) {
-        return tokenDao.findByConfirmationTokenAndType( token, type).orElseThrow(() -> new ResourceNotFoundException("Token", "token", token));
+        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", "token", token));
     }
 
     public Optional<ConfirmationToken> getByUser_EmailAndType(String email, TokenType type) {

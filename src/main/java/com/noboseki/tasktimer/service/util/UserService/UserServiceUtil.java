@@ -41,7 +41,7 @@ public class UserServiceUtil {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setFrom("nobosekiemiletest@gmail.com");
         mailMessage.setText("To confirm your account, please click here : "
-                +"http://localhost:8080/confirm/confirm-account?token=" + token);
+                + "http://localhost:8080/confirm/confirm-account?token=" + token);
 
         emailSenderService.sendEmail(mailMessage);
 
@@ -54,7 +54,7 @@ public class UserServiceUtil {
         mailMessage.setSubject("Change Password");
         mailMessage.setFrom("nobosekiemiletest@gmail.com");
         mailMessage.setText("To change password, please click here : "
-                +"http://localhost:8080/confirm/change-password?token=" + token);
+                + "http://localhost:8080/confirm/change-password?token=" + token);
 
         emailSenderService.sendEmail(mailMessage);
 
