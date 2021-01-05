@@ -1,6 +1,7 @@
 package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
@@ -28,6 +29,16 @@ public class UserController {
     @GetMapping("get")
     public ResponseEntity<UserServiceGetResponse> get(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(service.get(user));
+    }
+
+    @PostMapping("changePasswordTokenRequest")
+    public ResponseEntity<String> changePasswordTokenRequest(@RequestBody String email) {
+        return ResponseEntity.ok(service.changePasswordRequest(email));
+    }
+
+    @PutMapping("changePassword")
+    public ResponseEntity<String> changePasswordRequest(@RequestBody UserServiceChangePasswordRequest request) {
+        return ResponseEntity.ok(service.changePassword(request));
     }
 
     @UserPermission

@@ -90,7 +90,7 @@ public class TaskService {
     }
 
     private boolean deleteTask(Task task) {
-        DeleteException deleteException = new DeleteException("Task", "name", task.getName());
+        DeleteException deleteException = new DeleteException("name", task.getName());
 
         try {
             taskDao.delete(task);
