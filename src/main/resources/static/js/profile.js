@@ -64,22 +64,31 @@ function getIconList() {
     });
 }
 
-function updateProfile() {
-    const api = axios.create({
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
-        }
-    });
+function changePassword() {
+console.log(inpEmail.value)
+apiTextPlain.post("http://localhost:8080/user/changePasswordTokenRequest/",
+    inpEmail.value
+    ).catch(error => {
+    alert(error.response.data.message)
+});
+}
 
-    api.put("http://localhost:8080/user/update/", {
-        username: inpUsername.value,
-        email: inpEmail.value,
-        profileImgName: profileImage.alt,
-    }).catch(error => {
-        alert(error.response.data.message)
-    });
+function updateProfile() {
+const apiPost = axios.create({
+    withCredentials: true,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json"
+    }
+});
+
+apiPost.put("http://localhost:8080/user/update/", {
+    username: inpUsername.value,
+    email: inpEmail.value,
+    profileImgName: profileImage.alt,
+}).catch(error => {
+    alert(error.response.data.message)
+});
 }
 
 function changeTaskArchive(taskName) {
@@ -127,7 +136,8 @@ function editFrom() {
             item.classList.remove('fromInputUnEditable')
             item.removeAttribute('disabled');
             item.classList.add('fromInputEditable')
-            buttonSaveChanges.style.display = 'inline-block'
+            buttonSaveChanges.style.display = 'block'
+            buttonChangePassword.style.display = 'block'
         }
     } else {
         for (let item of formInput) {
@@ -137,6 +147,7 @@ function editFrom() {
             item.classList.add('fromInputUnEditable')
             item.setAttribute('disabled', 'disabled');
             buttonSaveChanges.style.display = 'none'
+            buttonChangePassword.style.display = 'none'
         }
     }
 }

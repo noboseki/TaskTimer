@@ -23,13 +23,17 @@ public class ConfirmationToken {
     private String confirmationToken;
 
     @Column(nullable = false)
+    private TokenType type;
+
+    @Column(nullable = false)
     private Timestamp timestamp;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
-    public ConfirmationToken(User user) {
+    public ConfirmationToken(User user, TokenType type) {
+        this.type = type;
         this.user = user;
         timestamp = new Timestamp(System.currentTimeMillis());
         confirmationToken = UUID.randomUUID().toString();

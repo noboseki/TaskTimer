@@ -88,7 +88,7 @@ function checkEmail() {
     let text = createInpEmail.value;
 
     if (text.match(pattern) == null) {
-        alert(createInpEmail, "pEmail")
+        alertWeb(createInpEmail, "pEmail")
         return false;
     } else {
         let p = document.getElementById('pEmail');
@@ -104,7 +104,7 @@ function checkLength(from, to, input, pIdForInput) {
         p.style.display = 'none'
         return true;
     } else {
-        alert(input, pIdForInput)
+        alertWeb(input, pIdForInput)
         return false;
     }
 }
@@ -115,12 +115,12 @@ function checkValid(input, pIdForInput) {
         p.style.display = 'none'
         return true;
     } else {
-        alert(input, pIdForInput)
+        alertWeb(input, pIdForInput)
         return false;
     }
 }
 
-function alert(input, pId) {
+function alertWeb(input, pId) {
     infoTable.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
     infoTable.style.display = 'block';
     input.style.backgroundColor = "rgba(255, 50, 50, 0.7)"

@@ -1,0 +1,21 @@
+main input {
+    outline: none;
+    border-width: 0 0 1px;
+    border-color: #6c58af;
+    color: #6c58af;
+    transition: border-color .3s;
+}
+
+main input::placeholder {
+    color: #6c58af;
+    transition: color .3s;
+}
+
+main input:focus {
+    border-color: #ff8766;
+
+}
+
+main input:focus::placeholder {
+    color: #ff8766;
+}

@@ -48,7 +48,7 @@
 
 #profileForm {
     width:300px;
-    padding-bottom:30px;
+    padding-bottom:20px;
     margin:0 auto;
 }
 
@@ -81,16 +81,18 @@ label {
     background:none;
 }
 
-#buttonSaveChanges {
-    position:absolute;
-    left:50%;
-    top:410px;
-    transform:translateX(-50%);
+.form-button {
+    position: relative;
+    width: 300px;
+}
+
+.formElement {
+    display: block;
+    margin: 8px auto;
     padding:0 10px;
 }
 
 .createTaskContainer {
-    padding-top: 15px;
     text-align: center;
 }
 
