@@ -27,7 +27,7 @@ public class ProfileImg {
 
     @JsonIgnore
     @OneToMany(
-            fetch =  FetchType.LAZY,
+            fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = User.class,
             mappedBy = "profileImg")

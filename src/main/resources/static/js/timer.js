@@ -17,13 +17,16 @@ function timer() {
     let delayThen;
 
     let start = function () {
+    if (document.getElementById('select').options.length == 0) {
+        alert("Please select ant task")
+    } else {
         delay = 0;
         running = true;
         then = Date.now();
         timer = setInterval(run, 51);
         toggle.innerHTML = '<i class="fas fa-pause"></i>';
         taskSelectContainer.disabled = true;
-
+    }
     };
 
     let parseTime = function (elapsed) {

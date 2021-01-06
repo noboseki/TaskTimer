@@ -36,14 +36,14 @@ public class Task {
     @NotNull
     @ManyToOne(
             fetch = FetchType.EAGER,
-            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = User.class)
     @JoinColumn(name = "user_Id")
     private User user;
 
     @Singular
     @OneToMany(
-            fetch =  FetchType.LAZY,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             targetEntity = Session.class,
             mappedBy = "task")

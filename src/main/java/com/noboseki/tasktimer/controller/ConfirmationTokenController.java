@@ -18,7 +18,7 @@ public class ConfirmationTokenController {
     @GetMapping("confirm-account")
     public ModelAndView confirmUserAccount(@RequestParam("token") String confirmationToken) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("activationResponse");
+        modelAndView.setViewName("login");
         modelAndView.addObject("message", tokenService.activateAccount(confirmationToken));
 
         return modelAndView;

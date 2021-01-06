@@ -15,29 +15,29 @@
     <script src="js/axios.min.js"></script>
 </head>
 <body>
-    <div th:replace="basicHtml/header :: header"></div>
-    <div th:replace="basicHtml/navigation :: navigation"></div>
-    <main>
-        <div id="formContainer">
-            <form>
-                <div>
-                    <label>Emile: </label><input id="createInpEmail" type="text">
-                </div>
-                <div>
-                    <label>Username:</label><input id="createInpUsername" type="text">
-                </div>
-                <div>
-                    <label>Password:</label><input id="createInpPassword" type="password">
-                </div>
-                <div>
-                    <label>Repeat Password:</label><input id="createInpRepeatPassword" type="password">
-                </div>
-            </form>
-            <button id="createButton" onclick="createUser()">Create</button>
-        </div>
-        <div id="infoTable"></div>
-    </main>
-    <div th:replace="basicHtml/footer :: footer"></div>
-    <script src="js/create.js"></script>
+<div th:replace="basicHtml/header :: header"></div>
+<div th:replace="basicHtml/navigation :: navigation"></div>
+<main>
+    <div id="formContainer">
+        <form>
+            <div>
+                <label>Emile: </label><input id="createInpEmail" type="text">
+            </div>
+            <div>
+                <label>Username:</label><input id="createInpUsername" type="text">
+            </div>
+            <div>
+                <label>Password:</label><input id="createInpPassword" type="password">
+            </div>
+            <div>
+                <label>Repeat Password:</label><input id="createInpRepeatPassword" type="password">
+            </div>
+        </form>
+        <button id="createButton" onclick="createUser()">Create</button>
+    </div>
+    <div id="infoTable"></div>
+</main>
+<div th:replace="basicHtml/footer :: footer"></div>
+<script src="js/create.js"></script>
 </body>
 </html>

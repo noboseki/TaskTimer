@@ -40,12 +40,6 @@ public class WebsiteController {
         return "statistic";
     }
 
-    @UserPermission
-    @GetMapping("contact")
-    public String contactPage() {
-        return "contact";
-    }
-
     @GetMapping("confirm/change-password")
     public String changePassword(@RequestParam("token") String confirmationToken) {
         return "changePassword";
