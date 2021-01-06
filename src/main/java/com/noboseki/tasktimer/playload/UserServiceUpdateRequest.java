@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class UserServiceUpdateRequest {
 
-    @Min(6) @Max(14)
+    @Min(6)
+    @Max(14)
     private String username;
 
     @Email

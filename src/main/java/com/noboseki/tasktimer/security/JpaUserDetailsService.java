@@ -23,7 +23,7 @@ public class JpaUserDetailsService implements UserDetailsService {
         log.debug("Getting User info via JPA");
 
         return userDao.findByEmail(emile).orElseThrow(() -> {
-           throw  new UsernameNotFoundException("User by emile: " + emile + "not found");
+            throw new UsernameNotFoundException("User by emile: " + emile + "not found");
         });
     }
 }

@@ -34,7 +34,7 @@ public class Session {
     @NotNull
     @ManyToOne(
             fetch = FetchType.EAGER,
-            cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = Task.class)
     @JoinColumn(name = "task_Id")
     private Task task;
