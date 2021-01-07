@@ -44,4 +44,9 @@ public class WebsiteController {
     public String changePassword(@RequestParam("token") String confirmationToken) {
         return "changePassword";
     }
+
+    @GetMapping("forgot-password")
+    public String forgotPassword() {
+        return "forgotPassword";
+    }
 }
