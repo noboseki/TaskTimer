@@ -56,13 +56,13 @@ label {
     display:inline-block;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight:700;
-    width: 80px;
+    width: 85px;
     color:#6c58af;
     padding:12px 0;
 }
 
 .formInput {
-    width:215px;
+    width:210px;
     color:#6c58af;
     font-family: 'Source Sans Pro', sans-serif;
     font-size:16px;

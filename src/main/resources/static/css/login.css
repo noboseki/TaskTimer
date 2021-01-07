@@ -3,117 +3,39 @@
     padding: 0;
 }
 
+body {
+    color: #6c58af;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
 .login form {
     position: relative;
-    padding: 10px;
+    padding: 15px;
+    padding-top: 30px;
     margin: 0 auto;
+    width: 300px;
+    text-align: center;
 }
 
 .login input {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    outline: none;
-    border-width: 0 0 1px;
-    border-color: #6c58af;
-    color: #6c58af;
-    font-size: 24px;
-    transition: border-color .3s;
-}
-
-.login input:focus {
-    border-color: #ff8766;
-}
-
-#username {
-    top: 50px;
-}
-
-#password {
-    top: 100px;
+    margin-bottom: 20px;
+    font-size: 18px;
 }
 
 .login button {
-    position: absolute;
-    top: 160px;
-    left: 50%;
-    transform: translate(-50%, -50%);
     padding: 0 35px;
-    border-style: solid;
-    border-color: #6c58af;
-    text-transform: uppercase;
-    font-family: 'Raleway', sans-serif;
-    color: #6c58af;
-    letter-spacing: 4px;
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    outline: none;
-    transition: border-color .3s, color .3s;
-}
-
-#logout {
-    top: 15px;
-}
-
-.login button:hover {
-    border-color: #ff8766;
-    color: #ff8766;
-}
-
-.logged-info p {
-    margin: 5px;
-}
-
-#logout {
-    margin-top: 30px;
-}
-
-.alert {
-    position: absolute;
-    top: 330px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    font-weight: bold;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 16px;
-    color: white;
-}
-
-.logged-info {
-    width: 300px;
-    margin: 20px auto;
-    text-align: left;
-    color: #6c58af;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 28px;
-    transform: translate(10%, 0%);
-}
-
-.alert-logout {
-    background-color: rgba(0, 151, 0, 0.6);
-}
-
-.alert-error {
-    background-color: rgba(255, 0, 0, 0.6);
 }
 
 .createUserContainer {
-    position: absolute;
-    top: 300px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding-top: 30px;
+    width: 300px;
     text-align: center;
+    margin: 0 auto;
 }
 
 .createUserContainer a {
     text-decoration: none;
     font-weight: 700;
+    font-size: 14px;
     color: #6c58af;
     transition: color 0.3s;
 }

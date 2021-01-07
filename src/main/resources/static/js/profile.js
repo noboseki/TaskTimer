@@ -65,7 +65,6 @@ function getIconList() {
 }
 
 function changePassword() {
-console.log(inpEmail.value)
 apiTextPlain.post("http://localhost:8080/user/changePasswordTokenRequest/",
     inpEmail.value
     ).catch(error => {

@@ -7,6 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Timer</title>
+    <link rel="stylesheet" type="text/css" href="/css/basicHTML/table.css">
+    <link rel="stylesheet" type="text/css" href="/css/basicHTML/button.css">
+    <link rel="stylesheet" type="text/css" href="/css/basicHTML/input.css">
     <link rel="stylesheet" href="/css/login.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600;700&display=swap" rel="stylesheet">
@@ -20,6 +23,8 @@
         document.getElementById('navLogout').style.display = 'none';
         var message = "[[${message}]]";
         console.log(message)
+
+
 </script>
 <main>
     <div class="login" sec:authorize="!isAuthenticated()">
@@ -40,13 +45,15 @@
         <script>
                 document.getElementById('navLogout').style.display = 'block';
 
+
         </script>
         <form th:action="@{/logout}">
             <button type="submit" value="Log out" id="logout">Logout</button>
         </form>
     </div>
     <div class="createUserContainer">
-        <a href="http://localhost:8080/create">Register</a>
+        <a href="http://localhost:8080/create">Register</a><br>
+        <a href="http://localhost:8080/forgot-password">Forgot password</a>
     </div>
 </main>
 <div th:replace="basicHtml/footer :: footer"></div>
