@@ -49,4 +49,24 @@ public class WebsiteController {
     public String forgotPassword() {
         return "forgotPassword";
     }
+
+    @GetMapping("/basicHTML/head")
+    public String getHeadHtml() {
+        return "/basicHTML/head";
+    }
+
+    @GetMapping("/basicHTML/header")
+    public String getHeaderHtml() {
+        return "/basicHTML/header";
+    }
+
+    @GetMapping("/basicHTML/navigation")
+    public String getNavigationHtml() {
+        return "/basicHTML/navigation";
+    }
+
+    @GetMapping("/basicHTML/footer")
+    public String getFooterHtml() {
+        return "/basicHTML/footer";
+    }
 }

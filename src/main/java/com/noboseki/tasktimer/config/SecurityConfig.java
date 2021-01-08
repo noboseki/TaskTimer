@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**", "/js/**", "/css/**", "/favicon.*", "/img/**" +
                             "").permitAll();
                     authorize.antMatchers("/h2-console/**", "/confirm/**", "/user/changePasswordTokenRequest/").permitAll();
-                    authorize.antMatchers("/user/create/**", "/user/changePassword/", "/forgot-password/**", "/create").permitAll();
+                    authorize.antMatchers("/user/create/**", "/user/changePassword/", "/forgot-password/**", "/create", "/basicHTML/**").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
