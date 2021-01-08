@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html lang="pl"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-
-<div th:fragment="navigation">
-    <link rel="stylesheet" href="/css/basicHTML/navigation.css">
-    <nav>
-        <div class="nav-mobile">
-            <button><i class="fas fa-bars"></i></button>
-        </div>
-        <div class="nav-desktop">
-            <ul>
-                <li><a th:href="@{http://localhost:8080/}">Main</a></li>
-                <li><a th:href="@{http://localhost:8080/profile}">Profile</a></li>
-                <li><a th:href="@{http://localhost:8080/statistic}">statistic</a></li>
-                <li><a id="navLogout" th:href="@{http://localhost:8080/logout}">logout</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="nav-mobile">
+    <button id="openSideMenu" onclick="opernSideBar()"><i class="fas fa-bars"></i></button>
+    <div id="sideMenu">
+        <button id="closeSideBar" onclick="closeSideBar()"><i class="fas fa-times"></i></button>
+        <ul>
+            <li><a href="http://localhost:8080/">Main</a></li>
+            <li><a href="http://localhost:8080/profile">Profile</a></li>
+            <li><a href="http://localhost:8080/statistic">statistic</a></li>
+            <li><a id="navLogoutMobile" href="http://localhost:8080/logout">logout</a></li>
+        </ul>
+    </div>
 </div>
+<div class="nav-desktop">
+    <ul>
+        <li><a href="http://localhost:8080/">Main</a></li>
+        <li><a href="http://localhost:8080/profile">Profile</a></li>
+        <li><a href="http://localhost:8080/statistic">statistic</a></li>
+        <li><a id="navLogoutDesktop" href="http://localhost:8080/logout">logout</a></li>
+    </ul>
+</div>
+<script src="/js/navigation.js"></script>

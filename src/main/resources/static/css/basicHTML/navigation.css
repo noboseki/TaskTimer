@@ -9,15 +9,19 @@ nav {
 
 .nav-mobile button {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background: none;
     border: none;
     color: white;
+    transition: color 0.3s;
+}
+
+#openSideMenu {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 30px;
     padding: 0 60px;
-    transition: color 0.3s;
+    z-index: 0;
 }
 
 .nav-mobile button:hover {
@@ -28,11 +32,29 @@ nav {
     display: none;
 }
 
-@media (min-width: 576px) { 
+nav a {
+    display: block;
+    width: 140px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+    letter-spacing: 2px;
+    font-weight: 700;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color:#ff8766 ;
+}
+
+@media (min-width: 576px) {
     .nav-mobile {
         display: none;
     }
-    
+
     .nav-desktop {
         position: relative;
         display: inline-block;
@@ -40,27 +62,11 @@ nav {
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
     .nav-desktop li {
         display: inline-block;
     }
-    
-    .nav-desktop  a {
-        display: block;
-        width: 112px;
-        font-family: 'Source Sans Pro', sans-serif;
-        font-size: 15px;
-        text-decoration: none;
-        text-transform: uppercase;
-        text-align: center;
-        color: white;
-        letter-spacing: 2px;
-        transition: color 0.3s;
-    }
-    
-    .nav-desktop a:hover {
-        color:#ff8766 ;
-    }
+
 }
 
 @media (max-width: 320px) {
@@ -72,4 +78,32 @@ nav {
     nav {
         width: 320px;
     }
+}
+
+#sideMenu {
+    position: fixed;
+    top:0;
+    left: -221px;
+    width: 220px;
+    height: 100%;
+    background: rgba(108,88,175,1);
+    z-index: 1;
+    border-right: 1px solid  #ff8766;
+    animation-timing-function: ease-in-out;
+    transition: transform 1s;
+
+}
+
+#sideMenu a {
+    display: block;
+    width: 140px;
+    font-size: 15px;
+    margin: 15px;
+    text-align: left;
+}
+
+#closeSideBar {
+    right: 15px;
+    font-size: 20px;
+    padding: 5px 20px;
 }
