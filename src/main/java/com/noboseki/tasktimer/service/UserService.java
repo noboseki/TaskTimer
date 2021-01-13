@@ -62,12 +62,12 @@ public class UserService {
         }
     }
 
-    public String changePassword(UserServiceChangePasswordRequest request) {
+    public String changePassword(@Valid UserServiceChangePasswordRequest request) {
         ConfirmationToken token = tokenService.getByTokenAndType(request.getToken(), TokenType.PASSWORD);
         User dbUser = findByEmile(token.getUser().getEmail());
 
         if (!passwordEncoder.matches(request.getOldPassword(), dbUser.getPassword())) {
-            throw new InvalidException("OldPassword", request.getOldPassword());
+            throw new InvalidException("Old password", request.getOldPassword());
         }
 
         dbUser.setPassword(passwordEncoder.encode(request.getNewPassword()));

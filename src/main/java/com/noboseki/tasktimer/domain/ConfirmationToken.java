@@ -1,8 +1,6 @@
 package com.noboseki.tasktimer.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,6 +8,7 @@ import java.util.UUID;
 
 @ToString
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class ConfirmationToken {

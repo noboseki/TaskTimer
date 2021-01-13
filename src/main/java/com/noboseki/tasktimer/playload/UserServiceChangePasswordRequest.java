@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -17,10 +18,10 @@ public class UserServiceChangePasswordRequest {
 
     @NotNull
     private String token;
+
     @NotNull
     private String oldPassword;
-    @NotNull
-    @Min(6)
-    @Max(30)
+
+    @Size(min = 6, max = 30)
     private String newPassword;
 }
