@@ -2,10 +2,7 @@ package com.noboseki.tasktimer.playload;
 
 import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -15,18 +12,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class UserServiceCreateRequest {
 
-    @NotNull
-    @Email
+    @Email(regexp = ".+@.+\\..+")
     private String email;
 
-    @NotNull
-    @Min(6)
-    @Max(30)
+    @Size(min = 6, max = 30)
     private String password;
 
-    @NotNull
-    @Min(6)
-    @Max(14)
-    private String userName;
+    @Size(min = 6, max = 14)
+    private String username;
 
 }

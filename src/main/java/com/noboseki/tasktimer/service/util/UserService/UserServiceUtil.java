@@ -29,7 +29,7 @@ public class UserServiceUtil {
     public User mapToUser(UserServiceCreateRequest request, Authority authority, ProfileImg profileImg) {
         return User.builder()
                 .email(request.getEmail())
-                .username(request.getUserName())
+                .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .authority(authority)
                 .profileImg(profileImg).build();
