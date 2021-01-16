@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +24,13 @@ public class TaskService {
     private final UserService userService;
     private final TaskDao taskDao;
 
-    public String create(User user, @Valid String taskName) {
+    public String create(User user, String taskName) {
         User dbUser = userService.findByEmile(user.getEmail());
         taskSave(Task.builder()
                 .name(taskName)
                 .user(dbUser).build());
 
-        return taskName + "has been created";
+        return taskName + " has been created";
     }
 
     public List<TaskServiceGetTaskList> getTasks(User user) {
@@ -48,7 +47,7 @@ public class TaskService {
         task.setComplete(!task.getComplete());
         task = taskSave(task);
 
-        return taskName + "complete changed to" + task.getComplete();
+        return taskName + " complete changed to " + task.getComplete();
     }
 
     public String changeArchiveTask(User user, String taskName) {
@@ -57,21 +56,17 @@ public class TaskService {
         task.setArchived(!task.getArchived());
         task = taskSave(task);
 
-        return taskName + "archive changed to" + task.getComplete();
+        return taskName + " archive changed to " + task.getComplete();
     }
 
     public String delete(User user, String taskName) {
         Task task = findByNameAndUser(user, taskName);
         deleteTask(task);
-        return taskName + "has been deleted";
+        return taskName + " has been deleted";
     }
 
     public Task findByNameAndUser(User user, String name) {
         return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
-    }
-
-    public Task getTaskByUserAndName(User user, String name) {
-        return taskDao.findByUserAndName(user, name).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
     }
 
     private Task taskSave(Task task) {

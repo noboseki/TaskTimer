@@ -43,7 +43,7 @@ public class UserControllerIT extends ControllerIntegrationTest {
             //Given
             request = UserServiceCreateRequest.builder()
                     .email("test@test.com")
-                    .userName("test name")
+                    .username("test name")
                     .password("TestPassword").build();
 
             String jsonRequest = gson.toJson(request);
