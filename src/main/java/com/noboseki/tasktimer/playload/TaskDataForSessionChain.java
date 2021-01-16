@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
 public class TaskDataForSessionChain {
 
     private List<Float> data;
