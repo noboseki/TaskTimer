@@ -75,8 +75,8 @@ public class SessionService {
 
     public List<GetByTaskSessionResponse> getAllByTask(User user, String taskName) {
         Task task = taskService.findByNameAndUser(user, taskName);
-        List<Session> sessions = sessionDao.findAllByTask(task);
-        return sessions.stream()
+
+        return sessionDao.findAllByTask(task).stream()
                 .map(this::mapToGetByTaskResponse)
                 .collect(Collectors.toList());
     }

@@ -53,7 +53,6 @@ class SessionServiceTest {
 
     @BeforeEach
     void setUp() {
-        //Given
         user = User.builder()
                 .id(UUID.randomUUID())
                 .username("test")
@@ -194,6 +193,7 @@ class SessionServiceTest {
                     LocalDate.parse("2020-10-20"),
                     LocalDate.parse("2020-10-21"));
 
+            //Then
             assertEquals(3, response.getDataList().size());
             assertEquals(2, response.getDateLabel().size());
             verify(sessionDao, times(1))
@@ -209,6 +209,7 @@ class SessionServiceTest {
                     LocalDate.parse("2020-10-20"),
                     LocalDate.parse("2020-10-20"));
 
+            //Then
             assertEquals(0, response.getDataList().size());
             assertEquals(1, response.getDateLabel().size());
         }
