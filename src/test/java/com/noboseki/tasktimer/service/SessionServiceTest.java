@@ -1,214 +1,245 @@
-//package com.noboseki.tasktimer.service;
-//
-//import com.noboseki.tasktimer.domain.Session;
-//import com.noboseki.tasktimer.domain.Task;
-//import com.noboseki.tasktimer.domain.User;
-//import com.noboseki.tasktimer.exeption.SaveException;
-//import com.noboseki.tasktimer.playload.ApiResponse;
-//import com.noboseki.tasktimer.playload.CreateSessionRequest;
-//import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
-//import com.noboseki.tasktimer.repository.SessionDao;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.springframework.http.ResponseEntity;
-//
-//import java.sql.Date;
-//import java.sql.Time;
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.UUID;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.anyString;
-//import static org.mockito.Mockito.*;
-//
-//class SessionServiceTest extends ServiceSetupClass {
-//
-//    @Mock
-//    SessionDao sessionDao;
-//
-//    @InjectMocks
-//    SessionService service;
-//
-//    @Override
-//    @BeforeEach
-//    void setUp() {
-//        super.setUp();
-//
-//        task = Task.builder()
-//                .id(UUID.randomUUID())
-//                .name("Test name")
-//                .complete(false)
-//                .user(user).build();
-//
-//        when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
-//    }
-//
-//    @Nested
-//    @DisplayName("Create")
-//    class SessionServiceTestCreate  {
-//        private CreateSessionRequest request;
-//
-//        @BeforeEach
-//        void setUp() {
-//            request = new CreateSessionRequest(LocalDate.now().toString(), LocalTime.of(2,5,20).toString());
-//        }
-//
-//        @Test
-//        @DisplayName("Correct")
-//        void createCorrect() {
-//            //When
-//            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
-//            ResponseEntity<ApiResponse> response = service.create(user, TEST_NAME, request);
-//
-//            //Then
-//            verify(sessionDao, times(1)).save(any(Session.class));
-//            checkApiResponse(response.getBody(),"Session has been created", true);
-//        }
-//
-//        @Test
-//        @DisplayName("User Not Found")
-//        void createUserNotFound() {
-//            testUserNotFound(() -> service.create(user, TEST_NAME, request));
-//        }
-//
-//        @Test
-//        @DisplayName("Task Not Found")
-//        void createTaskNotFound() {
-//            testTaskNotFound(() -> service.create(user, TEST_NAME, request));
-//        }
-//
-//        @Test
-//        @DisplayName("Save error")
-//        void createSaveError() {
-//            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
-//            when(sessionDao.save(any(Session.class))).thenThrow(SaveException.class);
-//            assertThrows(SaveException.class, () -> service.create(user, TEST_NAME, request));
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("Get by Task")
-//    class SessionServiceTestGetByTask {
-//
-//        @Test
-//        @DisplayName("Correct")
-//        void getByTaskCorrect() {
-//            //Given
-//            Session session = Session.builder()
-//                    .date(Date.valueOf(LocalDate.now()))
-//                    .time(Time.valueOf(LocalTime.of(2,5)))
-//                    .task(task).build();
-//
-//            List<Session> sessions = new ArrayList<>();
-//            sessions.add(session);
-//
-//            //When
-//            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
-//            when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
-//            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
-//            GetByTaskSessionResponse response = responses.getBody().get(0);
-//
-//            //Then
-//            assertEquals(1,responses.getBody().size());
-//            assertEquals(session.getDate(), response.getDate());
-//            assertEquals(session.getTime(), response.getTime());
-//            verify(userDao, times(1)).findByEmail(anyString());
-//            verify(taskDao, times(1)).findByNameAndUser(anyString(),any(User.class));
-//            verify(sessionDao, times(1)).findAllByTask(any(Task.class));
-//        }
-//
-//        @Test
-//        @DisplayName("Empty")
-//        void getByTaskEmpty() {
-//            //Given
-//            List<Session> sessions = new ArrayList<>();
-//
-//            //When
-//            when(taskDao.findByNameAndUser(anyString(),any(User.class))).thenReturn(Optional.of(task));
-//            when(sessionDao.findAllByTask(any(Task.class))).thenReturn(sessions);
-//            ResponseEntity<List<GetByTaskSessionResponse>> responses = service.getAllByTask(user, TEST_NAME);
-//
-//            //Then
-//            assertEquals(0,responses.getBody().size());
-//            verify(userDao, times(1)).findByEmail(anyString());
-//            verify(taskDao, times(1)).findByNameAndUser(anyString(),any(User.class));
-//            verify(sessionDao, times(1)).findAllByTask(any(Task.class));
-//        }
-//
-//        @Test
-//        @DisplayName("User Not Found")
-//        void getByTaskUserNotFound() {
-//            testUserNotFound(() -> service.getAllByTask(user, TEST_NAME));
-//        }
-//
-//        @Test
-//        @DisplayName("Task Not Found")
-//        void getByTaskTaskNotFound() {
-//            testTaskNotFound(() -> service.getAllByTask(user, TEST_NAME));
-//        }
-//    }
-//
-////    @Nested
-////    @DisplayName("Get by Date")
-////    class SessionServiceTestGetByDate {
-////        protected final String DATE = "2016-08-16";
-////
-////        @Test
-////        @DisplayName("Correct")
-////        void getByTaskCorrect() {
-////            //Given
-////            Session session = Session.builder()
-////                    .date(Date.valueOf(LocalDate.now()))
-////                    .time(Time.valueOf(LocalTime.of(2,5)))
-////                    .task(task).build();
-////
-////            List<Session> sessions = new ArrayList<>();
-////            sessions.add(session);
-////
-////            //When
-////            when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
-////            ResponseEntity<List<GetBetweenDateSessionResponse>> responses = service.getByDate(user, DATE);
-////            GetBetweenDateSessionResponse response = responses.getBody().get(0);
-////
-////            //Then
-////            assertEquals(1,responses.getBody().size());
-////            assertEquals(session.getDate(), response.getDate());
-////            assertEquals(session.getTime(), response.getTime());
-////            assertEquals(session.getTask().getName(), response.getTaskName());
-////            verify(userDao, times(1)).findByEmail(anyString());
-////            verify(sessionDao, times(1)).findAllByTask_User_EmailAndDate(anyString(),any(Date.class));
-////        }
-////
-////        @Test
-////        @DisplayName("Empty")
-////        void getByTaskEmpty() {
-////            //Given
-////            List<Session> sessions = new ArrayList<>();
-////
-////            //When
-////            when(sessionDao.findAllByTask_User_EmailAndDate(anyString(),any(Date.class))).thenReturn(sessions);
-////            ResponseEntity<List<GetBetweenDateSessionResponse>> responses = service.getByDate(user, DATE);
-////
-////            //Then
-////            assertEquals(0,responses.getBody().size());
-////            verify(userDao, times(1)).findByEmail(anyString());
-////            verify(sessionDao, times(1)).findAllByTask_User_EmailAndDate(anyString(),any(Date.class));
-////        }
-////
-////        @Test
-////        @DisplayName("User Not Found")
-////        void getByTaskUserNotFound() {
-////            testUserNotFound(() -> service.getByDate(user, DATE));
-////        }
-////    }
-//}
+package com.noboseki.tasktimer.service;
+
+import com.noboseki.tasktimer.domain.Session;
+import com.noboseki.tasktimer.domain.Task;
+import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.DateTimeException;
+import com.noboseki.tasktimer.exeption.SaveException;
+import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
+import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
+import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
+import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
+import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetBarChainByDateUtil;
+import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetTableByDateUtil;
+import org.junit.jupiter.api.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@SpringJUnitWebConfig
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class SessionServiceTest {
+    @Spy
+    private SessionServiceGetTableByDateUtil getTableByDateUtil;
+    @Spy
+    private SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
+    @Mock
+    private TaskService taskService;
+    @Mock
+    private UserService userService;
+    @Mock
+    private SessionDao sessionDao;
+    @InjectMocks
+    private SessionService service;
+
+    private User user;
+    private Task task;
+    private final UnitTestUtil util = new UnitTestUtil();
+
+    @BeforeEach
+    void setUp() {
+        user = User.builder()
+                .id(UUID.randomUUID())
+                .username("test")
+                .email("test@test.com")
+                .password("test")
+                .enabled(true).build();
+
+        task = Task.builder()
+                .id(UUID.randomUUID())
+                .name("task Name")
+                .user(user)
+                .archived(false).build();
+    }
+
+    @Nested
+    @DisplayName("Create")
+    class SessionServiceTestCreate {
+        private SessionServiceCreateRequest request;
+        private Session session;
+
+        @BeforeEach
+        void setUp() {
+            request = new SessionServiceCreateRequest(
+                    "2020-10-20",
+                    "00:20:00",
+                    "task name");
+
+            session = Session.builder()
+                    .id(UUID.randomUUID())
+                    .date(Date.valueOf("2020-10-20"))
+                    .task(task)
+                    .time(Time.valueOf("00:40:00")).build();
+        }
+
+        @Test
+        @DisplayName("Correct")
+        void correct() {
+            //When
+            when(sessionDao.save(any(Session.class))).thenReturn(session);
+            when(sessionDao.findById(any(UUID.class))).thenReturn(Optional.of(session));
+
+            String response = service.create(user, request);
+
+            //Then
+            assertEquals("Session has been created", response);
+            verify(sessionDao, times(1)).save(any(Session.class));
+            verify(sessionDao, times(1)).findById(any(UUID.class));
+        }
+
+        @Test
+        @DisplayName("DateTime date exception")
+        void DateTimeExceptionDate() {
+            //Given
+            request.setDate("2020-50-46");
+
+            //Then
+            Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
+            assertEquals("Create error 'Date' form string: '2020-50-46'", response.getMessage());
+        }
+
+        @Test
+        @DisplayName("DateTime time exception")
+        void DateTimeExceptionTime() {
+            //Given
+            request.setTime("46:80");
+
+            //Then
+            Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
+            assertEquals("Create error 'Time' form string: '46:80'", response.getMessage());
+        }
+
+        @Test
+        @DisplayName("Save exception")
+        void saveException() {
+            //Then
+            Throwable response = assertThrows(SaveException.class, () -> service.create(user, request));
+            assertEquals("Save error of 'Session' : '00:20:00'", response.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("Get table by date")
+    class SessionServiceTestGetTableByDate {
+
+        @Test
+        @DisplayName("Correct")
+        void correct() {
+            //When
+            when(sessionDao.findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class)))
+                    .thenReturn(util.getDefaultSessionList());
+
+            List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
+                    user,
+                    LocalDate.parse("2020-10-20"),
+                    LocalDate.parse("2020-10-21"));
+
+            //Then
+            assertEquals(2, responses.size());
+            assertEquals(LocalDate.parse("2020-10-20"), responses.get(0).getDate());
+            assertEquals("07:50", responses.get(0).getTime());
+            assertEquals(3, responses.get(0).getSessions());
+
+            assertEquals(LocalDate.parse("2020-10-21"), responses.get(1).getDate());
+            assertEquals("00:00", responses.get(1).getTime());
+            assertEquals(0, responses.get(1).getSessions());
+
+            verify(sessionDao, times(1))
+                    .findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class));
+        }
+
+        @Test
+        @DisplayName("Correct empty")
+        void correctEmpty() {
+            //When
+            List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
+                    user,
+                    LocalDate.parse("2020-10-20"),
+                    LocalDate.parse("2020-10-21"));
+
+            //Then
+            assertEquals(2, responses.size());
+        }
+    }
+
+    @Nested
+    @DisplayName("Get bar chain by date")
+    class SessionServiceTestGetBarChainByDate {
+
+        @Test
+        @DisplayName("Correct empty")
+        void correct() {
+            //When
+            when(sessionDao.findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class)))
+                    .thenReturn(util.getDefaultSessionList());
+
+            SessionServiceChainByDateResponse response = service.getBarChainByDate(
+                    user,
+                    LocalDate.parse("2020-10-20"),
+                    LocalDate.parse("2020-10-21"));
+
+            //Then
+            assertEquals(3, response.getDataList().size());
+            assertEquals(2, response.getDateLabel().size());
+            verify(sessionDao, times(1))
+                    .findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class));
+        }
+
+        @Test
+        @DisplayName("Correct empty")
+        void correctEmpty() {
+            //When
+            SessionServiceChainByDateResponse response = service.getBarChainByDate(
+                    user,
+                    LocalDate.parse("2020-10-20"),
+                    LocalDate.parse("2020-10-20"));
+
+            //Then
+            assertEquals(0, response.getDataList().size());
+            assertEquals(1, response.getDateLabel().size());
+        }
+    }
+
+    @Nested
+    @DisplayName("Get all by task")
+    class SessionServiceTestGetAllByTask {
+
+        @Test
+        @DisplayName("Correct empty")
+        void correctEmpty() {
+            //When
+            List<GetByTaskSessionResponse> responses = service.getAllByTask(user, "taskname");
+
+            //Then
+            assertEquals(0, responses.size());
+        }
+
+        @Test
+        @DisplayName("Correct")
+        void correct() {
+            //When
+            when(taskService.findByNameAndUser(any(User.class), anyString())).thenReturn(task);
+            when(sessionDao.findAllByTask(any(Task.class))).thenReturn(util.getDefaultSessionList());
+
+            List<GetByTaskSessionResponse> responses = service.getAllByTask(user, "taskname");
+
+            //Then
+            assertEquals(5, responses.size());
+        }
+    }
+}
