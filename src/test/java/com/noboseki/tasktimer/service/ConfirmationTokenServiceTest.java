@@ -52,19 +52,8 @@ class ConfirmationTokenServiceTest {
     }
 
     @Test
+    @DisplayName("Create token for user")
     void createTokenForUser() {
-        //Given
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .username("test")
-                .email("test@test.com")
-                .password("test")
-                .enabled(true).build();
-
-        ConfirmationToken token = new ConfirmationToken();
-        token.setUser(user);
-        token.setType(TokenType.ACTIVATE);
-
         //When
         when(tokenDao.save(any(ConfirmationToken.class))).thenReturn(token);
         when(tokenDao.findByUser_EmailAndType(anyString(), any(TokenType.class)))
@@ -91,6 +80,7 @@ class ConfirmationTokenServiceTest {
 
             String response = service.activateAccount(UUID.randomUUID().toString());
 
+            //Then
             assertEquals("Congratulations! Your account has been activated and email is verified!", response);
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenDao, times(1))
@@ -110,7 +100,6 @@ class ConfirmationTokenServiceTest {
         @Test
         @DisplayName("User not found error")
         void userNotFound() {
-            //When
             when(tokenDao.findByConfirmationTokenAndType(anyString(), any(TokenType.class)))
                     .thenReturn(Optional.of(token));
 
@@ -136,6 +125,7 @@ class ConfirmationTokenServiceTest {
 
             ConfirmationToken response = service.saveConfirmationToken(token);
 
+            //Then
             assertEquals(response, token);
             verify(tokenDao, times(1)).save(any(ConfirmationToken.class));
             verify(tokenDao, times(1))
@@ -145,7 +135,6 @@ class ConfirmationTokenServiceTest {
         @Test
         @DisplayName("Save error")
         void saveError() {
-            //When
             when(tokenDao.save(any(ConfirmationToken.class))).thenReturn(token);
 
             Throwable response = assertThrows(SaveException.class, () -> service.saveConfirmationToken(token));
@@ -173,7 +162,6 @@ class ConfirmationTokenServiceTest {
         @Test
         @DisplayName("Delete error")
         void deleteError() {
-
             when(tokenDao.findById(any(UUID.class))).thenReturn(Optional.of(token));
 
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteToken(token));
