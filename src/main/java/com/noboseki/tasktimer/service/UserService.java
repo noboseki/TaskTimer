@@ -56,7 +56,7 @@ public class UserService {
         try {
             ConfirmationToken token = tokenService.createTokenForUser(dbUser, TokenType.PASSWORD);
             userServiceUtil.changePasswordEmileSender(token.getConfirmationToken(), emile);
-            return "Emile has been send";
+            return "Emile has been sent";
         } catch (SaveException e) {
             throw new SaveException("token", "create change password token");
         }
@@ -101,16 +101,12 @@ public class UserService {
     public User saveUser(User user) {
         SaveException saveException = new SaveException("User", user.getEmail());
 
-        try {
             User dbUser = userDao.save(user);
             if (userDao.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
                 return dbUser;
             } else {
                 throw saveException;
             }
-        } catch (SaveException e) {
-            throw saveException;
-        }
     }
 
     public boolean deleteUser(User user) {
