@@ -96,11 +96,9 @@ class UserServiceTest {
             when(userDao.save(any())).thenReturn(null);
 
             //Then
-            Throwable response = assertThrows(SaveException.class, () -> {
-                service.saveUser(user);
-                verify(userDao, times(0)).findByEmailAndPassword(anyString(), anyString());
-            });
-            assertEquals(response.getMessage(), "Save error of 'User' : 'test@test.com'");
+            Throwable response = assertThrows(SaveException.class,
+                    () -> service.saveUser(user));
+            assertEquals("Save error of 'User' : 'test@test.com'", response.getMessage());
         }
 
         @Test
@@ -111,7 +109,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.saveUser(user));
-            assertEquals(response.getMessage(), "Save error of 'User' : 'test@test.com'");
+            assertEquals("Save error of 'User' : 'test@test.com'", response.getMessage());
         }
     }
 
@@ -138,7 +136,7 @@ class UserServiceTest {
         @DisplayName("Find by email error")
         void findByEmailError() {
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteUser(user));
-            assertEquals(response.getMessage(), "Delete error of 'emile' : 'test@test.com'");
+            assertEquals("Delete error of 'emile' : 'test@test.com'", response.getMessage());
         }
     }
 
@@ -169,7 +167,7 @@ class UserServiceTest {
         void findByEmailError() {
             when(userDao.findByEmail(anyString())).thenReturn(Optional.empty());
             Throwable response = assertThrows(ResourceNotFoundException.class, () -> service.findByEmile("test@test.com"));
-            assertEquals(response.getMessage(), "User not found by email : 'test@test.com'");
+            assertEquals("User not found by email : 'test@test.com'", response.getMessage());
         }
     }
 
@@ -193,7 +191,7 @@ class UserServiceTest {
             String response = service.updateProfile(user, request);
 
             //That
-            assertEquals(response, "User profile has been updated");
+            assertEquals("User profile has been updated", response);
             verify(userDao, times(1)).findByEmailAndPassword(anyString(), anyString());
             verify(userDao, times(1)).findByEmail(anyString());
             verify(userDao, times(1)).save(any(User.class));
@@ -230,7 +228,7 @@ class UserServiceTest {
             String response = service.changePassword(request);
 
             //Then
-            assertEquals(response, "Password has been changed");
+            assertEquals("Password has been changed", response);
             verify(tokenService, times(1)).getByTokenAndType(anyString(), any(TokenType.class));
             verify(userDao, times(1)).findByEmail(anyString());
             verify(passwordEncoder, times(1)).matches(any(), anyString());
@@ -241,7 +239,7 @@ class UserServiceTest {
         void passwordEncoderError() {
             //Then
             Throwable response = assertThrows(InvalidException.class, () -> service.changePassword(request));
-            assertEquals(response.getMessage(), "Invalid value of 'Old password' : 'oldPassword' ");
+            assertEquals("Invalid value of 'Old password' : 'oldPassword' ", response.getMessage());
         }
     }
 
@@ -267,7 +265,7 @@ class UserServiceTest {
             String response = service.changePasswordRequest("test@test.com");
 
             //Then
-            assertEquals(response, "Emile has been send");
+            assertEquals("Emile has been sent", response);
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
             verify(userServiceUtil, times(1)).changePasswordEmileSender(anyString(), anyString());
@@ -281,7 +279,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.changePasswordRequest("test@test.com"));
-            assertEquals(response.getMessage(), "Save error of 'token' : 'create change password token'");
+            assertEquals("Save error of 'token' : 'create change password token'", response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
             verify(userServiceUtil, times(1)).changePasswordEmileSender(anyString(), anyString());
@@ -321,7 +319,7 @@ class UserServiceTest {
             String response = service.create(request);
 
             //Then
-            assertEquals(response, "User has been created");
+            assertEquals("User has been created", response);
             verify(authorityService, times(1)).findByRole(anyString());
             verify(profileImgService, times(1)).findByName(anyString());
             verify(userServiceUtil, times(1)).activationEmileSender(anyString(), anyString());
@@ -337,7 +335,7 @@ class UserServiceTest {
             when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
 
             Throwable response = assertThrows(DuplicateException.class, () -> service.create(request));
-            assertEquals(response.getMessage(), "User with 'emile' : 'test@test.com' exists in the database");
+            assertEquals("User with 'emile' : 'test@test.com' exists in the database", response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
 
@@ -350,7 +348,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.create(request));
-            assertEquals(response.getMessage(), "Save error of 'token' : 'create activate token'");
+            assertEquals("Save error of 'token' : 'create activate token'", response.getMessage());
             verify(authorityService, times(1)).findByRole(anyString());
             verify(profileImgService, times(1)).findByName(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
@@ -394,7 +392,7 @@ class UserServiceTest {
             assertThat(violationMaxUsername.size()).isEqualTo(1);
             assertThat(violationEmail.size()).isEqualTo(1);
             assertThat(violationAllIncorrect.size()).isEqualTo(3);
-            assertThat(violationAllCorrect.size()).isEqualTo(0);
+            assertTrue(violationAllCorrect.isEmpty());
         }
 
         @Test
@@ -425,7 +423,7 @@ class UserServiceTest {
             assertThat(violationNullOldPassword.size()).isEqualTo(1);
             assertThat(violationNullToken.size()).isEqualTo(1);
             assertThat(violationAllIncorrect.size()).isEqualTo(3);
-            assertThat(violationAllCorrect.size()).isEqualTo(0);
+            assertTrue(violationAllCorrect.isEmpty());
         }
 
         @Test
@@ -456,7 +454,7 @@ class UserServiceTest {
             assertThat(violationEmail.size()).isEqualTo(1);
             assertThat(violationNotNull.size()).isEqualTo(1);
             assertThat(violationAllIncorrect.size()).isEqualTo(3);
-            assertThat(violationAllCorrect.size()).isEqualTo(0);
+            assertTrue(violationAllCorrect.isEmpty());
         }
     }
 }

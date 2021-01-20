@@ -38,7 +38,7 @@ public class Task {
             fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
             targetEntity = User.class)
-    @JoinColumn(name = "user_Id")
+    @JoinColumn(name = "user_Id", nullable = false)
     private User user;
 
     @Singular

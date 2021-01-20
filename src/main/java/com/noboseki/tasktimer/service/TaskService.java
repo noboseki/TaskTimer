@@ -56,7 +56,7 @@ public class TaskService {
         task.setArchived(!task.getArchived());
         task = taskSave(task);
 
-        return taskName + " archive changed to " + task.getComplete();
+        return taskName + " archive changed to " + task.getArchived();
     }
 
     public String delete(User user, String taskName) {
@@ -85,17 +85,11 @@ public class TaskService {
     }
 
     private boolean deleteTask(Task task) {
-        DeleteException deleteException = new DeleteException("name", task.getName());
-
-        try {
-            taskDao.delete(task);
-            if (taskDao.findById(task.getId()).isPresent()) {
-                throw deleteException;
-            } else {
-                return true;
-            }
-        } catch (DeleteException e) {
-            throw deleteException;
+        taskDao.delete(task);
+        if (taskDao.findById(task.getId()).isPresent()) {
+            throw new DeleteException("name", task.getName());
+        } else {
+            return true;
         }
     }
 }
