@@ -79,7 +79,6 @@ public class UserControllerIT {
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
-
             String JsonRequest = mapper.writeValueAsString(request);
 
             mockMvc.perform(post("/user/create/")
@@ -141,9 +140,14 @@ public class UserControllerIT {
         @DisplayName("Correct")
         void correct() throws Exception {
             mockMvc.perform(post(url)
-                    .content("user@test.com"))
+                    .content("test@test.com"))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Emile has been send")).andReturn();
+                    .andExpect(content().string("Emile has been sent")).andReturn();
+
+            ConfirmationToken token = tokenService.getByUser_EmailAndType(user.getEmail(), TokenType.PASSWORD)
+                    .orElseThrow();
+
+            tokenService.deleteToken(token);
         }
 
         @Test
@@ -165,7 +169,6 @@ public class UserControllerIT {
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
-            //Given
             User user = userDao.findByEmail("test@test.com").orElseThrow(RuntimeException::new);
             ConfirmationToken token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
             UserServiceChangePasswordRequest request = new UserServiceChangePasswordRequest(
@@ -186,7 +189,6 @@ public class UserControllerIT {
         @Test
         @DisplayName("Invalid token")
         void invalidToken() throws Exception {
-            //Given
             UserServiceChangePasswordRequest request = new UserServiceChangePasswordRequest(
                     UUID.randomUUID().toString(),
                     "password",
@@ -204,7 +206,6 @@ public class UserControllerIT {
         @Test
         @DisplayName("Invalid old password")
         void invalidOldPassword() throws Exception {
-            //Given
             User user = userDao.findByEmail("test@test.com").orElseThrow(RuntimeException::new);
             ConfirmationToken token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
             UserServiceChangePasswordRequest request = new UserServiceChangePasswordRequest(
