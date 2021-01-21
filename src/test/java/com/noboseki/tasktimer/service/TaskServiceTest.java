@@ -72,7 +72,7 @@ class TaskServiceTest {
             String response = service.create(user, "testName");
 
             //Then
-            assertEquals(response, "testName has been created");
+            assertEquals("testName has been created", response);
             verify(userService, times(1)).findByEmile(anyString());
             verify(taskDao, times(1)).save(any(Task.class));
             verify(taskDao, times(1)).findByNameAndUser(anyString(), any(User.class));
@@ -85,8 +85,8 @@ class TaskServiceTest {
             when(userService.findByEmile(anyString())).thenReturn(user);
 
             //Then
-            Throwable response = assertThrows(SaveException.class, () -> service.create(user,"taskName"));
-            assertEquals(response.getMessage(), "Save error of 'Task' : 'taskName'");
+            Throwable response = assertThrows(SaveException.class, () -> service.create(user, "taskName"));
+            assertEquals("Save error of 'Task' : 'taskName'", response.getMessage());
             verify(userService, times(1)).findByEmile(anyString());
         }
     }
@@ -115,7 +115,7 @@ class TaskServiceTest {
             List<TaskServiceGetTaskList> response = service.getTasks(user);
 
             //Then
-            assertEquals(response.size(), 2);
+            assertEquals(2, response.size());
             verify(taskDao, times(1)).findAllByUser(any(User.class));
         }
     }
@@ -134,7 +134,7 @@ class TaskServiceTest {
             String response = service.changeTaskComplete(user, "taskName");
 
             //Then
-            assertEquals(response, "taskName complete changed to true");
+            assertEquals("taskName complete changed to true", response);
             verify(taskDao, times(1)).save(any(Task.class));
             verify(taskDao, times(2)).findByNameAndUser(anyString(), any(User.class));
         }
@@ -154,7 +154,7 @@ class TaskServiceTest {
             String response = service.changeArchiveTask(user, "taskTest");
 
             //Then
-            assertEquals(response, "taskTest archive changed to false");
+            assertEquals("taskTest archive changed to true", response);
             verify(taskDao, times(1)).save(any(Task.class));
             verify(taskDao, times(2)).findByNameAndUser(anyString(), any(User.class));
         }
@@ -173,7 +173,7 @@ class TaskServiceTest {
             String response = service.delete(user, "taskName");
 
             //Then
-            assertEquals(response, "taskName has been deleted");
+            assertEquals("taskName has been deleted", response);
             verify(taskDao, times(1)).findByNameAndUser(anyString(), any(User.class));
         }
 
@@ -184,10 +184,10 @@ class TaskServiceTest {
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
             when(taskDao.findById(any(UUID.class))).thenReturn(Optional.of(task));
 
-            Throwable response = assertThrows(DeleteException.class, () -> service.delete(user," taskName"));
+            Throwable response = assertThrows(DeleteException.class, () -> service.delete(user, " taskName"));
 
             //Then
-            assertEquals(response.getMessage(), "Delete error of 'name' : 'task Name'");
+            assertEquals("Delete error of 'name' : 'task Name'", response.getMessage());
             verify(taskDao, times(1)).findByNameAndUser(anyString(), any(User.class));
             verify(taskDao, times(1)).findById(any(UUID.class));
         }
@@ -216,7 +216,7 @@ class TaskServiceTest {
             //When
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.findByNameAndUser(user, "testName"));
-            assertEquals(response.getMessage(), "Task not found by name : 'testName'");
+            assertEquals("Task not found by name : 'testName'", response.getMessage());
         }
     }
 }

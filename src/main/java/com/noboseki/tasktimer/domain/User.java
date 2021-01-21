@@ -62,6 +62,7 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Singular
     @OneToMany(
+            orphanRemoval = true,
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             targetEntity = Task.class,
@@ -71,9 +72,8 @@ public class User implements UserDetails, CredentialsContainer {
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
         return authorities.stream()
-                .map(authority -> {
-                    return new SimpleGrantedAuthority(authority.getRole());
-                }).collect(Collectors.toSet());
+                .map(authority -> new SimpleGrantedAuthority(authority.getRole()))
+                .collect(Collectors.toSet());
     }
 
     @Builder.Default
