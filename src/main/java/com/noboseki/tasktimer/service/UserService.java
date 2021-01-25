@@ -101,12 +101,12 @@ public class UserService {
     public User saveUser(User user) {
         SaveException saveException = new SaveException("User", user.getEmail());
 
-            User dbUser = userDao.save(user);
-            if (userDao.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
-                return dbUser;
-            } else {
-                throw saveException;
-            }
+        User dbUser = userDao.save(user);
+        if (userDao.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
+            return dbUser;
+        } else {
+            throw saveException;
+        }
     }
 
     public boolean deleteUser(User user) {

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,8 @@ public class SessionController {
     public ResponseEntity<SessionServiceChainByDateResponse> getChainByDate(@AuthenticationPrincipal User user,
                                                                             @PathVariable String from,
                                                                             @PathVariable String to) {
-        return ResponseEntity.ok(service.getBarChainByDate(user, LocalDate.parse(from), LocalDate.parse(to)));
+
+        return ResponseEntity.ok(service.getBarChainByDate(user, from, to));
     }
 
     @UserPermission
@@ -46,6 +48,7 @@ public class SessionController {
     public ResponseEntity<List<SessionServiceTableByDateResponse>> getTableByDate(@AuthenticationPrincipal User user,
                                                                                   @PathVariable String from,
                                                                                   @PathVariable String to) {
-        return ResponseEntity.ok(service.getTableByDate(user, LocalDate.parse(from), LocalDate.parse(to)));
+
+        return ResponseEntity.ok(service.getTableByDate(user, from, to));
     }
 }

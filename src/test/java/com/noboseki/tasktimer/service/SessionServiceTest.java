@@ -10,6 +10,7 @@ import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.service.util.ServiceUtil;
 import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetBarChainByDateUtil;
 import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetTableByDateUtil;
 import org.junit.jupiter.api.*;
@@ -38,6 +39,8 @@ class SessionServiceTest {
     private SessionServiceGetTableByDateUtil getTableByDateUtil;
     @Spy
     private SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
+    @Spy
+    private  ServiceUtil serviceUtil;
     @Mock
     private TaskService taskService;
     @Mock
@@ -146,8 +149,8 @@ class SessionServiceTest {
 
             List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
                     user,
-                    LocalDate.parse("2020-10-20"),
-                    LocalDate.parse("2020-10-21"));
+                    "2020-10-20",
+                    "2020-10-21");
 
             //Then
             assertEquals(2, responses.size());
@@ -169,8 +172,8 @@ class SessionServiceTest {
             //When
             List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
                     user,
-                    LocalDate.parse("2020-10-20"),
-                    LocalDate.parse("2020-10-21"));
+                    "2020-10-20",
+                    "2020-10-21");
 
             //Then
             assertEquals(2, responses.size());
@@ -182,7 +185,7 @@ class SessionServiceTest {
     class SessionServiceTestGetBarChainByDate {
 
         @Test
-        @DisplayName("Correct empty")
+        @DisplayName("Correct")
         void correct() {
             //When
             when(sessionDao.findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class)))
@@ -190,8 +193,8 @@ class SessionServiceTest {
 
             SessionServiceChainByDateResponse response = service.getBarChainByDate(
                     user,
-                    LocalDate.parse("2020-10-20"),
-                    LocalDate.parse("2020-10-21"));
+                    "2020-10-20",
+                    "2020-10-21");
 
             //Then
             assertEquals(3, response.getDataList().size());
@@ -206,8 +209,8 @@ class SessionServiceTest {
             //When
             SessionServiceChainByDateResponse response = service.getBarChainByDate(
                     user,
-                    LocalDate.parse("2020-10-20"),
-                    LocalDate.parse("2020-10-20"));
+                    "2020-10-20",
+                    "2020-10-20");
 
             //Then
             assertEquals(0, response.getDataList().size());
