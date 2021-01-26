@@ -1,57 +1,31 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.noboseki.tasktimer.domain.Authority;
-import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.repository.AuthorityDao;
-import com.noboseki.tasktimer.repository.ProfileImgDao;
 import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.repository.UserDao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class TaskControllerIT {
-    @Autowired
-    private WebApplicationContext wac;
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private AuthorityDao authorityDao;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ProfileImgDao profileImgDao;
+public class TaskControllerIT extends BaseControllerTest {
+    private final String PASSWORD = "password";
+
     @Autowired
     private TaskDao taskDao;
 
     private User user;
-    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
-        user = createTestUser();
+        super.setUp();
+        user = createTestUser(PASSWORD);
     }
 
     @AfterEach
@@ -65,24 +39,25 @@ public class TaskControllerIT {
     @DisplayName("Create")
     class TaskControllerITCreate {
         private final String URL = "/task/";
+        private final String TASKNAME = "Task";
 
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
             mockMvc.perform(post(URL)
-                    .with(httpBasic("test@test.com", "password"))
-                    .content("test"))
+                    .with(httpBasic(user.getEmail(), PASSWORD))
+                    .content(TASKNAME))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("test has been created"));
+                    .andExpect(content().string(TASKNAME + " has been created"));
 
-            assertTrue(taskDao.findByNameAndUser("test", user).isPresent());
+            assertTrue(taskDao.findByNameAndUser(TASKNAME, user).isPresent());
         }
 
         @Test
         @DisplayName("Unauthorized")
         void unauthorized() throws Exception {
             mockMvc.perform(post(URL)
-                    .content("test task"))
+                    .content(TASKNAME))
                     .andExpect(status().is(401));
         }
     }
@@ -95,19 +70,20 @@ public class TaskControllerIT {
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
-            taskDao.save(Task.builder().name("test 1").user(user).build());
+            String test1 = "test 1";
+            taskDao.save(Task.builder().name(test1).user(user).build());
             taskDao.save(Task.builder().name("test 2").user(user).complete(true).build());
             taskDao.save(Task.builder().name("test 3").user(user).build());
 
             mockMvc.perform(get(URL)
-                    .with(httpBasic("test@test.com", "password")))
+                    .with(httpBasic(user.getEmail(), PASSWORD)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].taskName", is("test 1")))
                     .andExpect(jsonPath("$[1].taskName", is("test 2")))
                     .andExpect(jsonPath("$[2].taskName", is("test 3")))
                     .andExpect(jsonPath("$[0].complete", is(false)))
                     .andExpect(jsonPath("$[1].complete", is(true)))
                     .andExpect(jsonPath("$[2].complete", is(false)));
+
         }
 
         @Test
@@ -129,7 +105,7 @@ public class TaskControllerIT {
             taskDao.save(Task.builder().name("test").user(user).build());
 
             mockMvc.perform(put(URL)
-                    .with(httpBasic(user.getEmail(), "password"))
+                    .with(httpBasic(user.getEmail(), PASSWORD))
                     .content("test"))
                     .andExpect(status().isOk())
                     .andExpect(content().string("test complete changed to true"));
@@ -158,7 +134,7 @@ public class TaskControllerIT {
             taskDao.save(Task.builder().name("test").user(user).build());
 
             mockMvc.perform(put(URL)
-                    .with(httpBasic(user.getEmail(), "password"))
+                    .with(httpBasic(user.getEmail(), PASSWORD))
                     .content("test"))
                     .andExpect(status().isOk())
                     .andExpect(content().string("test archive changed to true"));
@@ -179,15 +155,15 @@ public class TaskControllerIT {
     @Nested
     @DisplayName("Delete")
     class TaskControllerITDelete {
-        private final String URL = "/task/";
+        private final String URL = "/task/test";
 
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
             taskDao.save(Task.builder().name("test").user(user).build());
 
-            mockMvc.perform(delete(URL + "/test")
-                    .with(httpBasic(user.getEmail(), "password")))
+            mockMvc.perform(delete(URL)
+                    .with(httpBasic(user.getEmail(), PASSWORD)))
                     .andExpect(status().isOk())
                     .andExpect(content().string("test has been deleted"));
 
@@ -197,8 +173,8 @@ public class TaskControllerIT {
         @Test
         @DisplayName("Invalid task name")
         void invalidTaskName() throws Exception {
-            mockMvc.perform(delete(URL + "/test")
-                    .with(httpBasic(user.getEmail(), "password")))
+            mockMvc.perform(delete(URL)
+                    .with(httpBasic(user.getEmail(), PASSWORD)))
                     .andExpect(status().is(404))
                     .andExpect(jsonPath("message", is("Task not found by name : 'test'")))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
@@ -207,24 +183,13 @@ public class TaskControllerIT {
         @Test
         @DisplayName("Unauthorized")
         void unauthorized() throws Exception {
-            mockMvc.perform(delete(URL + "/test"))
+            mockMvc.perform(delete(URL))
                     .andExpect(status().is(401));
         }
     }
 
-    private User createTestUser() {
-        Authority user = authorityDao.findByRole("ROLE_USER").orElseThrow(RuntimeException::new);
-        ProfileImg profileImg = profileImgDao.findByName("SpiderMan").orElseThrow(RuntimeException::new);
-
-        return userDao.save(User.builder()
-                .username("ItTestUser")
-                .email("test@test.com")
-                .password(passwordEncoder.encode("password"))
-                .enabled(true)
-                .profileImg(profileImg)
-                .authority(user).build());
-    }
 }
+
 
 //    private final String POST_URL = "/task/create/";
 //    private final String GET_URL = "/task/get/";

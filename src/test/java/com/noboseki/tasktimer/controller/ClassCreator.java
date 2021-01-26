@@ -12,7 +12,7 @@ public class ClassCreator {
 
     private final PasswordEncoder passwordEncoder;
 
-    public User user(){
+    public User user() {
         return User.builder()
                 .username("user")
                 .email("test1@test.com")

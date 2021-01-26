@@ -40,7 +40,7 @@ class SessionServiceTest {
     @Spy
     private SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
     @Spy
-    private  ServiceUtil serviceUtil;
+    private ServiceUtil serviceUtil;
     @Mock
     private TaskService taskService;
     @Mock

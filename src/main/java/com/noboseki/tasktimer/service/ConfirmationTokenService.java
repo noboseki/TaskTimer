@@ -60,17 +60,11 @@ public class ConfirmationTokenService {
     }
 
     public boolean deleteToken(ConfirmationToken token) {
-        DeleteException exception = new DeleteException("token", token.getConfirmationToken());
-
-        try {
-            tokenDao.delete(token);
-            if (tokenDao.findById(token.getId()).isPresent()) {
-                throw exception;
-            }
-            return true;
-        } catch (Exception e) {
-            throw exception;
+        tokenDao.delete(token);
+        if (tokenDao.findById(token.getId()).isPresent()) {
+            throw new DeleteException("token", token.getConfirmationToken());
         }
+        return true;
     }
 
     public ConfirmationToken getByTokenAndType(String token, TokenType type) {
