@@ -30,7 +30,7 @@ public class UserService {
 
     public String create(@Valid UserServiceCreateRequest request) {
         if (userDao.findByEmail(request.getEmail()).isPresent()) {
-            throw new DuplicateException("User", "emile", request.getEmail());
+            throw new DuplicateException("User", "email", request.getEmail());
         }
         Authority userAuthority = authorityService.findByRole("ROLE_USER");
         ProfileImg profileImg = profileImgService.findByName("Yondu");
@@ -43,7 +43,7 @@ public class UserService {
             return "User has been created";
         } catch (SaveException e) {
             deleteUser(dbUser);
-            throw new SaveException("token", "create activate token");
+            throw new SaveException("token", "activate token");
         }
     }
 
@@ -58,7 +58,7 @@ public class UserService {
             userServiceUtil.changePasswordEmileSender(token.getConfirmationToken(), emile);
             return "Emile has been sent";
         } catch (SaveException e) {
-            throw new SaveException("token", "create change password token");
+            throw new SaveException("token", "password token");
         }
     }
 
@@ -110,7 +110,7 @@ public class UserService {
     }
 
     public boolean deleteUser(User user) {
-        DeleteException deleteException = new DeleteException("emile", user.getEmail());
+        DeleteException deleteException = new DeleteException("email", user.getEmail());
 
         try {
             userDao.delete(user);

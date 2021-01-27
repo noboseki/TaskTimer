@@ -98,7 +98,7 @@ class UserServiceTest {
             //Then
             Throwable response = assertThrows(SaveException.class,
                     () -> service.saveUser(user));
-            assertEquals("Save error of 'User' : 'test@test.com'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
         }
 
         @Test
@@ -109,7 +109,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.saveUser(user));
-            assertEquals("Save error of 'User' : 'test@test.com'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
         }
     }
 
@@ -136,7 +136,7 @@ class UserServiceTest {
         @DisplayName("Find by email error")
         void findByEmailError() {
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteUser(user));
-            assertEquals("Delete error of 'emile' : 'test@test.com'", response.getMessage());
+            assertEquals(ExceptionTextConstants.delete("email", user.getEmail()), response.getMessage());
         }
     }
 
@@ -167,7 +167,7 @@ class UserServiceTest {
         void findByEmailError() {
             when(userDao.findByEmail(anyString())).thenReturn(Optional.empty());
             Throwable response = assertThrows(ResourceNotFoundException.class, () -> service.findByEmile("test@test.com"));
-            assertEquals("User not found by email : 'test@test.com'", response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound(user.getClass().getSimpleName(), "email", user.getEmail()), response.getMessage());
         }
     }
 
@@ -239,7 +239,7 @@ class UserServiceTest {
         void passwordEncoderError() {
             //Then
             Throwable response = assertThrows(InvalidException.class, () -> service.changePassword(request));
-            assertEquals("Invalid value of 'Old password' : 'oldPassword' ", response.getMessage());
+            assertEquals(ExceptionTextConstants.invalid("Old password", request.getOldPassword()), response.getMessage());
         }
     }
 
@@ -279,7 +279,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.changePasswordRequest("test@test.com"));
-            assertEquals("Save error of 'token' : 'create change password token'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save("token", "password token"), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
             verify(userServiceUtil, times(1)).changePasswordEmileSender(anyString(), anyString());
@@ -334,8 +334,9 @@ class UserServiceTest {
             //When
             when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
 
+
             Throwable response = assertThrows(DuplicateException.class, () -> service.create(request));
-            assertEquals("User with 'emile' : 'test@test.com' exists in the database", response.getMessage());
+            assertEquals(ExceptionTextConstants.duplicate(user.getClass().getSimpleName(), "emile", user.getEmail()), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
 
@@ -348,7 +349,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.create(request));
-            assertEquals("Save error of 'token' : 'create activate token'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save("token", "activate token"), response.getMessage());
             verify(authorityService, times(1)).findByRole(anyString());
             verify(profileImgService, times(1)).findByName(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));

@@ -4,6 +4,7 @@ import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DateTimeException;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.GetByTaskSessionResponse;
 import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
@@ -113,7 +114,7 @@ class SessionServiceTest {
 
             //Then
             Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
-            assertEquals("Create error 'Date' form string: '2020-50-46'", response.getMessage());
+            assertEquals(ExceptionTextConstants.dateTime("Date", request.getDate()), response.getMessage());
         }
 
         @Test
@@ -124,7 +125,7 @@ class SessionServiceTest {
 
             //Then
             Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
-            assertEquals("Create error 'Time' form string: '46:80'", response.getMessage());
+            assertEquals(ExceptionTextConstants.dateTime("Time", request.getTime()), response.getMessage());
         }
 
         @Test
@@ -132,7 +133,7 @@ class SessionServiceTest {
         void saveException() {
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.create(user, request));
-            assertEquals("Save error of 'Session' : '00:20:00'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save("Session", request.getTime()), response.getMessage());
         }
     }
 

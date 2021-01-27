@@ -3,6 +3,7 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.exeption.DeleteException;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
@@ -85,8 +86,8 @@ class TaskServiceTest {
             when(userService.findByEmile(anyString())).thenReturn(user);
 
             //Then
-            Throwable response = assertThrows(SaveException.class, () -> service.create(user, "taskName"));
-            assertEquals("Save error of 'Task' : 'taskName'", response.getMessage());
+            Throwable response = assertThrows(SaveException.class, () -> service.create(user, "task Name"));
+            assertEquals(ExceptionTextConstants.save(task.getClass().getSimpleName(), "task Name"), response.getMessage());
             verify(userService, times(1)).findByEmile(anyString());
         }
     }
@@ -184,10 +185,10 @@ class TaskServiceTest {
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
             when(taskDao.findById(any(UUID.class))).thenReturn(Optional.of(task));
 
-            Throwable response = assertThrows(DeleteException.class, () -> service.delete(user, " taskName"));
+            Throwable response = assertThrows(DeleteException.class, () -> service.delete(user, "task Name"));
 
             //Then
-            assertEquals("Delete error of 'name' : 'task Name'", response.getMessage());
+            assertEquals(ExceptionTextConstants.delete("name", "task Name"), response.getMessage());
             verify(taskDao, times(1)).findByNameAndUser(anyString(), any(User.class));
             verify(taskDao, times(1)).findById(any(UUID.class));
         }
@@ -216,7 +217,7 @@ class TaskServiceTest {
             //When
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.findByNameAndUser(user, "testName"));
-            assertEquals("Task not found by name : 'testName'", response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("Task", "name", "testName"), response.getMessage());
         }
     }
 }

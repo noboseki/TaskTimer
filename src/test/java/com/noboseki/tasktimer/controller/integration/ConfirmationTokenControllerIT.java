@@ -24,10 +24,14 @@ public class ConfirmationTokenControllerIT extends BaseControllerTest {
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
-            ConfirmationToken token = tokenService.createTokenForUser(createTestUser("password"), TokenType.ACTIVATE);
+            User user = createTestUser("password");
+            ConfirmationToken token = tokenService.createTokenForUser(user, TokenType.ACTIVATE);
 
             mockMvc.perform(get(URL + "?token=" + token.getConfirmationToken()))
                     .andExpect(status().isOk());
+
+            tokenService.deleteToken(token);
+            userDao.delete(user);
         }
 
         @Test

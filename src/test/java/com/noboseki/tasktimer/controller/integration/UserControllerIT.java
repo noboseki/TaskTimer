@@ -3,6 +3,7 @@ package com.noboseki.tasktimer.controller.integration;
 import com.noboseki.tasktimer.domain.ConfirmationToken;
 import com.noboseki.tasktimer.domain.TokenType;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
@@ -79,7 +80,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .content(JsonRequest))
                     .andExpect(status().is(409))
                     .andExpect(jsonPath("message",
-                            is("User with 'emile' : 'test@test.com' exists in the database")));
+                            is(ExceptionTextConstants.duplicate("User", "email", request.getEmail()))));
         }
     }
 
@@ -131,7 +132,7 @@ public class UserControllerIT extends BaseControllerTest {
             mockMvc.perform(post(url)
                     .content("invalid@test.com"))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("User not found by email : 'invalid@test.com'")))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("User", "email", "invalid@test.com"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -181,7 +182,8 @@ public class UserControllerIT extends BaseControllerTest {
                     .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Token not found by token : '" + request.getToken() + "'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Token", "token", request.getToken()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
@@ -200,7 +202,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(409))
                     .andExpect(jsonPath("message",
-                            is("Invalid value of 'Old password' : '" + request.getOldPassword() + "' ")))
+                            is(ExceptionTextConstants.invalid("Old password", request.getOldPassword()))))
                     .andExpect(jsonPath("httpStatus", is("CONFLICT")));
 
             tokenService.deleteToken(token);
@@ -244,7 +246,8 @@ public class UserControllerIT extends BaseControllerTest {
                     .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Profile img not found by name : 'standard'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Profile img", "name", request.getProfileImgName()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 

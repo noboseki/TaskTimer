@@ -3,6 +3,7 @@ package com.noboseki.tasktimer.controller.integration;
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.domain.Task;
 import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.repository.SessionDao;
 import com.noboseki.tasktimer.repository.TaskDao;
@@ -41,8 +42,11 @@ public class SessionControllerIT extends BaseControllerTest {
     @AfterEach
     void tearDown() {
         sessionDao.deleteAll(sessionDao.findAllByTask(task));
-        taskDao.delete(task);
-        userDao.delete(user);
+        if (task != null) {
+            taskDao.delete(task);
+        } if(user != null) {
+            userDao.delete(user);
+        }
     }
 
     @Nested
@@ -101,7 +105,8 @@ public class SessionControllerIT extends BaseControllerTest {
                     .characterEncoding("UTF-8")
                     .content(jsonRequest))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Task not found by name : 'Invalid task name'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Task", "name", "Invalid task name"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -148,7 +153,7 @@ public class SessionControllerIT extends BaseControllerTest {
             mockMvc.perform(get(URL + "/invalid/")
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Task not found by name : 'invalid'")))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("Task", "name", "invalid"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
@@ -211,7 +216,7 @@ public class SessionControllerIT extends BaseControllerTest {
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(400))
                     .andExpect(jsonPath("message",
-                            is("Create error 'Date' form string: '2020-100-10 or 2020-100-10'")))
+                            is(ExceptionTextConstants.dateTime("Date", "2020-100-10 or 2020-100-10"))))
                     .andExpect(jsonPath("httpStatus", is("BAD_REQUEST")));
         }
     }
@@ -273,7 +278,7 @@ public class SessionControllerIT extends BaseControllerTest {
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(400))
                     .andExpect(jsonPath("message",
-                            is("Create error 'Date' form string: '2020-100-10 or 2020-100-10'")))
+                            is(ExceptionTextConstants.dateTime("Date", "2020-100-10 or 2020-100-10"))))
                     .andExpect(jsonPath("httpStatus", is("BAD_REQUEST")));
         }
     }
