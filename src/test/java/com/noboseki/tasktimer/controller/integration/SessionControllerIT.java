@@ -1,20 +1,15 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.noboseki.tasktimer.domain.*;
+import com.noboseki.tasktimer.domain.Session;
+import com.noboseki.tasktimer.domain.Task;
+import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
-import com.noboseki.tasktimer.repository.*;
+import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.repository.TaskDao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -23,25 +18,11 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-class SessionControllerIT {
-    @Autowired
-    private WebApplicationContext wac;
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private AuthorityDao authorityDao;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ProfileImgDao profileImgDao;
+public class SessionControllerIT extends BaseControllerTest {
     @Autowired
     private TaskDao taskDao;
     @Autowired
@@ -49,13 +30,11 @@ class SessionControllerIT {
 
     private User user;
     private Task task;
-    private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
-        user = createTestUser();
+        super.setUp();
+        user = createTestUser("password");
         task = Task.builder().name("Test").user(user).build();
         task = taskDao.save(task);
     }
@@ -63,8 +42,11 @@ class SessionControllerIT {
     @AfterEach
     void tearDown() {
         sessionDao.deleteAll(sessionDao.findAllByTask(task));
-        taskDao.delete(task);
-        userDao.delete(user);
+        if (task != null) {
+            taskDao.delete(task);
+        } if(user != null) {
+            userDao.delete(user);
+        }
     }
 
     @Nested
@@ -114,7 +96,7 @@ class SessionControllerIT {
         @Test
         @DisplayName("Invalid task name")
         void invalidTaskName() throws Exception {
-            request.setTaskName("Invalid task name");
+            request.setTaskName("Invalid");
             String jsonRequest = mapper.writeValueAsString(request);
 
             mockMvc.perform(post(URL)
@@ -123,7 +105,8 @@ class SessionControllerIT {
                     .characterEncoding("UTF-8")
                     .content(jsonRequest))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Task not found by name : 'Invalid task name'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Task", "Invalid"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -170,7 +153,7 @@ class SessionControllerIT {
             mockMvc.perform(get(URL + "/invalid/")
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Task not found by name : 'invalid'")))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("Task", "invalid"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
@@ -233,7 +216,7 @@ class SessionControllerIT {
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(400))
                     .andExpect(jsonPath("message",
-                            is("Create error 'Date' form string: '2020-100-10 or 2020-100-10'")))
+                            is(ExceptionTextConstants.dateTime("Date", "2020-100-10 or 2020-100-10"))))
                     .andExpect(jsonPath("httpStatus", is("BAD_REQUEST")));
         }
     }
@@ -295,21 +278,8 @@ class SessionControllerIT {
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(400))
                     .andExpect(jsonPath("message",
-                            is("Create error 'Date' form string: '2020-100-10 or 2020-100-10'")))
+                            is(ExceptionTextConstants.dateTime("Date", "2020-100-10 or 2020-100-10"))))
                     .andExpect(jsonPath("httpStatus", is("BAD_REQUEST")));
         }
-    }
-
-    private User createTestUser() {
-        Authority user = authorityDao.findByRole("ROLE_USER").orElseThrow(RuntimeException::new);
-        ProfileImg profileImg = profileImgDao.findByName("SpiderMan").orElseThrow(RuntimeException::new);
-
-        return userDao.save(User.builder()
-                .username("ItTestUser")
-                .email("sessionIt@test.com")
-                .password(passwordEncoder.encode("password"))
-                .enabled(true)
-                .profileImg(profileImg)
-                .authority(user).build());
     }
 }

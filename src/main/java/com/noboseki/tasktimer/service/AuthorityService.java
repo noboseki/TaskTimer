@@ -15,6 +15,6 @@ public class AuthorityService {
     private final AuthorityDao authorityDao;
 
     public Authority findByRole(String role) {
-        return authorityDao.findByRole(role).orElseThrow(() -> new ResourceNotFoundException("Authority", "name", "role"));
+        return authorityDao.findByRole(role).orElseThrow(() -> new ResourceNotFoundException("Authority", "role"));
     }
 }

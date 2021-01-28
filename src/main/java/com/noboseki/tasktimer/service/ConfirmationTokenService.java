@@ -37,7 +37,7 @@ public class ConfirmationTokenService {
         String email = confirmationToken.getUser().getEmail();
 
         User user = userDao.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", email));
         user.setEnabled(true);
         userDao.save(user);
 
@@ -60,21 +60,15 @@ public class ConfirmationTokenService {
     }
 
     public boolean deleteToken(ConfirmationToken token) {
-        DeleteException exception = new DeleteException("token", token.getConfirmationToken());
-
-        try {
-            tokenDao.delete(token);
-            if (tokenDao.findById(token.getId()).isPresent()) {
-                throw exception;
-            }
-            return true;
-        } catch (Exception e) {
-            throw exception;
+        tokenDao.delete(token);
+        if (tokenDao.findById(token.getId()).isPresent()) {
+            throw new DeleteException("token", token.getConfirmationToken());
         }
+        return true;
     }
 
     public ConfirmationToken getByTokenAndType(String token, TokenType type) {
-        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", "token", token));
+        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", token));
     }
 
     public Optional<ConfirmationToken> getByUser_EmailAndType(String email, TokenType type) {

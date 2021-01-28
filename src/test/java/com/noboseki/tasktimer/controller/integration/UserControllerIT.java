@@ -1,60 +1,37 @@
 package com.noboseki.tasktimer.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.noboseki.tasktimer.domain.*;
+import com.noboseki.tasktimer.domain.ConfirmationToken;
+import com.noboseki.tasktimer.domain.TokenType;
+import com.noboseki.tasktimer.domain.User;
+import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
-import com.noboseki.tasktimer.repository.AuthorityDao;
-import com.noboseki.tasktimer.repository.ProfileImgDao;
-import com.noboseki.tasktimer.repository.UserDao;
 import com.noboseki.tasktimer.service.ConfirmationTokenService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
-public class UserControllerIT {
-    @Autowired
-    private WebApplicationContext wac;
+public class UserControllerIT extends BaseControllerTest {
+    private final String PASSWORD = "password";
+
     @Autowired
     private ConfirmationTokenService tokenService;
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private AuthorityDao authorityDao;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ProfileImgDao profileImgDao;
 
     private User user;
-    private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper();
 
+    @Override
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
-        user = createTestUser();
+        super.setUp();
+        user = createTestUser(PASSWORD);
     }
 
     @AfterEach
@@ -65,6 +42,7 @@ public class UserControllerIT {
     @Nested
     @DisplayName("Create")
     class UserControllerITCreate {
+        private final String URL = "/user/create/";
         private UserServiceCreateRequest request;
 
         @BeforeEach
@@ -72,8 +50,7 @@ public class UserControllerIT {
             request = UserServiceCreateRequest.builder()
                     .email("create@test.com")
                     .password("password")
-                    .username("ItUsername")
-                    .build();
+                    .username("ItUsername").build();
         }
 
         @Test
@@ -81,9 +58,9 @@ public class UserControllerIT {
         void correct() throws Exception {
             String JsonRequest = mapper.writeValueAsString(request);
 
-            mockMvc.perform(post("/user/create/")
+            mockMvc.perform(post(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(JsonRequest))
                     .andExpect(status().isOk())
                     .andExpect(content().string("User has been created"));
@@ -96,14 +73,14 @@ public class UserControllerIT {
 
             String JsonRequest = mapper.writeValueAsString(request);
 
-            mockMvc.perform(post("/user/create/")
+            mockMvc.perform(post(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(JsonRequest))
                     .andExpect(status().is(409))
                     .andExpect(jsonPath("message",
-                            is("User with 'emile' : 'test@test.com' exists in the database")));
+                            is(ExceptionTextConstants.duplicate("User", request.getEmail()))));
         }
     }
 
@@ -116,7 +93,7 @@ public class UserControllerIT {
         @DisplayName("Correct")
         void correct() throws Exception {
             mockMvc.perform(get(url)
-                    .with(httpBasic("test@test.com", "password")))
+                    .with(httpBasic(user.getEmail(), PASSWORD)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("publicId", is(user.getPublicId().intValue())))
                     .andExpect(jsonPath("email", is(user.getEmail())))
@@ -146,7 +123,6 @@ public class UserControllerIT {
 
             ConfirmationToken token = tokenService.getByUser_EmailAndType(user.getEmail(), TokenType.PASSWORD)
                     .orElseThrow();
-
             tokenService.deleteToken(token);
         }
 
@@ -156,7 +132,7 @@ public class UserControllerIT {
             mockMvc.perform(post(url)
                     .content("invalid@test.com"))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("User not found by email : 'invalid@test.com'")))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("User", "invalid@test.com"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -165,20 +141,27 @@ public class UserControllerIT {
     @DisplayName("Change password")
     class UserControllerITChangePassword {
         private final String URL = "/user/changePassword/";
+        private ConfirmationToken token;
+
+        @AfterEach
+        void tearDown() {
+            if (token != null) {
+                tokenService.deleteToken(token);
+            }
+        }
 
         @Test
         @DisplayName("Correct")
         void correct() throws Exception {
-            User user = userDao.findByEmail("test@test.com").orElseThrow(RuntimeException::new);
-            ConfirmationToken token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
+            token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
             UserServiceChangePasswordRequest request = new UserServiceChangePasswordRequest(
                     token.getConfirmationToken(),
-                    "password",
+                    PASSWORD,
                     "password2021");
 
             mockMvc.perform(put(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(content().string("Password has been changed")).andReturn();
@@ -196,18 +179,18 @@ public class UserControllerIT {
 
             mockMvc.perform(put(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Token not found by token : '" + request.getToken() + "'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Token", request.getToken()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
         @Test
         @DisplayName("Invalid old password")
         void invalidOldPassword() throws Exception {
-            User user = userDao.findByEmail("test@test.com").orElseThrow(RuntimeException::new);
-            ConfirmationToken token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
+            token = tokenService.createTokenForUser(user, TokenType.PASSWORD);
             UserServiceChangePasswordRequest request = new UserServiceChangePasswordRequest(
                     token.getConfirmationToken(),
                     "password2021",
@@ -215,11 +198,11 @@ public class UserControllerIT {
 
             mockMvc.perform(put(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(409))
                     .andExpect(jsonPath("message",
-                            is("Invalid value of 'Old password' : '" + request.getOldPassword() + "' ")))
+                            is(ExceptionTextConstants.invalid("Old password", request.getOldPassword()))))
                     .andExpect(jsonPath("httpStatus", is("CONFLICT")));
 
             tokenService.deleteToken(token);
@@ -244,9 +227,9 @@ public class UserControllerIT {
         @DisplayName("Correct")
         void correct() throws Exception {
             mockMvc.perform(put(URL)
-                    .with(httpBasic("test@test.com", "password"))
+                    .with(httpBasic(user.getEmail(), PASSWORD))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(content().string("User profile has been updated"))
                     .andExpect(status().isOk()).andReturn();
@@ -258,12 +241,13 @@ public class UserControllerIT {
             request.setProfileImgName("Test");
 
             mockMvc.perform(put(URL)
-                    .with(httpBasic("test@test.com", "password"))
+                    .with(httpBasic(user.getEmail(), PASSWORD))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is("Profile img not found by name : 'standard'")))
+                    .andExpect(jsonPath("message",
+                            is(ExceptionTextConstants.resourceNotFound("Profile img", request.getProfileImgName()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
@@ -272,22 +256,9 @@ public class UserControllerIT {
         void unauthorized() throws Exception {
             mockMvc.perform(put(URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
+                    .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(401));
         }
-    }
-
-    private User createTestUser() {
-        Authority user = authorityDao.findByRole("ROLE_USER").orElseThrow(RuntimeException::new);
-        ProfileImg profileImg = profileImgDao.findByName("SpiderMan").orElseThrow(RuntimeException::new);
-
-        return userDao.save(User.builder()
-                .username("ItTestUser")
-                .email("test@test.com")
-                .password(passwordEncoder.encode("password"))
-                .enabled(true)
-                .profileImg(profileImg)
-                .authority(user).build());
     }
 }

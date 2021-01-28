@@ -3,10 +3,7 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.ConfirmationToken;
 import com.noboseki.tasktimer.domain.TokenType;
 import com.noboseki.tasktimer.domain.User;
-import com.noboseki.tasktimer.exeption.DeleteException;
-import com.noboseki.tasktimer.exeption.InvalidException;
-import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
-import com.noboseki.tasktimer.exeption.SaveException;
+import com.noboseki.tasktimer.exeption.*;
 import com.noboseki.tasktimer.repository.ConfirmationTokenDao;
 import com.noboseki.tasktimer.repository.UserDao;
 import org.junit.jupiter.api.*;
@@ -94,7 +91,7 @@ class ConfirmationTokenServiceTest {
 
             Throwable response = assertThrows(InvalidException.class, () -> service.activateAccount(uuid));
 
-            assertEquals("Invalid value of 'Token' : '" + uuid + "' ", response.getMessage());
+            assertEquals(ExceptionTextConstants.invalid("Token", uuid), response.getMessage());
         }
 
         @Test
@@ -106,7 +103,7 @@ class ConfirmationTokenServiceTest {
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.activateAccount(UUID.randomUUID().toString()));
 
-            assertEquals("User not found by email : 'test@test.com'", response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("User",  user.getEmail()), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
     }
@@ -139,7 +136,7 @@ class ConfirmationTokenServiceTest {
 
             Throwable response = assertThrows(SaveException.class, () -> service.saveConfirmationToken(token));
 
-            assertEquals("Save error of 'Token' : 'test'", response.getMessage());
+            assertEquals(ExceptionTextConstants.save("Token", token.getUser().getUsername()), response.getMessage());
             verify(tokenDao, times(1)).save(any(ConfirmationToken.class));
         }
     }
@@ -166,7 +163,7 @@ class ConfirmationTokenServiceTest {
 
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteToken(token));
 
-            assertEquals("Delete error of 'token' : '" + token.getConfirmationToken() + "'", response.getMessage());
+            assertEquals(ExceptionTextConstants.delete("token", token.getConfirmationToken()), response.getMessage());
             verify(tokenDao, times(1)).findById(any(UUID.class));
         }
     }

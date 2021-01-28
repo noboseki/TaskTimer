@@ -10,9 +10,9 @@ public class DateTimeException extends RuntimeException {
     private String typeName;
     private String injectedString;
 
-    public DateTimeException(String typeName, String injectedString) {
-        super(String.format("Create error '%s' form string: '%s'", typeName, injectedString));
+    public DateTimeException(String typeName, String convertedString) {
+        super(ExceptionTextConstants.dateTime(typeName, convertedString));
         this.typeName = typeName;
-        this.injectedString = injectedString;
+        this.injectedString = convertedString;
     }
 }
