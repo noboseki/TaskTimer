@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
-@Transactional
 public abstract class BaseControllerTest {
     protected final String charEncoding = "UTF-8";
     protected final String userPassword = "password";

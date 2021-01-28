@@ -96,7 +96,7 @@ public class SessionControllerIT extends BaseControllerTest {
         @Test
         @DisplayName("Invalid task name")
         void invalidTaskName() throws Exception {
-            request.setTaskName("Invalid task name");
+            request.setTaskName("Invalid");
             String jsonRequest = mapper.writeValueAsString(request);
 
             mockMvc.perform(post(URL)
@@ -106,7 +106,7 @@ public class SessionControllerIT extends BaseControllerTest {
                     .content(jsonRequest))
                     .andExpect(status().is(404))
                     .andExpect(jsonPath("message",
-                            is(ExceptionTextConstants.resourceNotFound("Task", "name", "Invalid task name"))))
+                            is(ExceptionTextConstants.resourceNotFound("Task", "Invalid"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -153,7 +153,7 @@ public class SessionControllerIT extends BaseControllerTest {
             mockMvc.perform(get(URL + "/invalid/")
                     .with(httpBasic(user.getEmail(), "password")))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("Task", "name", "invalid"))))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("Task", "invalid"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 

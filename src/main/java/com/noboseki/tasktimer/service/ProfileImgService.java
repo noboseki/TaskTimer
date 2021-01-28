@@ -19,6 +19,6 @@ public class ProfileImgService {
     }
 
     public ProfileImg findByName(String name) {
-        return profileImgDao.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Profile img", "name", "standard"));
+        return profileImgDao.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Profile img", name));
     }
 }

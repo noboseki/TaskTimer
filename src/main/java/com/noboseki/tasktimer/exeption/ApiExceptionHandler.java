@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
@@ -18,8 +20,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 exception.getMessage(),
                 internalServerError,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+                ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(apiException, internalServerError);
     }
@@ -31,8 +32,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 exception.getMessage(),
                 internalServerError,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+                ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(apiException, internalServerError);
     }
@@ -44,8 +44,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 exception.getMessage(),
                 internalServerError,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+                ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(apiException, internalServerError);
     }
@@ -57,8 +56,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 exception.getMessage(),
                 internalServerError,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+                ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(apiException, internalServerError);
     }
@@ -70,8 +68,20 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 exception.getMessage(),
                 internalServerError,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+                ZonedDateTime.now(ZoneId.of("Z")));
+
+        return new ResponseEntity<>(apiException, internalServerError);
+    }
+
+    @ExceptionHandler(value = {NestedServletException.class})
+    public ResponseEntity<ApiException> handleDdsadateTimeException(NestedServletException exception) {
+        HttpStatus internalServerError = HttpStatus.BAD_REQUEST;
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+        ApiException apiException = new ApiException(
+                exception.getMessage(),
+                internalServerError,
+                ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(apiException, internalServerError);
     }

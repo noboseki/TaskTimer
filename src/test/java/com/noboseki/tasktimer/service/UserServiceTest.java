@@ -167,7 +167,7 @@ class UserServiceTest {
         void findByEmailError() {
             when(userDao.findByEmail(anyString())).thenReturn(Optional.empty());
             Throwable response = assertThrows(ResourceNotFoundException.class, () -> service.findByEmile("test@test.com"));
-            assertEquals(ExceptionTextConstants.resourceNotFound(user.getClass().getSimpleName(), "email", user.getEmail()), response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
         }
     }
 
@@ -336,7 +336,7 @@ class UserServiceTest {
 
 
             Throwable response = assertThrows(DuplicateException.class, () -> service.create(request));
-            assertEquals(ExceptionTextConstants.duplicate(user.getClass().getSimpleName(), "emile", user.getEmail()), response.getMessage());
+            assertEquals(ExceptionTextConstants.duplicate(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
 

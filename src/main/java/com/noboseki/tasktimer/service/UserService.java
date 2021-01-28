@@ -30,7 +30,7 @@ public class UserService {
 
     public String create(@Valid UserServiceCreateRequest request) {
         if (userDao.findByEmail(request.getEmail()).isPresent()) {
-            throw new DuplicateException("User", "email", request.getEmail());
+            throw new DuplicateException("User", request.getEmail());
         }
         Authority userAuthority = authorityService.findByRole("ROLE_USER");
         ProfileImg profileImg = profileImgService.findByName("Yondu");
@@ -95,7 +95,7 @@ public class UserService {
     }
 
     public User findByEmile(String email) {
-        return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        return userDao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", email));
     }
 
     public User saveUser(User user) {

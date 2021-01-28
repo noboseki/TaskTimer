@@ -217,7 +217,7 @@ class TaskServiceTest {
             //When
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.findByNameAndUser(user, "testName"));
-            assertEquals(ExceptionTextConstants.resourceNotFound("Task", "name", "testName"), response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("Task",  "testName"), response.getMessage());
         }
     }
 }

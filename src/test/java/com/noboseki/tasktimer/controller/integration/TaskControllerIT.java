@@ -178,7 +178,7 @@ public class TaskControllerIT extends BaseControllerTest {
                     .with(httpBasic(user.getEmail(), PASSWORD)))
                     .andExpect(status().is(404))
                     .andExpect(jsonPath("message",
-                            is(ExceptionTextConstants.resourceNotFound("Task", "name", "test"))))
+                            is(ExceptionTextConstants.resourceNotFound("Task", "test"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 

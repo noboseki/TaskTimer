@@ -80,7 +80,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .content(JsonRequest))
                     .andExpect(status().is(409))
                     .andExpect(jsonPath("message",
-                            is(ExceptionTextConstants.duplicate("User", "email", request.getEmail()))));
+                            is(ExceptionTextConstants.duplicate("User", request.getEmail()))));
         }
     }
 
@@ -132,7 +132,7 @@ public class UserControllerIT extends BaseControllerTest {
             mockMvc.perform(post(url)
                     .content("invalid@test.com"))
                     .andExpect(status().is(404))
-                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("User", "email", "invalid@test.com"))))
+                    .andExpect(jsonPath("message", is(ExceptionTextConstants.resourceNotFound("User", "invalid@test.com"))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
     }
@@ -183,7 +183,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
                     .andExpect(jsonPath("message",
-                            is(ExceptionTextConstants.resourceNotFound("Token", "token", request.getToken()))))
+                            is(ExceptionTextConstants.resourceNotFound("Token", request.getToken()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 
@@ -247,7 +247,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().is(404))
                     .andExpect(jsonPath("message",
-                            is(ExceptionTextConstants.resourceNotFound("Profile img", "name", request.getProfileImgName()))))
+                            is(ExceptionTextConstants.resourceNotFound("Profile img", request.getProfileImgName()))))
                     .andExpect(jsonPath("httpStatus", is("NOT_FOUND")));
         }
 

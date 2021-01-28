@@ -66,7 +66,7 @@ public class TaskService {
     }
 
     public Task findByNameAndUser(User user, String name) {
-        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", "name", name));
+        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", name));
     }
 
     private Task taskSave(Task task) {

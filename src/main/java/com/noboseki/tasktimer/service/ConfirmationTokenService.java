@@ -37,7 +37,7 @@ public class ConfirmationTokenService {
         String email = confirmationToken.getUser().getEmail();
 
         User user = userDao.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", email));
         user.setEnabled(true);
         userDao.save(user);
 
@@ -68,7 +68,7 @@ public class ConfirmationTokenService {
     }
 
     public ConfirmationToken getByTokenAndType(String token, TokenType type) {
-        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", "token", token));
+        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", token));
     }
 
     public Optional<ConfirmationToken> getByUser_EmailAndType(String email, TokenType type) {

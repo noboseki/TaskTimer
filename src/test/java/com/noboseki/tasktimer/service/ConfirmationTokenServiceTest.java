@@ -103,7 +103,7 @@ class ConfirmationTokenServiceTest {
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.activateAccount(UUID.randomUUID().toString()));
 
-            assertEquals(ExceptionTextConstants.resourceNotFound("User", "email", user.getEmail()), response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("User",  user.getEmail()), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
     }
