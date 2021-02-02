@@ -1,4 +1,4 @@
-package com.noboseki.tasktimer.service.util.SessionService;
+package com.noboseki.tasktimer.service.util.session_service;
 
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;

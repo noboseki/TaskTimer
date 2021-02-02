@@ -1,7 +1,8 @@
-package com.noboseki.tasktimer.service.util.SessionService;
+package com.noboseki.tasktimer.service.util.session_service;
 
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
+import com.noboseki.tasktimer.service.constants.ServiceUtilTextConstants;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @Component
 @NoArgsConstructor
 public class SessionServiceGetTableByDateUtil {
+    private static final String ZERO_TIME = ServiceUtilTextConstants.getZeroTime();
 
     public List<SessionServiceTableByDateResponse> fillEmptyResponseList(LocalDate fromDate, LocalDate toDate) {
         List<SessionServiceTableByDateResponse> responseList = new ArrayList<>();
@@ -20,7 +22,7 @@ public class SessionServiceGetTableByDateUtil {
         while (fromDate.isBefore(toDate.plusDays(1))) {
             responseList.add(new SessionServiceTableByDateResponse(
                     fromDate,
-                    "00:00",
+                    ZERO_TIME,
                     0));
             fromDate = fromDate.plusDays(1);
         }
@@ -51,7 +53,7 @@ public class SessionServiceGetTableByDateUtil {
         if (tempSessionsByDateList.isEmpty()) {
             responseList.add(new SessionServiceTableByDateResponse(
                     date,
-                    "00:00",
+                    ZERO_TIME,
                     0));
         } else {
             SessionServiceTableByDateResponse response = mapToGetBetweenDateSessionResponse(tempSessionsByDateList, date);

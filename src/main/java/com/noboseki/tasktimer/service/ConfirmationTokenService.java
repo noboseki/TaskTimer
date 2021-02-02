@@ -9,6 +9,7 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.repository.ConfirmationTokenDao;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ConfirmationTokenService {
+    private static final String TOKEN = ServiceTextConstants.getToken();
+    private static final String ACTIVATE_ACCOUNT = ServiceTextConstants.getActivateAccount();
 
     private final ConfirmationTokenDao tokenDao;
     private final UserDao userDao;
@@ -31,21 +34,21 @@ public class ConfirmationTokenService {
 
     public String activateAccount(String token) {
         ConfirmationToken confirmationToken = tokenDao.findByConfirmationTokenAndType(token, TokenType.ACTIVATE)
-                .orElseThrow(() -> new InvalidException("Token", token));
+                .orElseThrow(() -> new InvalidException(TOKEN, token));
 
         @Email
         String email = confirmationToken.getUser().getEmail();
 
         User user = userDao.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+                .orElseThrow(() -> new ResourceNotFoundException(ServiceTextConstants.getUser(), email));
         user.setEnabled(true);
         userDao.save(user);
 
-        return "Congratulations! Your account has been activated and email is verified!";
+        return ACTIVATE_ACCOUNT;
     }
 
     public ConfirmationToken saveConfirmationToken(ConfirmationToken token) {
-        SaveException saveException = new SaveException("Token", token.getUser().getUsername());
+        SaveException saveException = new SaveException(TOKEN, token.getUser().getUsername());
 
         try {
             ConfirmationToken dbToken = tokenDao.save(token);
@@ -62,16 +65,16 @@ public class ConfirmationTokenService {
     public boolean deleteToken(ConfirmationToken token) {
         tokenDao.delete(token);
         if (tokenDao.findById(token.getId()).isPresent()) {
-            throw new DeleteException("token", token.getConfirmationToken());
+            throw new DeleteException(TOKEN, token.getConfirmationToken());
         }
         return true;
     }
 
     public ConfirmationToken getByTokenAndType(String token, TokenType type) {
-        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException("Token", token));
+        return tokenDao.findByConfirmationTokenAndType(token, type).orElseThrow(() -> new ResourceNotFoundException(TOKEN, token));
     }
 
-    public Optional<ConfirmationToken> getByUser_EmailAndType(String email, TokenType type) {
+    public Optional<ConfirmationToken> getByUserEmailAndType(String email, TokenType type) {
         return tokenDao.findByUser_EmailAndType(email, type);
     }
 

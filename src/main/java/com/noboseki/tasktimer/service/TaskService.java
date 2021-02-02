@@ -7,7 +7,8 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.service.util.TaskService.TaskServiceUtil;
+import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
+import com.noboseki.tasktimer.service.util.task_service.TaskServiceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TaskService {
+    private static final String TASK = ServiceTextConstants.getTask();
+    private static final String CHANGE_COMPLETE = " complete changed to ";
+    private static final String CHANGE_ARCHIVE = " archive changed to ";
 
     private final TaskServiceUtil taskServiceUtil;
     private final UserService userService;
@@ -30,7 +34,7 @@ public class TaskService {
                 .name(taskName)
                 .user(dbUser).build());
 
-        return taskName + " has been created";
+        return ServiceTextConstants.hasBeenCreate(taskName);
     }
 
     public List<TaskServiceGetTaskList> getTasks(User user) {
@@ -47,7 +51,7 @@ public class TaskService {
         task.setComplete(!task.getComplete());
         task = taskSave(task);
 
-        return taskName + " complete changed to " + task.getComplete();
+        return taskName + CHANGE_COMPLETE + task.getComplete();
     }
 
     public String changeArchiveTask(User user, String taskName) {
@@ -56,30 +60,26 @@ public class TaskService {
         task.setArchived(!task.getArchived());
         task = taskSave(task);
 
-        return taskName + " archive changed to " + task.getArchived();
+        return taskName + CHANGE_ARCHIVE + task.getArchived();
     }
 
     public String delete(User user, String taskName) {
         Task task = findByNameAndUser(user, taskName);
         deleteTask(task);
-        return taskName + " has been deleted";
+        return ServiceTextConstants.hasBeenDeleted(taskName);
     }
 
     public Task findByNameAndUser(User user, String name) {
-        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException("Task", name));
+        return taskDao.findByNameAndUser(name, user).orElseThrow(() -> new ResourceNotFoundException(TASK, name));
     }
 
     private Task taskSave(Task task) {
-        SaveException saveException = new SaveException("Task", task.getName());
+        SaveException saveException = new SaveException(TASK, task.getName());
 
-        try {
-            Task dbTask = taskDao.save(task);
-            if (taskDao.findByNameAndUser(task.getName(), task.getUser()).isPresent()) {
-                return dbTask;
-            } else {
-                throw saveException;
-            }
-        } catch (SaveException e) {
+        Task dbTask = taskDao.save(task);
+        if (taskDao.findByNameAndUser(task.getName(), task.getUser()).isPresent()) {
+            return dbTask;
+        } else {
             throw saveException;
         }
     }
@@ -87,7 +87,7 @@ public class TaskService {
     private boolean deleteTask(Task task) {
         taskDao.delete(task);
         if (taskDao.findById(task.getId()).isPresent()) {
-            throw new DeleteException("name", task.getName());
+            throw new DeleteException(TASK, task.getName());
         } else {
             return true;
         }

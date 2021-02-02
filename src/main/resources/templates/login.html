@@ -12,10 +12,6 @@
 <body>
 <header></header>
 <nav></nav>
-<script>
-        document.getElementById('navLogoutMobile').style.display = 'none';
-        document.getElementById('navLogoutDesktop').style.display = 'none';
-</script>
 <main>
     <div class="login" sec:authorize="!isAuthenticated()">
         <form th:action="@{/login}" method="post">
@@ -32,10 +28,6 @@
         </div>
     </div>
     <div class="login" sec:authorize="isAuthenticated()">
-        <script>
-                document.getElementById('navLogoutMobile').style.display = 'block';
-                document.getElementById('navLogoutDesktop').style.display = 'block';
-        </script>
         <form th:action="@{/logout}">
             <button type="submit" value="Log out" id="logout">Logout</button>
         </form>

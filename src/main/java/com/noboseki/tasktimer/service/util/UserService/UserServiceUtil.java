@@ -1,11 +1,13 @@
 package com.noboseki.tasktimer.service.util.UserService;
 
+import com.noboseki.tasktimer.config.PropertiesConstants;
 import com.noboseki.tasktimer.domain.Authority;
 import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.service.EmailSenderService;
+import com.noboseki.tasktimer.service.constants.ServiceUtilTextConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +16,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserServiceUtil {
+    private static final String PASSWORD_URL = "http://localhost:8080/confirm/change-password?token=";
+    private static final String ACTIVATION_URL = "http://localhost:8080/confirm/confirm-account?token=";
 
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
+    private final PropertiesConstants constants;
 
     public UserServiceGetResponse mapToResponse(User user) {
         return UserServiceGetResponse.builder()
@@ -38,10 +43,10 @@ public class UserServiceUtil {
     public boolean activationEmileSender(String token, String emile) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(emile);
-        mailMessage.setSubject("Complete Registration!");
-        mailMessage.setFrom("nobosekiemiletest@gmail.com");
-        mailMessage.setText("To confirm your account, please click here : "
-                + "http://localhost:8080/confirm/confirm-account?token=" + token);
+        mailMessage.setSubject(ServiceUtilTextConstants.getCompleteRegistration());
+        mailMessage.setFrom(constants.getEmail());
+        mailMessage.setText(ServiceUtilTextConstants
+                .activationEmailMessage(ACTIVATION_URL, token));
 
         emailSenderService.sendEmail(mailMessage);
 
@@ -51,10 +56,10 @@ public class UserServiceUtil {
     public boolean changePasswordEmileSender(String token, String emile) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(emile);
-        mailMessage.setSubject("Change Password");
-        mailMessage.setFrom("nobosekiemiletest@gmail.com");
-        mailMessage.setText("To change password, please click here : "
-                + "http://localhost:8080/confirm/change-password?token=" + token);
+        mailMessage.setSubject(ServiceUtilTextConstants.getChangePassword());
+        mailMessage.setFrom(constants.getEmail());
+        mailMessage.setText(ServiceUtilTextConstants
+                .changePasswordEmailMessage(PASSWORD_URL, token));
 
         emailSenderService.sendEmail(mailMessage);
 

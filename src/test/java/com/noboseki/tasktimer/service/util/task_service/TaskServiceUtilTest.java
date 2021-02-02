@@ -1,4 +1,4 @@
-package com.noboseki.tasktimer.service.util.TaskService;
+package com.noboseki.tasktimer.service.util.task_service;
 
 import com.noboseki.tasktimer.domain.Session;
 import com.noboseki.tasktimer.domain.Task;
