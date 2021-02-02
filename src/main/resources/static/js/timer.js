@@ -17,7 +17,7 @@ function timer() {
     let delayThen;
 
     let start = function () {
-    if (document.getElementById('select').options.length == 0) {
+    if (document.getElementById('tasksList').options.length == 0) {
         alert("Please select ant task")
     } else {
         delay = 0;

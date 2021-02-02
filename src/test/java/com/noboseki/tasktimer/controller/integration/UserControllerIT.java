@@ -119,9 +119,9 @@ public class UserControllerIT extends BaseControllerTest {
             mockMvc.perform(post(url)
                     .content("test@test.com"))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Emile has been sent")).andReturn();
+                    .andExpect(content().string("Email has benn sent to : test@test.com")).andReturn();
 
-            ConfirmationToken token = tokenService.getByUser_EmailAndType(user.getEmail(), TokenType.PASSWORD)
+            ConfirmationToken token = tokenService.getByUserEmailAndType(user.getEmail(), TokenType.PASSWORD)
                     .orElseThrow();
             tokenService.deleteToken(token);
         }
@@ -164,7 +164,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Password has been changed")).andReturn();
+                    .andExpect(content().string("Password has been updated")).andReturn();
 
             tokenService.deleteToken(token);
         }
@@ -231,7 +231,7 @@ public class UserControllerIT extends BaseControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding(charEncoding)
                     .content(mapper.writeValueAsString(request)))
-                    .andExpect(content().string("User profile has been updated"))
+                    .andExpect(content().string("User has been updated"))
                     .andExpect(status().isOk()).andReturn();
         }
 

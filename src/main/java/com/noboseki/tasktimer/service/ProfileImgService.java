@@ -3,6 +3,7 @@ package com.noboseki.tasktimer.service;
 import com.noboseki.tasktimer.domain.ProfileImg;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.repository.ProfileImgDao;
+import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,6 @@ public class ProfileImgService {
     }
 
     public ProfileImg findByName(String name) {
-        return profileImgDao.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Profile img", name));
+        return profileImgDao.findByName(name).orElseThrow(() -> new ResourceNotFoundException(ServiceTextConstants.getProfileImg(), name));
     }
 }

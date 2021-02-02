@@ -163,7 +163,7 @@ class ConfirmationTokenServiceTest {
 
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteToken(token));
 
-            assertEquals(ExceptionTextConstants.delete("token", token.getConfirmationToken()), response.getMessage());
+            assertEquals(ExceptionTextConstants.delete("Token", token.getConfirmationToken()), response.getMessage());
             verify(tokenDao, times(1)).findById(any(UUID.class));
         }
     }

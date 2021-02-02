@@ -8,7 +8,7 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.service.util.TaskService.TaskServiceUtil;
+import com.noboseki.tasktimer.service.util.task_service.TaskServiceUtil;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -188,7 +188,7 @@ class TaskServiceTest {
             Throwable response = assertThrows(DeleteException.class, () -> service.delete(user, "task Name"));
 
             //Then
-            assertEquals(ExceptionTextConstants.delete("name", "task Name"), response.getMessage());
+            assertEquals(ExceptionTextConstants.delete("Task", "task Name"), response.getMessage());
             verify(taskDao, times(1)).findByNameAndUser(anyString(), any(User.class));
             verify(taskDao, times(1)).findById(any(UUID.class));
         }

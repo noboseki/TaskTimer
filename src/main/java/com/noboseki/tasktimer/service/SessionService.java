@@ -10,11 +10,11 @@ import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.ServiceUtil;
-import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetBarChainByDateUtil;
-import com.noboseki.tasktimer.service.util.SessionService.SessionServiceGetTableByDateUtil;
+import com.noboseki.tasktimer.service.util.session_service.SessionServiceGetBarChainByDateUtil;
+import com.noboseki.tasktimer.service.util.session_service.SessionServiceGetTableByDateUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -23,12 +23,18 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SessionService {
+    private static final String SESSION = "Session";
+    private static final String DATE = "Date";
+    private static final String TIME = "Time";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
 
     private final SessionServiceGetTableByDateUtil getTableByDateUtil;
     private final SessionServiceGetBarChainByDateUtil getBarChainByDateUtil;
@@ -47,7 +53,7 @@ public class SessionService {
                 .time(time)
                 .task(task).build());
 
-        return "Session has been " + "created";
+        return ServiceTextConstants.hasBeenCreate(SESSION);
     }
 
     public List<SessionServiceTableByDateResponse> getTableByDate(User user, String fromDate, String toDate) {
@@ -98,46 +104,45 @@ public class SessionService {
         try {
             Session dbSession = sessionDao.save(session);
             if (sessionDao.findById(dbSession.getId()).isPresent()) {
-                log.info("Session has been saved");
                 return dbSession;
             } else {
-                throw new SaveException("Session", session.getTime().toString());
+                throw new SaveException(SESSION, session.getTime().toString());
             }
         } catch (Exception e) {
-            log.error("Session save error", e);
-            throw new SaveException("Session", session.getTime().toString());
-        }
-    }
-
-    private Date checkDateFromString(String date) {
-        try {
-            log.debug("Success format to Date");
-            return Date.valueOf(date);
-        } catch (Exception e) {
-            log.error("Date error", e);
-            throw new DateTimeException("Date", date);
+            throw new SaveException(SESSION, session.getTime().toString());
         }
     }
 
     private Time checkTimeFromString(String time) {
-        try {
-            log.debug("Success format to Time");
+        Pattern pattern = Pattern.compile(TIME24HOURS_PATTERN);
+        Matcher matcher = pattern.matcher(time);
+        if (matcher.matches()) {
             return Time.valueOf(time);
-        } catch (Exception e) {
-            log.error("Time error", e);
-            throw new DateTimeException("Time", time);
+        } else {
+            throw new DateTimeException(TIME, time);
+        }
+    }
+
+    private Date checkDateFromString(String date) {
+
+        boolean isCorrect = util.isValidFormat(DATE_FORMAT, date);
+
+        if (isCorrect) {
+            return Date.valueOf(date);
+        } else {
+            throw new DateTimeException(DATE, date);
         }
     }
 
     private boolean checkDateFromString(String from, String to) {
-        final String format = "yyyy-MM-dd";
-        boolean fromCorrect = util.isValidFormat(format, from);
-        boolean toCorrect = util.isValidFormat(format, to);
+        boolean fromCorrect = util.isValidFormat(DATE_FORMAT, from);
+        boolean toCorrect = util.isValidFormat(DATE_FORMAT, to);
 
         if (fromCorrect && toCorrect) {
             return true;
         } else {
-            throw new DateTimeException("Date", from + " or " + to);
+            final String or = " or ";
+            throw new DateTimeException(DATE, from + or + to);
         }
     }
 }
