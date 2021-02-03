@@ -6,7 +6,10 @@ import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.UserService.UserServiceUtil;
+import net.bytebuddy.utility.RandomString;
+import org.assertj.core.api.AbstractIntegerAssert;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +34,12 @@ import static org.mockito.Mockito.*;
 @SpringJUnitWebConfig
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
 class UserServiceTest {
+    private final static String TEST = "test";
+    private final String TEST_EMAIL = "test@test.com";
+    private final String USER = ServiceTextConstants.getUser();
+    private final String PASSWORD = "Password";
+    private final String USERNAME = "Username";
+
     @Mock
     private UserDao userDao;
     @Mock
@@ -53,18 +62,20 @@ class UserServiceTest {
     void setUp() {
         user = User.builder()
                 .id(UUID.randomUUID())
-                .username("test")
-                .email("test@test.com")
-                .password("test")
+                .username(TEST)
+                .email(TEST_EMAIL)
+                .password(TEST)
                 .enabled(true).build();
     }
 
     @Nested
     @DisplayName("Save")
     class UserServiceTestSave {
+        private String SAVE_EXCEPTION_MESSAGE;
 
         @BeforeEach
         void setUp() {
+            SAVE_EXCEPTION_MESSAGE = ExceptionTextConstants.save(user.getClass().getSimpleName(), user.getEmail());
             when(userDao.save(any())).thenReturn(user);
         }
 
@@ -83,10 +94,7 @@ class UserServiceTest {
             User response = service.saveUser(user);
 
             //Then
-            assertEquals(response.getEmail(), user.getEmail());
-            assertEquals(response.getUsername(), user.getUsername());
-            assertEquals(response.getPassword(), user.getPassword());
-            assertEquals(response.getId(), user.getId());
+            assertEqualsUserValues(response);
         }
 
         @Test
@@ -96,9 +104,8 @@ class UserServiceTest {
             when(userDao.save(any())).thenReturn(null);
 
             //Then
-            Throwable response = assertThrows(SaveException.class,
-                    () -> service.saveUser(user));
-            assertEquals(ExceptionTextConstants.save(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
+            Throwable response = assertThrows(SaveException.class, () -> service.saveUser(user));
+            assertEquals(SAVE_EXCEPTION_MESSAGE, response.getMessage());
         }
 
         @Test
@@ -109,7 +116,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.saveUser(user));
-            assertEquals(ExceptionTextConstants.save(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
+            assertEquals(SAVE_EXCEPTION_MESSAGE, response.getMessage());
         }
     }
 
@@ -135,8 +142,10 @@ class UserServiceTest {
         @Test
         @DisplayName("Find by email error")
         void findByEmailError() {
+            final String deleteExceptionMessage = ExceptionTextConstants.delete(USER, UserServiceTest.this.user.getEmail());
+
             Throwable response = assertThrows(DeleteException.class, () -> service.deleteUser(user));
-            assertEquals(ExceptionTextConstants.delete("User", user.getEmail()), response.getMessage());
+            assertEquals(deleteExceptionMessage, response.getMessage());
         }
     }
 
@@ -153,21 +162,20 @@ class UserServiceTest {
         void correct() {
             //When
             when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
-            User response = service.findByEmile("test@test.com");
+            User response = service.findByEmile(TEST_EMAIL);
 
             //Then
-            assertEquals(response.getEmail(), user.getEmail());
-            assertEquals(response.getUsername(), user.getUsername());
-            assertEquals(response.getPassword(), user.getPassword());
-            assertEquals(response.getId(), user.getId());
+            assertEqualsUserValues(response);
         }
 
         @Test
         @DisplayName("Find by email error")
         void findByEmailError() {
+            final String exceptionNotFoundMessage = ExceptionTextConstants.resourceNotFound(user.getClass().getSimpleName(), user.getEmail());
+
             when(userDao.findByEmail(anyString())).thenReturn(Optional.empty());
-            Throwable response = assertThrows(ResourceNotFoundException.class, () -> service.findByEmile("test@test.com"));
-            assertEquals(ExceptionTextConstants.resourceNotFound(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
+            Throwable response = assertThrows(ResourceNotFoundException.class, () -> service.findByEmile(TEST_EMAIL));
+            assertEquals(exceptionNotFoundMessage, response.getMessage());
         }
     }
 
@@ -178,10 +186,15 @@ class UserServiceTest {
         @Test
         @DisplayName("Correct")
         void correct() {
+            final String updateTest = "updateTest";
+            final String updateEmail = "updateTest@test.com";
+            final String updateUrl = "updateUrl";
+            final String responseMessage = ServiceTextConstants.hasBeenUpdated(USER);
+
             UserServiceUpdateRequest request = new UserServiceUpdateRequest(
-                    "updateTest",
-                    "updateTest@test.com",
-                    "updateUrl");
+                    updateTest,
+                    updateEmail,
+                    updateUrl);
 
             //When
             when(userDao.findByEmailAndPassword(anyString(), anyString())).thenReturn(Optional.of(user));
@@ -191,7 +204,7 @@ class UserServiceTest {
             String response = service.updateProfile(user, request);
 
             //That
-            assertEquals("User has been updated", response);
+            assertEquals(responseMessage, response);
             verify(userDao, times(1)).findByEmailAndPassword(anyString(), anyString());
             verify(userDao, times(1)).findByEmail(anyString());
             verify(userDao, times(1)).save(any(User.class));
@@ -201,15 +214,18 @@ class UserServiceTest {
     @Nested
     @DisplayName("Change password")
     class UserServiceTestChangePassword {
+        private final String TOKEN_TEST = "tokenTest";
+        private final String OLD_PASSWORD = "Old password";
+
         ConfirmationToken token;
         UserServiceChangePasswordRequest request;
 
         @BeforeEach
         void setUp() {
             request = new UserServiceChangePasswordRequest(
-                    "tokenTest",
-                    "oldPassword",
-                    "password");
+                    TOKEN_TEST,
+                    OLD_PASSWORD,
+                    PASSWORD);
 
             token = new ConfirmationToken();
             token.setUser(user);
@@ -221,6 +237,8 @@ class UserServiceTest {
         @Test
         @DisplayName("Correct")
         void correct() {
+            final String responseMessage = ServiceTextConstants.hasBeenUpdated(PASSWORD);
+
             //When
             when(passwordEncoder.matches(any(), anyString())).thenReturn(true);
             doReturn(user).when(service).saveUser(any(User.class));
@@ -228,7 +246,7 @@ class UserServiceTest {
             String response = service.changePassword(request);
 
             //Then
-            assertEquals("Password has been updated", response);
+            assertEquals(responseMessage, response);
             verify(tokenService, times(1)).getByTokenAndType(anyString(), any(TokenType.class));
             verify(userDao, times(1)).findByEmail(anyString());
             verify(passwordEncoder, times(1)).matches(any(), anyString());
@@ -237,15 +255,15 @@ class UserServiceTest {
         @Test
         @DisplayName("Password encoder error")
         void passwordEncoderError() {
-            //Then
             Throwable response = assertThrows(InvalidException.class, () -> service.changePassword(request));
-            assertEquals(ExceptionTextConstants.invalid("Old password", request.getOldPassword()), response.getMessage());
+            assertEquals(ExceptionTextConstants.invalid(OLD_PASSWORD, request.getOldPassword()), response.getMessage());
         }
     }
 
     @Nested
     @DisplayName("Change password request")
     class UserServiceTestChangePasswordRequest {
+        private final String PASSWORD_TOKEN = "password token";
 
         @BeforeEach
         void setUp() {
@@ -259,16 +277,14 @@ class UserServiceTest {
         @Test
         @DisplayName("Correct")
         void correct() {
-            //Given
-            final String emile = "test@test.com";
+            final String expectedMessage = ServiceTextConstants.emailHasBeenSend(TEST_EMAIL);
 
-            //When
             when(userServiceUtil.changePasswordEmileSender(anyString(), anyString())).thenReturn(true);
 
-            String response = service.changePasswordRequest(emile);
+            String response = service.changePasswordRequest(TEST_EMAIL);
 
             //Then
-            assertEquals("Email has been sent to : " + emile, response);
+            assertEquals(expectedMessage, response);
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
             verify(userServiceUtil, times(1)).changePasswordEmileSender(anyString(), anyString());
@@ -277,12 +293,14 @@ class UserServiceTest {
         @Test
         @DisplayName("Save error")
         void saveError() {
-            //When
+            final String expectedMessage = ExceptionTextConstants.save(ServiceTextConstants.getToken(), PASSWORD_TOKEN);
+
             when(userServiceUtil.changePasswordEmileSender(anyString(), anyString())).thenThrow(SaveException.class);
 
-            //Then
-            Throwable response = assertThrows(SaveException.class, () -> service.changePasswordRequest("test@test.com"));
-            assertEquals(ExceptionTextConstants.save("Token", "password token"), response.getMessage());
+
+            Throwable response = assertThrows(SaveException.class, () -> service.changePasswordRequest(TEST_EMAIL));
+
+            assertEquals(expectedMessage, response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
             verify(userServiceUtil, times(1)).changePasswordEmileSender(anyString(), anyString());
@@ -292,15 +310,18 @@ class UserServiceTest {
     @Nested
     @DisplayName("Create")
     class UserServiceTestCreate {
+        private final String TOKEN = "Token";
+        private final String ACTIVATE_TOKEN = "activate token";
+
         UserServiceCreateRequest request;
         ConfirmationToken token;
 
         @BeforeEach
         void setUp() {
             request = new UserServiceCreateRequest(
-                    "test@test.com",
-                    "password",
-                    "username");
+                    TEST_EMAIL,
+                    PASSWORD,
+                    USERNAME);
 
             token = new ConfirmationToken();
             token.setConfirmationToken(UUID.randomUUID().toString());
@@ -322,7 +343,7 @@ class UserServiceTest {
             String response = service.create(request);
 
             //Then
-            assertEquals("User has been created", response);
+            assertEquals(ServiceTextConstants.hasBeenCreate(USER), response);
             verify(authorityService, times(1)).findByRole(anyString());
             verify(profileImgService, times(1)).findByName(anyString());
             verify(userServiceUtil, times(1)).activationEmileSender(anyString(), anyString());
@@ -334,12 +355,13 @@ class UserServiceTest {
         @Test
         @DisplayName("Duplicate error")
         void duplicateError() {
-            //When
+            final String duplicateExceptionMessage = ExceptionTextConstants.duplicate(user.getClass().getSimpleName(), user.getEmail());
+
             when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-
             Throwable response = assertThrows(DuplicateException.class, () -> service.create(request));
-            assertEquals(ExceptionTextConstants.duplicate(user.getClass().getSimpleName(), user.getEmail()), response.getMessage());
+
+            assertEquals(duplicateExceptionMessage, response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
 
@@ -352,7 +374,7 @@ class UserServiceTest {
 
             //Then
             Throwable response = assertThrows(SaveException.class, () -> service.create(request));
-            assertEquals(ExceptionTextConstants.save("Token", "activate token"), response.getMessage());
+            assertEquals(ExceptionTextConstants.save(TOKEN, ACTIVATE_TOKEN), response.getMessage());
             verify(authorityService, times(1)).findByRole(anyString());
             verify(profileImgService, times(1)).findByName(anyString());
             verify(tokenService, times(1)).createTokenForUser(any(User.class), any(TokenType.class));
@@ -364,21 +386,28 @@ class UserServiceTest {
     @Nested
     @DisplayName("Validate")
     class UserServiceTestValidate {
+        private final String RANDOM5 = RandomString.make(5);
+        private final String RANDOM15 = RandomString.make(15);
+        private final String RANDOM31 = RandomString.make(31);
+
+        private final String NULL = null;
+        private final String TOKEN_TEST = "tokenTest";
+        private final String OLD_PASSWORD = "oldPassword";
+        private final String TEST_URL = "testUrl";
 
         @Test
         @DisplayName("Create")
         void create() {
             //Given
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
+            Validator validator = getValidator();
 
-            UserServiceCreateRequest minPassword = new UserServiceCreateRequest("test@test.com", "passw", "username");
-            UserServiceCreateRequest maxPassword = new UserServiceCreateRequest("test@test.com", "password123456789123456789123456", "username");
-            UserServiceCreateRequest minUsername = new UserServiceCreateRequest("test@test.com", "password", "usern");
-            UserServiceCreateRequest maxUsername = new UserServiceCreateRequest("test@test.com", "password", "username1234567");
-            UserServiceCreateRequest email = new UserServiceCreateRequest("test.com", "password", "username");
-            UserServiceCreateRequest allIncorrect = new UserServiceCreateRequest("test.com", "passw", "usern");
-            UserServiceCreateRequest allCorrect = new UserServiceCreateRequest("test@test.com", "password", "username");
+            UserServiceCreateRequest minPassword = new UserServiceCreateRequest(TEST_EMAIL, RANDOM5, USERNAME);
+            UserServiceCreateRequest maxPassword = new UserServiceCreateRequest(TEST_EMAIL, RANDOM31, USERNAME);
+            UserServiceCreateRequest minUsername = new UserServiceCreateRequest(TEST_EMAIL, PASSWORD, RANDOM5);
+            UserServiceCreateRequest maxUsername = new UserServiceCreateRequest(TEST_EMAIL, PASSWORD, RANDOM15);
+            UserServiceCreateRequest email = new UserServiceCreateRequest(RANDOM5, PASSWORD, USERNAME);
+            UserServiceCreateRequest allIncorrect = new UserServiceCreateRequest(RANDOM5, RANDOM5, RANDOM5);
+            UserServiceCreateRequest allCorrect = new UserServiceCreateRequest(TEST_EMAIL, PASSWORD, USERNAME);
 
             //When
             Set<ConstraintViolation<UserServiceCreateRequest>> violationMinPassword = validator.validate(minPassword);
@@ -403,15 +432,14 @@ class UserServiceTest {
         @DisplayName("Change password")
         void changePassword() {
             //Given
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
+            Validator validator = getValidator();
 
-            UserServiceChangePasswordRequest minNewPassword = new UserServiceChangePasswordRequest("tokenTest", "oldPassword", "passw");
-            UserServiceChangePasswordRequest maxNewPassword = new UserServiceChangePasswordRequest("tokenTest", "oldPassword", "password12345678912345678912345");
-            UserServiceChangePasswordRequest nullOldPassword = new UserServiceChangePasswordRequest("tokenTest", null, "password");
-            UserServiceChangePasswordRequest nullToken = new UserServiceChangePasswordRequest(null, "oldPassword", "password");
-            UserServiceChangePasswordRequest allIncorrect = new UserServiceChangePasswordRequest(null, null, "pass");
-            UserServiceChangePasswordRequest allCorrect = new UserServiceChangePasswordRequest("tokenTest", "oldPassword", "password");
+            UserServiceChangePasswordRequest minNewPassword = new UserServiceChangePasswordRequest(TOKEN_TEST, OLD_PASSWORD, RANDOM5);
+            UserServiceChangePasswordRequest maxNewPassword = new UserServiceChangePasswordRequest(TOKEN_TEST, OLD_PASSWORD, RANDOM31);
+            UserServiceChangePasswordRequest nullOldPassword = new UserServiceChangePasswordRequest(TOKEN_TEST, NULL, PASSWORD);
+            UserServiceChangePasswordRequest nullToken = new UserServiceChangePasswordRequest(NULL, OLD_PASSWORD, PASSWORD);
+            UserServiceChangePasswordRequest allIncorrect = new UserServiceChangePasswordRequest(NULL, NULL, RANDOM5);
+            UserServiceChangePasswordRequest allCorrect = new UserServiceChangePasswordRequest(TOKEN_TEST, OLD_PASSWORD, PASSWORD);
 
             //When
             Set<ConstraintViolation<UserServiceChangePasswordRequest>> violationMinNewPassword = validator.validate(minNewPassword);
@@ -434,17 +462,15 @@ class UserServiceTest {
         @DisplayName("Update profile")
         void updateProfile() {
             //Given
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
+            Validator validator = getValidator();
 
-            UserServiceUpdateRequest minUsername = new UserServiceUpdateRequest("test", "test@test.com", "testUrl");
-            UserServiceUpdateRequest maxUsername = new UserServiceUpdateRequest("test123456789123456789", "test@test.com", "testUrl");
-            UserServiceUpdateRequest email = new UserServiceUpdateRequest("test12", "test", "testUrl");
-            UserServiceUpdateRequest notNull = new UserServiceUpdateRequest("test123456789123", "test@test.com", null);
-            UserServiceUpdateRequest allIncorrect = new UserServiceUpdateRequest("test", "test", null);
-            UserServiceUpdateRequest allCorrect = new UserServiceUpdateRequest("test12", "test@test.com", "testUrl");
+            UserServiceUpdateRequest minUsername = new UserServiceUpdateRequest(RANDOM5, TEST_EMAIL, TEST_URL);
+            UserServiceUpdateRequest maxUsername = new UserServiceUpdateRequest(RANDOM31, TEST_EMAIL, TEST_URL);
+            UserServiceUpdateRequest email = new UserServiceUpdateRequest(USERNAME, RANDOM5, TEST_URL);
+            UserServiceUpdateRequest notNull = new UserServiceUpdateRequest(USERNAME, TEST_EMAIL, NULL);
+            UserServiceUpdateRequest allIncorrect = new UserServiceUpdateRequest(RANDOM5, RANDOM5, NULL);
+            UserServiceUpdateRequest allCorrect = new UserServiceUpdateRequest(USERNAME, TEST_EMAIL, TEST_URL);
 
-            //When
             Set<ConstraintViolation<UserServiceUpdateRequest>> violationMinUsername = validator.validate(minUsername);
             Set<ConstraintViolation<UserServiceUpdateRequest>> violationMaxUsername = validator.validate(maxUsername);
             Set<ConstraintViolation<UserServiceUpdateRequest>> violationEmail = validator.validate(email);
@@ -452,13 +478,32 @@ class UserServiceTest {
             Set<ConstraintViolation<UserServiceUpdateRequest>> violationAllIncorrect = validator.validate(allIncorrect);
             Set<ConstraintViolation<UserServiceUpdateRequest>> violationAllCorrect = validator.validate(allCorrect);
 
-            //Then
-            assertThat(violationMinUsername.size()).isEqualTo(1);
-            assertThat(violationMaxUsername.size()).isEqualTo(1);
-            assertThat(violationEmail.size()).isEqualTo(1);
-            assertThat(violationNotNull.size()).isEqualTo(1);
-            assertThat(violationAllIncorrect.size()).isEqualTo(3);
-            assertTrue(violationAllCorrect.isEmpty());
+            checkValidatorSetsSizeOne(Set.of(violationMinUsername, violationMaxUsername,
+                    violationEmail, violationNotNull));
+            checkValidatorSet(violationAllIncorrect, 3);
+            checkValidatorSet(violationAllCorrect, 0);
         }
+
+        private Validator getValidator() {
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            return factory.getValidator();
+        }
+
+        private void checkValidatorSetsSizeOne(Set<Set<?>> validatorSets) {
+            for (Set<?> set : validatorSets) {
+                checkValidatorSet(set, 1);
+            }
+        }
+
+        private AbstractIntegerAssert<?> checkValidatorSet(Set<?> validatorSet, Integer setSize) {
+            return assertThat(validatorSet.size()).isEqualTo(setSize);
+        }
+    }
+
+    private void assertEqualsUserValues(User expected) {
+        assertEquals(expected.getEmail(), user.getEmail());
+        assertEquals(expected.getUsername(), user.getUsername());
+        assertEquals(expected.getPassword(), user.getPassword());
+        assertEquals(expected.getId(), user.getId());
     }
 }

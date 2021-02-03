@@ -40,7 +40,7 @@ public class UserService {
         }
 
         Authority userAuthority = authorityService.findByRole(ROLE_USER);
-        ProfileImg profileImg = profileImgService.findByName(ServiceTextConstants.getProfileImg());
+        ProfileImg profileImg = profileImgService.findByName(ServiceTextConstants.getStandardAvatarName());
         User user = userServiceUtil.mapToUser(request, userAuthority, profileImg);
         User dbUser = saveUser(user);
 
