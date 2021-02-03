@@ -119,7 +119,7 @@ public class UserControllerIT extends BaseControllerTest {
             mockMvc.perform(post(url)
                     .content("test@test.com"))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Email has benn sent to : test@test.com")).andReturn();
+                    .andExpect(content().string("Email has been sent to : test@test.com")).andReturn();
 
             ConfirmationToken token = tokenService.getByUserEmailAndType(user.getEmail(), TokenType.PASSWORD)
                     .orElseThrow();
