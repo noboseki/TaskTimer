@@ -1,5 +1,6 @@
 package com.noboseki.tasktimer.security;
 
+import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.repository.UserDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,18 @@ public class JpaUserDetailsService implements UserDetailsService {
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String emile) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String emile) {
 
         log.debug("Getting User info via JPA");
 
-        return userDao.findByEmail(emile).orElseThrow(() -> {
+        User user = userDao.findByEmail(emile).orElseThrow(() -> {
             throw new UsernameNotFoundException("User by emile: " + emile + "not found");
         });
+
+        return UserDetailsImplementation.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .authorities(user.getAuthorities())
+                .enabled(user.getEnabled()).build();
     }
 }

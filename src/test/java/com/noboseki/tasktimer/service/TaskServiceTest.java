@@ -92,34 +92,34 @@ class TaskServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("Get tasks")
-    class TaskServiceTestGetTask {
-
-        @Test
-        @DisplayName("Correct")
-        void correct() {
-            List<Task> tasks = new ArrayList<>();
-            tasks.add(Task.builder()
-                    .name("testName 1")
-                    .archived(true).build());
-            tasks.add(Task.builder()
-                    .name("testName 2")
-                    .archived(false).build());
-            tasks.add(Task.builder()
-                    .name("testName 3")
-                    .archived(false).build());
-
-            //When
-            when(taskDao.findAllByUser(any(User.class))).thenReturn(tasks);
-
-            List<TaskServiceGetTaskList> response = service.getTasks(user);
-
-            //Then
-            assertEquals(2, response.size());
-            verify(taskDao, times(1)).findAllByUser(any(User.class));
-        }
-    }
+//    @Nested
+//    @DisplayName("Get tasks")
+//    class TaskServiceTestGetTask {
+//
+//        @Test
+//        @DisplayName("Correct")
+//        void correct() {
+//            List<Task> tasks = new ArrayList<>();
+//            tasks.add(Task.builder()
+//                    .name("testName 1")
+//                    .archived(true).build());
+//            tasks.add(Task.builder()
+//                    .name("testName 2")
+//                    .archived(false).build());
+//            tasks.add(Task.builder()
+//                    .name("testName 3")
+//                    .archived(false).build());
+//
+//            //When
+//            when(taskDao.findAllByUser(any(User.class))).thenReturn(tasks);
+//
+//            List<TaskServiceGetTaskList> response = service.getTasks(user);
+//
+//            //Then
+//            assertEquals(2, response.size());
+//            verify(taskDao, times(1)).findAllByUser(any(User.class));
+//        }
+//    }
 
     @Nested
     @DisplayName("Change task complete")

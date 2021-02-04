@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails, CredentialsContainer {
+public class User implements CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -69,47 +69,8 @@ public class User implements UserDetails, CredentialsContainer {
             mappedBy = "user")
     private Set<Task> tasks;
 
-    @Transient
-    public Set<GrantedAuthority> getAuthorities() {
-        return authorities.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getRole()))
-                .collect(Collectors.toSet());
-    }
-
-    @Builder.Default
-    private Boolean emailVerified = false;
-
-    @Builder.Default
-    private Boolean accountNonExpired = true;
-
-    @Builder.Default
-    private Boolean accountNonLocked = true;
-
-    @Builder.Default
-    private Boolean credentialsNonExpired = true;
-
     @Builder.Default
     private Boolean enabled = false;
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return this.accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return this.accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return this.credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
 
     @Override
     public void eraseCredentials() {

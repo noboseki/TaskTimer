@@ -7,6 +7,7 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
+import com.noboseki.tasktimer.security.UserDetailsImplementation;
 import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.task_service.TaskServiceUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +38,8 @@ public class TaskService {
         return ServiceTextConstants.hasBeenCreate(taskName);
     }
 
-    public List<TaskServiceGetTaskList> getTasks(User user) {
-        userService.findByEmile(user.getEmail());
+    public List<TaskServiceGetTaskList> getTasks(UserDetailsImplementation userDetails) {
+        User user = userService.findByEmile(userDetails.getUsername());
         return taskDao.findAllByUser(user).stream()
                 .filter(task -> !task.getArchived())
                 .map(taskServiceUtil::mapToGetTaskResponse)

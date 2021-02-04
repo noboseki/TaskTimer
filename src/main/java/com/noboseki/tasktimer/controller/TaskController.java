@@ -2,6 +2,7 @@ package com.noboseki.tasktimer.controller;
 
 import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
+import com.noboseki.tasktimer.security.UserDetailsImplementation;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RestController
@@ -29,7 +31,7 @@ public class TaskController {
 
     @UserPermission
     @GetMapping("getTasks")
-    public ResponseEntity<List<TaskServiceGetTaskList>> getTasks(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<TaskServiceGetTaskList>> getTasks(@AuthenticationPrincipal UserDetailsImplementation user) {
         return ResponseEntity.ok(service.getTasks(user));
     }
 
