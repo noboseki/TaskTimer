@@ -6,6 +6,7 @@ import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.UserService.UserServiceUtil;
 import net.bytebuddy.utility.RandomString;
@@ -191,6 +192,8 @@ class UserServiceTest {
             final String updateUrl = "updateUrl";
             final String responseMessage = ServiceTextConstants.hasBeenUpdated(USER);
 
+            UserDetailsImpl userDetails = UserDetailsImpl.builder().username(TEST_EMAIL).build();
+
             UserServiceUpdateRequest request = new UserServiceUpdateRequest(
                     updateTest,
                     updateEmail,
@@ -201,7 +204,7 @@ class UserServiceTest {
             when(userDao.findByEmail(anyString())).thenReturn(Optional.of(user));
             when(userDao.save(any())).thenReturn(user);
 
-            String response = service.updateProfile(user, request);
+            String response = service.updateProfile(userDetails, request);
 
             //That
             assertEquals(responseMessage, response);

@@ -27,7 +27,7 @@ public class JpaUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User by emile: " + emile + "not found");
         });
 
-        return UserDetailsImplementation.builder()
+        return UserDetailsImpl.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .authorities(user.getAuthorities())

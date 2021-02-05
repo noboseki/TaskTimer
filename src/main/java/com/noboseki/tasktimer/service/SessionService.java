@@ -10,6 +10,7 @@ import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.ServiceUtil;
 import com.noboseki.tasktimer.service.util.session_service.SessionServiceGetBarChainByDateUtil;
@@ -43,7 +44,8 @@ public class SessionService {
     private final SessionDao sessionDao;
     private final ServiceUtil util;
 
-    public String create(User user, @Valid SessionServiceCreateRequest request) {
+    public String create(UserDetailsImpl userDetails, @Valid SessionServiceCreateRequest request) {
+        User user = userService.findByEmile(userDetails.getUsername());
         Task task = taskService.findByNameAndUser(user, request.getTaskName());
         Date date = checkDateFromString(request.getDate());
         Time time = checkTimeFromString(request.getTime());
@@ -56,8 +58,8 @@ public class SessionService {
         return ServiceTextConstants.hasBeenCreate(SESSION);
     }
 
-    public List<SessionServiceTableByDateResponse> getTableByDate(User user, String fromDate, String toDate) {
-        userService.findByEmile(user.getEmail());
+    public List<SessionServiceTableByDateResponse> getTableByDate(UserDetailsImpl userDetails, String fromDate, String toDate) {
+        User user = userService.findByEmile(userDetails.getUsername());
         checkDateFromString(fromDate, toDate);
 
         LocalDate from = LocalDate.parse(fromDate);
@@ -72,8 +74,8 @@ public class SessionService {
         return getTableByDateUtil.fillResponseList(sessionsListBetweenDate, from, to);
     }
 
-    public SessionServiceChainByDateResponse getBarChainByDate(User user, String fromDate, String toDate) {
-        userService.findByEmile(user.getEmail());
+    public SessionServiceChainByDateResponse getBarChainByDate(UserDetailsImpl userDetails, String fromDate, String toDate) {
+        User user = userService.findByEmile(userDetails.getUsername());
         checkDateFromString(fromDate, toDate);
         LocalDate from = LocalDate.parse(fromDate);
         LocalDate to = LocalDate.parse(toDate);
@@ -88,7 +90,8 @@ public class SessionService {
         return getBarChainByDateUtil.fillBarChainByDate(sessionsBetweenDateForUser, from, to);
     }
 
-    public List<GetByTaskSessionResponse> getAllByTask(User user, String taskName) {
+    public List<GetByTaskSessionResponse> getAllByTask(UserDetailsImpl userDetails, String taskName) {
+        User user = userService.findByEmile(userDetails.getUsername());
         Task task = taskService.findByNameAndUser(user, taskName);
 
         return sessionDao.findAllByTask(task).stream()

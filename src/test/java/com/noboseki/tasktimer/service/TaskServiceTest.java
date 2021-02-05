@@ -6,8 +6,8 @@ import com.noboseki.tasktimer.exeption.DeleteException;
 import com.noboseki.tasktimer.exeption.ExceptionTextConstants;
 import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
-import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.util.task_service.TaskServiceUtil;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,12 +36,17 @@ class TaskServiceTest {
     @InjectMocks
     private TaskService service;
 
+    private UserDetailsImpl userDetails;
     private User user;
     private Task task;
 
     @BeforeEach
     void setUp() {
         //Given
+        userDetails = UserDetailsImpl.builder()
+                .username("test@test.com")
+                .build();
+
         user = User.builder()
                 .id(UUID.randomUUID())
                 .username("test")
@@ -70,7 +73,7 @@ class TaskServiceTest {
             when(taskDao.save(any(Task.class))).thenReturn(task);
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
 
-            String response = service.create(user, "testName");
+            String response = service.create(userDetails, "testName");
 
             //Then
             assertEquals("testName has been created", response);
@@ -86,40 +89,12 @@ class TaskServiceTest {
             when(userService.findByEmile(anyString())).thenReturn(user);
 
             //Then
-            Throwable response = assertThrows(SaveException.class, () -> service.create(user, "task Name"));
+            Throwable response = assertThrows(SaveException.class, () -> service.create(userDetails, "task Name"));
             assertEquals(ExceptionTextConstants.save(task.getClass().getSimpleName(), "task Name"), response.getMessage());
             verify(userService, times(1)).findByEmile(anyString());
         }
     }
 
-//    @Nested
-//    @DisplayName("Get tasks")
-//    class TaskServiceTestGetTask {
-//
-//        @Test
-//        @DisplayName("Correct")
-//        void correct() {
-//            List<Task> tasks = new ArrayList<>();
-//            tasks.add(Task.builder()
-//                    .name("testName 1")
-//                    .archived(true).build());
-//            tasks.add(Task.builder()
-//                    .name("testName 2")
-//                    .archived(false).build());
-//            tasks.add(Task.builder()
-//                    .name("testName 3")
-//                    .archived(false).build());
-//
-//            //When
-//            when(taskDao.findAllByUser(any(User.class))).thenReturn(tasks);
-//
-//            List<TaskServiceGetTaskList> response = service.getTasks(user);
-//
-//            //Then
-//            assertEquals(2, response.size());
-//            verify(taskDao, times(1)).findAllByUser(any(User.class));
-//        }
-//    }
 
     @Nested
     @DisplayName("Change task complete")
@@ -129,10 +104,11 @@ class TaskServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(taskDao.save(any(Task.class))).thenReturn(task);
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
 
-            String response = service.changeTaskComplete(user, "taskName");
+            String response = service.changeTaskComplete(userDetails, "taskName");
 
             //Then
             assertEquals("taskName complete changed to true", response);
@@ -149,10 +125,11 @@ class TaskServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(taskDao.save(any(Task.class))).thenReturn(task);
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
 
-            String response = service.changeArchiveTask(user, "taskTest");
+            String response = service.changeArchiveTask(userDetails, "taskTest");
 
             //Then
             assertEquals("taskTest archive changed to true", response);
@@ -169,9 +146,10 @@ class TaskServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
 
-            String response = service.delete(user, "taskName");
+            String response = service.delete(userDetails, "taskName");
 
             //Then
             assertEquals("taskName has been deleted", response);
@@ -182,10 +160,11 @@ class TaskServiceTest {
         @DisplayName("Delete error")
         void deleteError() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(taskDao.findByNameAndUser(anyString(), any(User.class))).thenReturn(Optional.of(task));
             when(taskDao.findById(any(UUID.class))).thenReturn(Optional.of(task));
 
-            Throwable response = assertThrows(DeleteException.class, () -> service.delete(user, "task Name"));
+            Throwable response = assertThrows(DeleteException.class, () -> service.delete(userDetails, "task Name"));
 
             //Then
             assertEquals(ExceptionTextConstants.delete("Task", "task Name"), response.getMessage());
@@ -217,7 +196,7 @@ class TaskServiceTest {
             //When
             Throwable response = assertThrows(ResourceNotFoundException.class,
                     () -> service.findByNameAndUser(user, "testName"));
-            assertEquals(ExceptionTextConstants.resourceNotFound("Task",  "testName"), response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("Task", "testName"), response.getMessage());
         }
     }
 }

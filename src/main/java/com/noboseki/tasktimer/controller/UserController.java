@@ -1,10 +1,10 @@
 package com.noboseki.tasktimer.controller;
 
-import com.noboseki.tasktimer.domain.User;
 import com.noboseki.tasktimer.playload.UserServiceChangePasswordRequest;
 import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.security.perms.UserPermission;
 import com.noboseki.tasktimer.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class UserController {
 
     @UserPermission
     @GetMapping("get")
-    public ResponseEntity<UserServiceGetResponse> get(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(service.get(user));
+    public ResponseEntity<UserServiceGetResponse> get(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(service.get(userDetails));
     }
 
     @PostMapping("changePasswordTokenRequest")
@@ -43,7 +43,8 @@ public class UserController {
 
     @UserPermission
     @PutMapping("update")
-    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal User user, @RequestBody UserServiceUpdateRequest request) {
-        return ResponseEntity.ok(service.updateProfile(user, request));
+    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @RequestBody UserServiceUpdateRequest request) {
+        return ResponseEntity.ok(service.updateProfile(userDetails, request));
     }
 }

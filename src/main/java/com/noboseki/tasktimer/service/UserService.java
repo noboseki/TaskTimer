@@ -7,6 +7,7 @@ import com.noboseki.tasktimer.playload.UserServiceCreateRequest;
 import com.noboseki.tasktimer.playload.UserServiceGetResponse;
 import com.noboseki.tasktimer.playload.UserServiceUpdateRequest;
 import com.noboseki.tasktimer.repository.UserDao;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.UserService.UserServiceUtil;
 import lombok.RequiredArgsConstructor;
@@ -83,13 +84,13 @@ public class UserService {
         return ServiceTextConstants.hasBeenUpdated(PASSWORD);
     }
 
-    public UserServiceGetResponse get(User user) {
-        User dbUser = findByEmile(user.getEmail());
+    public UserServiceGetResponse get(UserDetailsImpl userDetails) {
+        User dbUser = findByEmile(userDetails.getUsername());
         return userServiceUtil.mapToResponse(dbUser);
     }
 
-    public String updateProfile(User user, @Valid UserServiceUpdateRequest request) {
-        User dbUser = findByEmile(user.getEmail());
+    public String updateProfile(UserDetailsImpl userDetails, @Valid UserServiceUpdateRequest request) {
+        User dbUser = findByEmile(userDetails.getUsername());
         ProfileImg profileImg = profileImgService.findByName(request.getProfileImgName());
 
         dbUser.setUsername(request.getUsername());

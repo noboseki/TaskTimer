@@ -1,10 +1,7 @@
 package com.noboseki.tasktimer.security;
 
 import com.noboseki.tasktimer.domain.Authority;
-import com.noboseki.tasktimer.domain.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
-public class UserDetailsImplementation implements UserDetails {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserDetailsImpl implements UserDetails {
 
     private String username;
     private String password;

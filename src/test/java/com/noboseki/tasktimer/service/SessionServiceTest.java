@@ -11,6 +11,7 @@ import com.noboseki.tasktimer.playload.SessionServiceChainByDateResponse;
 import com.noboseki.tasktimer.playload.SessionServiceCreateRequest;
 import com.noboseki.tasktimer.playload.SessionServiceTableByDateResponse;
 import com.noboseki.tasktimer.repository.SessionDao;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.util.ServiceUtil;
 import com.noboseki.tasktimer.service.util.session_service.SessionServiceGetBarChainByDateUtil;
 import com.noboseki.tasktimer.service.util.session_service.SessionServiceGetTableByDateUtil;
@@ -51,12 +52,16 @@ class SessionServiceTest {
     @InjectMocks
     private SessionService service;
 
-    private User user;
+    private UserDetailsImpl userDetails;
     private Task task;
+    private User user;
     private final UnitTestUtil util = new UnitTestUtil();
 
     @BeforeEach
     void setUp() {
+        userDetails = UserDetailsImpl.builder()
+                .username("test@test.com").build();
+
         user = User.builder()
                 .id(UUID.randomUUID())
                 .username("test")
@@ -98,7 +103,7 @@ class SessionServiceTest {
             when(sessionDao.save(any(Session.class))).thenReturn(session);
             when(sessionDao.findById(any(UUID.class))).thenReturn(Optional.of(session));
 
-            String response = service.create(user, request);
+            String response = service.create(userDetails, request);
 
             //Then
             assertEquals("Session has been created", response);
@@ -113,7 +118,7 @@ class SessionServiceTest {
             request.setDate("2020-50-46");
 
             //Then
-            Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
+            Throwable response = assertThrows(DateTimeException.class, () -> service.create(userDetails, request));
             assertEquals(ExceptionTextConstants.dateTime("Date", request.getDate()), response.getMessage());
         }
 
@@ -124,7 +129,7 @@ class SessionServiceTest {
             request.setTime("46:80");
 
             //Then
-            Throwable response = assertThrows(DateTimeException.class, () -> service.create(user, request));
+            Throwable response = assertThrows(DateTimeException.class, () -> service.create(userDetails, request));
             assertEquals(ExceptionTextConstants.dateTime("Time", request.getTime()), response.getMessage());
         }
 
@@ -132,7 +137,7 @@ class SessionServiceTest {
         @DisplayName("Save exception")
         void saveException() {
             //Then
-            Throwable response = assertThrows(SaveException.class, () -> service.create(user, request));
+            Throwable response = assertThrows(SaveException.class, () -> service.create(userDetails, request));
             assertEquals(ExceptionTextConstants.save("Session", request.getTime()), response.getMessage());
         }
     }
@@ -145,11 +150,12 @@ class SessionServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(sessionDao.findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class)))
                     .thenReturn(util.getDefaultSessionList());
 
             List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
-                    user,
+                    userDetails,
                     "2020-10-20",
                     "2020-10-21");
 
@@ -172,7 +178,7 @@ class SessionServiceTest {
         void correctEmpty() {
             //When
             List<SessionServiceTableByDateResponse> responses = service.getTableByDate(
-                    user,
+                    userDetails,
                     "2020-10-20",
                     "2020-10-21");
 
@@ -189,11 +195,12 @@ class SessionServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(sessionDao.findAllByTask_UserAndDateBetween(any(User.class), any(Date.class), any(Date.class)))
                     .thenReturn(util.getDefaultSessionList());
 
             SessionServiceChainByDateResponse response = service.getBarChainByDate(
-                    user,
+                    userDetails,
                     "2020-10-20",
                     "2020-10-21");
 
@@ -209,7 +216,7 @@ class SessionServiceTest {
         void correctEmpty() {
             //When
             SessionServiceChainByDateResponse response = service.getBarChainByDate(
-                    user,
+                    userDetails,
                     "2020-10-20",
                     "2020-10-20");
 
@@ -227,7 +234,7 @@ class SessionServiceTest {
         @DisplayName("Correct empty")
         void correctEmpty() {
             //When
-            List<GetByTaskSessionResponse> responses = service.getAllByTask(user, "taskname");
+            List<GetByTaskSessionResponse> responses = service.getAllByTask(userDetails, "taskname");
 
             //Then
             assertEquals(0, responses.size());
@@ -237,10 +244,11 @@ class SessionServiceTest {
         @DisplayName("Correct")
         void correct() {
             //When
+            when(userService.findByEmile(anyString())).thenReturn(user);
             when(taskService.findByNameAndUser(any(User.class), anyString())).thenReturn(task);
             when(sessionDao.findAllByTask(any(Task.class))).thenReturn(util.getDefaultSessionList());
 
-            List<GetByTaskSessionResponse> responses = service.getAllByTask(user, "taskname");
+            List<GetByTaskSessionResponse> responses = service.getAllByTask(userDetails, "taskname");
 
             //Then
             assertEquals(5, responses.size());

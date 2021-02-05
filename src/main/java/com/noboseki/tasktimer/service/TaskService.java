@@ -7,7 +7,7 @@ import com.noboseki.tasktimer.exeption.ResourceNotFoundException;
 import com.noboseki.tasktimer.exeption.SaveException;
 import com.noboseki.tasktimer.playload.TaskServiceGetTaskList;
 import com.noboseki.tasktimer.repository.TaskDao;
-import com.noboseki.tasktimer.security.UserDetailsImplementation;
+import com.noboseki.tasktimer.security.UserDetailsImpl;
 import com.noboseki.tasktimer.service.constants.ServiceTextConstants;
 import com.noboseki.tasktimer.service.util.task_service.TaskServiceUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class TaskService {
     private final UserService userService;
     private final TaskDao taskDao;
 
-    public String create(User user, String taskName) {
-        User dbUser = userService.findByEmile(user.getEmail());
+    public String create(UserDetailsImpl userDetails, String taskName) {
+        User dbUser = userService.findByEmile(userDetails.getUsername());
         taskSave(Task.builder()
                 .name(taskName)
                 .user(dbUser).build());
@@ -38,7 +38,7 @@ public class TaskService {
         return ServiceTextConstants.hasBeenCreate(taskName);
     }
 
-    public List<TaskServiceGetTaskList> getTasks(UserDetailsImplementation userDetails) {
+    public List<TaskServiceGetTaskList> getTasks(UserDetailsImpl userDetails) {
         User user = userService.findByEmile(userDetails.getUsername());
         return taskDao.findAllByUser(user).stream()
                 .filter(task -> !task.getArchived())
@@ -46,8 +46,8 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public String changeTaskComplete(User user, String taskName) {
-        userService.findByEmile(user.getEmail());
+    public String changeTaskComplete(UserDetailsImpl userDetails, String taskName) {
+        User user = userService.findByEmile(userDetails.getUsername());
         Task task = findByNameAndUser(user, taskName);
         task.setComplete(!task.getComplete());
         task = taskSave(task);
@@ -55,8 +55,8 @@ public class TaskService {
         return taskName + CHANGE_COMPLETE + task.getComplete();
     }
 
-    public String changeArchiveTask(User user, String taskName) {
-        userService.findByEmile(user.getEmail());
+    public String changeArchiveTask(UserDetailsImpl userDetails, String taskName) {
+        User user = userService.findByEmile(userDetails.getUsername());
         Task task = findByNameAndUser(user, taskName);
         task.setArchived(!task.getArchived());
         task = taskSave(task);
@@ -64,7 +64,8 @@ public class TaskService {
         return taskName + CHANGE_ARCHIVE + task.getArchived();
     }
 
-    public String delete(User user, String taskName) {
+    public String delete(UserDetailsImpl userDetails, String taskName) {
+        User user = userService.findByEmile(userDetails.getUsername());
         Task task = findByNameAndUser(user, taskName);
         deleteTask(task);
         return ServiceTextConstants.hasBeenDeleted(taskName);

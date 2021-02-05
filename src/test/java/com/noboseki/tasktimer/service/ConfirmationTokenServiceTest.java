@@ -97,13 +97,15 @@ class ConfirmationTokenServiceTest {
         @Test
         @DisplayName("User not found error")
         void userNotFound() {
+            final String randomToken = UUID.randomUUID().toString();
+
             when(tokenDao.findByConfirmationTokenAndType(anyString(), any(TokenType.class)))
                     .thenReturn(Optional.of(token));
 
             Throwable response = assertThrows(ResourceNotFoundException.class,
-                    () -> service.activateAccount(UUID.randomUUID().toString()));
+                    () -> service.activateAccount(randomToken));
 
-            assertEquals(ExceptionTextConstants.resourceNotFound("User",  user.getEmail()), response.getMessage());
+            assertEquals(ExceptionTextConstants.resourceNotFound("User", user.getEmail()), response.getMessage());
             verify(userDao, times(1)).findByEmail(anyString());
         }
     }
